@@ -5,7 +5,15 @@ module.exports = {
     "./public/**/*.html",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        main: "#084734",
+        highlight: "#CEF17B",
+        secondary: "#CEEDB2",
+        dark: "#000000",
+        light: "#FFFFFF",
+      },
+    },
   },
   plugins: [],
 };

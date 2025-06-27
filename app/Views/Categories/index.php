@@ -1,0 +1,5 @@
+<?= $this->extend('layouts/app') ?>
+<?= $this->section('content') ?>
+    <h1 class="text-3xl font-bold text-main mb-4">Kategori</h1>
+    <p class="text-dark">Ini adalah halaman Kategori. Kelola kategori pemasukan dan pengeluaran di sini.</p>
+<?= $this->endSection() ?>
