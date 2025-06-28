@@ -78,3 +78,41 @@ CREATE TABLE settings (
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- DATA DUMMY UNTUK SETIAP TABEL
+
+-- Users
+INSERT INTO users (id, username, email, password_hash, nama, role, created_at, updated_at) VALUES
+(1, 'admin', 'admin@mail.com', '$2y$10$adminhash', 'Administrator', 'admin', NOW(), NOW()),
+(2, 'budi', 'budi@mail.com', '$2y$10$budihash', 'Budi Santoso', 'user', NOW(), NOW()),
+(3, 'sari', 'sari@mail.com', '$2y$10$sarihash', 'Sari Dewi', 'user', NOW(), NOW());
+
+-- Accounts
+INSERT INTO accounts (id, user_id, nama_akun, tipe_akun, saldo_awal, catatan, created_at, updated_at) VALUES
+(1, 1, 'Kas Utama', 'cash', 1000000, 'Kas kantor utama', NOW(), NOW()),
+(2, 2, 'Rekening BCA', 'bank', 2500000, 'Tabungan pribadi Budi', NOW(), NOW()),
+(3, 3, 'E-Wallet OVO', 'ewallet', 500000, 'Saldo OVO Sari', NOW(), NOW());
+
+-- Categories
+INSERT INTO categories (id, user_id, nama_kategori, tipe, created_at, updated_at) VALUES
+(1, 1, 'Gaji', 'income', NOW(), NOW()),
+(2, 2, 'Makan', 'expense', NOW(), NOW()),
+(3, 3, 'Transportasi', 'expense', NOW(), NOW());
+
+-- Transactions
+INSERT INTO transactions (id, user_id, account_id, category_id, tipe, jumlah, tanggal, deskripsi, lampiran, created_at, updated_at) VALUES
+(1, 1, 1, 1, 'income', 5000000, '2025-06-01', 'Gaji bulan Juni', NULL, NOW(), NOW()),
+(2, 2, 2, 2, 'expense', 75000, '2025-06-02', 'Makan siang', NULL, NOW(), NOW()),
+(3, 3, 3, 3, 'expense', 20000, '2025-06-03', 'Naik ojek', NULL, NOW(), NOW());
+
+-- Budgets
+INSERT INTO budgets (id, user_id, category_id, jumlah_anggaran, periode, created_at, updated_at) VALUES
+(1, 1, 1, 5000000, '2025-06', NOW(), NOW()),
+(2, 2, 2, 1000000, '2025-06', NOW(), NOW()),
+(3, 3, 3, 300000, '2025-06', NOW(), NOW());
+
+-- Settings
+INSERT INTO settings (id, user_id, tema, bahasa, preferensi_lain, created_at, updated_at) VALUES
+(1, 1, 'dark', 'id', '{"notif":true}', NOW(), NOW()),
+(2, 2, 'default', 'id', '{"notif":false}', NOW(), NOW()),
+(3, 3, 'light', 'en', '{"notif":true}', NOW(), NOW());

@@ -12,3 +12,5 @@ $routes->get('categories', 'CategoriesController::index');
 $routes->get('reports', 'ReportsController::index');
 $routes->get('users', 'UsersController::index');
 $routes->get('settings', 'SettingsController::index');
+$routes->get('dbtest', 'Dbtest::index');
+$routes->get('dbdebug', 'Dbdebug::index');
