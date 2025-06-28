@@ -1,5 +1,7 @@
 #!/usr/bin/env php
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 /**
  * This file is part of CodeIgniter 4 framework.
@@ -76,12 +78,25 @@ chdir(FCPATH);
 
 // LOAD OUR PATHS CONFIG FILE
 // This is the line that might need to be changed, depending on your folder structure.
+// Debug: tampilkan FCPATH
+fwrite(STDERR, "FCPATH: " . FCPATH . "\n");
+if (!file_exists(FCPATH . '../app/Config/Paths.php')) {
+    fwrite(STDERR, "File Paths.php tidak ditemukan!\n");
+}
 require FCPATH . '../app/Config/Paths.php';
-// ^^^ Change this line if you move your application folder
-
 $paths = new Paths();
+fwrite(STDERR, "systemDirectory: " . $paths->systemDirectory . "\n");
+if (!file_exists($paths->systemDirectory . '/Boot.php')) {
+    fwrite(STDERR, "File Boot.php tidak ditemukan di: " . $paths->systemDirectory . "/Boot.php\n");
+}
 
-// LOAD THE FRAMEWORK BOOTSTRAP FILE
+/*
+ * ---------------------------------------------------------------
+ * RUN THE APPLICATION
+ * ---------------------------------------------------------------
+ * Once everything is set up, we just need to run the application
+ * by calling the `run` method on the `CodeIgniter\CodeIgniter` instance.
+ */
 require $paths->systemDirectory . '/Boot.php';
 
 exit(Boot::bootSpark($paths));
