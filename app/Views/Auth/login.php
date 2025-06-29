@@ -4,17 +4,12 @@
 <div class="min-h-screen flex items-center justify-center">
   <div class="w-full max-w-md rounded-lg shadow-lg p-8 border-t-8 border-main bg-white flex flex-col items-center">
     <h2 class="text-3xl font-bold text-main mb-6 w-full text-center">Login</h2>
-    <?php if (session()->getFlashdata('success')): ?>
-      <div class="text-green-700 bg-green-100 border border-green-300 rounded px-4 py-2 mb-4 w-full">
-        <?= esc(session()->getFlashdata('success')) ?>
-      </div>
-    <?php endif; ?>
     <?php if (session()->getFlashdata('error')): ?>
       <div class="text-red-600 bg-red-100 border border-red-300 rounded px-4 py-2 mb-4 w-full">
         <?= esc(session()->getFlashdata('error')) ?>
       </div>
     <?php endif; ?>
-    <form method="post" class="space-y-5 w-full flex flex-col items-center">
+    <form method="POST" class="space-y-5 w-full flex flex-col items-center">
       <?= csrf_field() ?>
       <div class="w-full">
         <label class="block text-dark font-semibold mb-1 w-full text-left">Email</label>

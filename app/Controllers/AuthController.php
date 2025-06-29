@@ -10,7 +10,7 @@ class AuthController extends Controller
     {
         helper(['form']);
         $session = session();
-        if ($this->request->getMethod() === 'post') {
+        if ($this->request->getMethod() === 'POST') {
             $userModel = new UserModel();
             $email = $this->request->getPost('email');
             $password = $this->request->getPost('password');
@@ -24,7 +24,7 @@ class AuthController extends Controller
                     'isLoggedIn' => true
                 ]);
                 $session->setFlashdata('success', 'Login berhasil!');
-                return redirect()->to('/dashboard');
+                return redirect()->to(base_url('/'));
             } else {
                 $session->setFlashdata('error', 'Email atau password salah');
                 return redirect()->to('/login');
@@ -42,16 +42,13 @@ class AuthController extends Controller
             $userModel = new UserModel();
             $username = $this->request->getPost('username');
             $email = $this->request->getPost('email');
-            log_message('debug', 'Register POST: username=' . $username . ', email=' . $email);
             // Cek username
             if ($userModel->where('username', $username)->first()) {
                 $errorMsg['username'] = 'Username sudah digunakan.';
-                log_message('debug', 'Register gagal: username sudah digunakan.');
             }
             // Cek email
             if ($userModel->where('email', $email)->first()) {
                 $errorMsg['email'] = 'Email sudah digunakan.';
-                log_message('debug', 'Register gagal: email sudah digunakan.');
             }
             if (!empty($errorMsg)) {
                 if ($this->request->isAJAX()) {
@@ -80,7 +77,6 @@ class AuthController extends Controller
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s'),
             ];
-            log_message('debug', 'Register insert data: ' . json_encode($data));
             if ($userModel->insert($data)) {
                 if ($this->request->isAJAX()) {
                     return $this->response->setJSON([
@@ -89,7 +85,6 @@ class AuthController extends Controller
                     ]);
                 } else {
                     $session->setFlashdata('success', 'Registrasi berhasil! Silakan login.');
-                    log_message('debug', 'Register berhasil untuk username=' . $username);
                     return redirect()->to('/login');
                 }
             } else {
@@ -103,7 +98,6 @@ class AuthController extends Controller
                 if ($dbError['code'] != 0) {
                     $errorMsg .= ' | DB Error: ' . $dbError['message'];
                 }
-                log_message('error', 'Register gagal: ' . $errorMsg . ' | Data: ' . json_encode($data));
                 if ($this->request->isAJAX()) {
                     return $this->response->setJSON([
                         'success' => false,
