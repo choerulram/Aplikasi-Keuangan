@@ -86,4 +86,24 @@ class AccountsController extends BaseController
         $accountModel->update($id, $data);
         return redirect()->to('/accounts')->with('success', 'Akun berhasil diubah!');
     }
+
+    public function delete($id)
+    {
+        $accountModel = new AccountModel();
+        $akun = $accountModel->find($id);
+        if (!$akun) {
+            return redirect()->to('/accounts')->with('error', 'Data akun tidak ditemukan.');
+        }
+        $role = session('role');
+        $userId = session('user_id');
+        // Hanya admin atau pemilik akun yang boleh hapus
+        if ($role !== 'admin' && $akun['user_id'] != $userId) {
+            return redirect()->to('/accounts')->with('error', 'Anda tidak berhak menghapus akun ini.');
+        }
+        if ($accountModel->delete($id)) {
+            return redirect()->to('/accounts')->with('success', 'Akun berhasil dihapus!');
+        } else {
+            return redirect()->to('/accounts')->with('error', 'Gagal menghapus akun.');
+        }
+    }
 }
