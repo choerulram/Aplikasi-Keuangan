@@ -4,6 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 use App\Models\AccountModel;
+use CodeIgniter\Pager\Pager;
 
 class AccountsController extends BaseController
 {
@@ -12,15 +13,24 @@ class AccountsController extends BaseController
         $accountModel = new AccountModel();
         $role = session('role');
         $userId = session('user_id');
+        $perPage = 10;
+        // Hapus variabel $page, biarkan CodeIgniter handle otomatis
         if ($role === 'admin') {
-            $accounts = $accountModel->findAll();
+            $accounts = $accountModel->paginate($perPage, 'accounts');
+            $pager = $accountModel->pager;
+            $total = $accountModel->countAll();
         } else {
-            $accounts = $accountModel->where('user_id', $userId)->findAll();
+            $accounts = $accountModel->where('user_id', $userId)->paginate($perPage, 'accounts');
+            $pager = $accountModel->pager;
+            $total = $accountModel->where('user_id', $userId)->countAllResults();
         }
         return view('Accounts/index', [
             'pageTitle' => 'Akun',
             'title' => 'Akun | Aplikasi Keuangan',
-            'accounts' => $accounts
+            'accounts' => $accounts,
+            'pager' => $pager,
+            'total_accounts' => $total,
+            'perPage' => $perPage // Kirim perPage ke view
         ]);
     }
 

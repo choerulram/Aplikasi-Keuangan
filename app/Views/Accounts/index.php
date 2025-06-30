@@ -23,7 +23,9 @@
         </thead>
         <tbody class="bg-white">
             <?php if (!empty($accounts)): ?>
-                <?php $no = 1; foreach ($accounts as $akun): ?>
+                <?php 
+                $no = 1 + ($pager->getCurrentPage('accounts') - 1) * $perPage;
+                foreach ($accounts as $akun): ?>
                     <tr class="hover:bg-gray-50 transition">
                         <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
                         <td class="py-2 px-4 text-sm text-gray-800 font-semibold border-b border-r border-gray-200"><?= esc($akun['nama_akun']) ?></td>
@@ -72,6 +74,14 @@
         </tbody>
     </table>
 </div>
+
+<?php if (isset($pager) && isset($total_accounts) && $total_accounts > 10): ?>
+<div class="mt-4 flex justify-center">
+    <nav class="inline-flex rounded-md shadow-sm" aria-label="Pagination">
+        <?= view('Accounts/pagination', ['pager' => $pager]) ?>
+    </nav>
+</div>
+<?php endif; ?>
 
 <?php include(APPPATH.'Views/Accounts/modal_add.php'); ?>
 <?php include(APPPATH.'Views/Accounts/modal_edit.php'); ?>
