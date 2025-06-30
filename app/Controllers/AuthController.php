@@ -30,7 +30,9 @@ class AuthController extends Controller
                 return redirect()->to('/login');
             }
         }
-        return view('Auth/login');
+        return view('Auth/login', [
+            'title' => 'Login | Aplikasi Keuangan',
+        ]);
     }
 
     public function register()
@@ -110,7 +112,9 @@ class AuthController extends Controller
                 }
             }
         }
-        return view('Auth/register');
+        return view('Auth/register', [
+            'title' => 'Register | Aplikasi Keuangan',
+        ]);
     }
 
     public function logout()
