@@ -28,7 +28,7 @@
                         <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
                         <td class="py-2 px-4 text-sm text-gray-800 font-semibold border-b border-r border-gray-200"><?= esc($akun['nama_akun']) ?></td>
                         <td class="py-2 px-4 text-sm text-gray-600 border-b border-r border-gray-200"><?= esc($akun['tipe_akun']) ?></td>
-                        <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">Rp <?= number_format($akun['saldo_awal'],0,',','.') ?></td>
+                        <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">Rp <?= number_format($akun['saldo_awal'],2,',','.') ?></td>
                         <td class="py-2 px-4 text-sm text-gray-600 border-b border-r border-gray-200"><?= esc($akun['catatan']) ?></td>
                         <td class="py-2 px-4 text-sm text-gray-500 border-b border-r border-gray-200"><?= esc($akun['created_at']) ?></td>
                         <td class="py-2 px-2 w-40 text-center border-b border-r border-gray-200">
@@ -37,7 +37,13 @@
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12h.01M12 12h.01M9 12h.01M21 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z"/></svg>
                                     Detail
                                 </a>
-                                <a href="/accounts/edit/<?= $akun['id'] ?>" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600" title="Ubah">
+                                <a href="#" onclick="toggleEditAccountModal(true, {
+    id: '<?= $akun['id'] ?>',
+    nama_akun: '<?= esc($akun['nama_akun'], 'js') ?>',
+    tipe_akun: '<?= esc($akun['tipe_akun'], 'js') ?>',
+    saldo_awal: '<?= $akun['saldo_awal'] ?>',
+    catatan: '<?= esc($akun['catatan'], 'js') ?>'
+})" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600" title="Ubah">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m-2 2h6"/></svg>
                                     Ubah
                                 </a>
@@ -59,5 +65,6 @@
 </div>
 
 <?php include(APPPATH.'Views/Accounts/modal_add.php'); ?>
+<?php include(APPPATH.'Views/Accounts/modal_edit.php'); ?>
 
 <?= $this->endSection() ?>

@@ -16,3 +16,4 @@ $routes->match(['GET', 'POST'], 'login', 'AuthController::login');
 $routes->match(['GET', 'POST'], 'register', 'AuthController::register');
 $routes->get('logout', 'AuthController::logout');
 $routes->post('accounts/add', 'AccountsController::add');
+$routes->post('accounts/edit', 'AccountsController::edit');

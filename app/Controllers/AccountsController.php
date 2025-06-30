@@ -57,4 +57,33 @@ class AccountsController extends BaseController
         }
         return redirect()->to('/accounts');
     }
+
+    public function edit()
+    {
+        $accountModel = new AccountModel();
+        $id = $this->request->getPost('id');
+        if (!$id) {
+            return redirect()->to('/accounts')->with('error', 'ID akun tidak ditemukan.');
+        }
+        $akun = $accountModel->find($id);
+        if (!$akun) {
+            return redirect()->to('/accounts')->with('error', 'Data akun tidak ditemukan.');
+        }
+        // Jika user biasa, hanya boleh edit akun miliknya sendiri
+        $role = session('role');
+        $userId = session('user_id');
+        if ($role !== 'admin' && $akun['user_id'] != $userId) {
+            return redirect()->to('/accounts')->with('error', 'Anda tidak berhak mengubah akun ini.');
+        }
+        $data = [
+            'nama_akun' => $this->request->getPost('nama_akun'),
+            'tipe_akun' => $this->request->getPost('tipe_akun'),
+            'saldo_awal' => $this->request->getPost('saldo_awal'),
+            'catatan' => $this->request->getPost('catatan'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+        // user_id tidak diubah, tetap milik user aslinya
+        $accountModel->update($id, $data);
+        return redirect()->to('/accounts')->with('success', 'Akun berhasil diubah!');
+    }
 }
