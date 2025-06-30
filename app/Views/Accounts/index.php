@@ -2,7 +2,7 @@
 <?= $this->section('content') ?>
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-3xl font-bold text-main tracking-tight drop-shadow-sm">Akun</h1>
-    <a href="/accounts/add" class="inline-flex items-center gap-2 px-4 py-2 bg-main text-white rounded-lg shadow hover:bg-highlight transition">
+    <a id="btnShowAddAccountModal" href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-main text-white rounded-lg shadow hover:bg-highlight transition">
         <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
         Tambah Akun
     </a>
@@ -57,5 +57,7 @@
         </tbody>
     </table>
 </div>
+
+<?php include(APPPATH.'Views/Accounts/modal_add.php'); ?>
 
 <?= $this->endSection() ?>
