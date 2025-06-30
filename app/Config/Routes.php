@@ -12,8 +12,6 @@ $routes->get('categories', 'CategoriesController::index');
 $routes->get('reports', 'ReportsController::index');
 $routes->get('users', 'UsersController::index');
 $routes->get('settings', 'SettingsController::index');
-$routes->get('dbtest', 'Dbtest::index');
-$routes->get('dbdebug', 'Dbdebug::index');
 $routes->match(['GET', 'POST'], 'login', 'AuthController::login');
 $routes->match(['GET', 'POST'], 'register', 'AuthController::register');
 $routes->get('logout', 'AuthController::logout');
