@@ -9,6 +9,9 @@ class UsersController extends BaseController
 {
     public function index()
     {
+        if (session('role') !== 'admin') {
+            return redirect()->to('/');
+        }
         $userModel = new UserModel();
         $users = $userModel->findAll();
         return view('Users/index', [

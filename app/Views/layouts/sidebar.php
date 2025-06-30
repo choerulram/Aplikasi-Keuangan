@@ -20,10 +20,12 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h6"/></svg>
             Laporan
         </a></li>
+        <?php if (session('role') === 'admin'): ?>
         <li><a href="/users" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('users*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"/></svg>
             User
         </a></li>
+        <?php endif; ?>
         <li><a href="/settings" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('settings*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.01c.797-.46 1.757.3 1.516 1.176a1.724 1.724 0 002.293 2.293c.876-.241 1.636.719 1.176 1.516a1.724 1.724 0 001.01 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.01 2.573c.46.797-.3 1.757-1.176 1.516a1.724 1.724 0 00-2.293 2.293c.241.876-.719 1.636-1.516 1.176a1.724 1.724 0 00-2.573 1.01c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.01c-.797.46-1.757-.3-1.516-1.176a1.724 1.724 0 00-2.293-2.293c-.876.241-1.636-.719-1.176-1.516a1.724 1.724 0 00-1.01-2.573c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.01-2.573c-.46-.797.3-1.757 1.176-1.516a1.724 1.724 0 002.293-2.293c-.241-.876.719-1.636 1.516-1.176a1.724 1.724 0 002.573-1.01z"/></svg>
             Pengaturan
