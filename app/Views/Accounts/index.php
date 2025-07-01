@@ -66,7 +66,10 @@
                                     catatan: '<?= esc($akun['catatan'], 'js') ?>',
                                     created_at: '<?= esc($akun['created_at'], 'js') ?>'
                                 })" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600" title="Detail">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12h.01M12 12h.01M9 12h.01M21 12c0 4.418-4.03 8-9 8s-9-3.582-9-8 4.03-8 9-8 9 3.582 9 8z"/></svg>
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s3.5-7 10.5-7 10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/>
+                                      <circle cx="12" cy="12" r="3"/>
+                                    </svg>
                                     Detail
                                 </a>
                                 <a href="#" onclick="toggleEditAccountModal(true, {
@@ -76,7 +79,10 @@
                                     saldo_awal: '<?= $akun['saldo_awal'] ?>',
                                     catatan: '<?= esc($akun['catatan'], 'js') ?>'
                                 })" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600" title="Ubah">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m-2 2h6"/></svg>
+                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 5.487l1.65 1.65a2.121 2.121 0 010 3l-8.486 8.486a2 2 0 01-.878.513l-3.06.765a.5.5 0 01-.606-.606l.765-3.06a2 2 0 01.513-.878l8.486-8.486a2.121 2.121 0 013 0z"/>
+                                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 7l2 2"/>
+                                    </svg>
                                     Ubah
                                 </a>
                                 <a href="#" onclick="toggleDeleteAccountModal(true, {
