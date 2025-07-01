@@ -14,23 +14,48 @@ class AccountsController extends BaseController
         $role = session('role');
         $userId = session('user_id');
         $perPage = 10;
-        // Hapus variabel $page, biarkan CodeIgniter handle otomatis
+
+        // Ambil parameter search dan filter dari request
+        $search = $this->request->getGet('search');
+        $filter = trim($this->request->getGet('filter'));
+
+        // Query dasar
         if ($role === 'admin') {
-            $accounts = $accountModel->paginate($perPage, 'accounts');
-            $pager = $accountModel->pager;
-            $total = $accountModel->countAll();
+            $builder = $accountModel;
         } else {
-            $accounts = $accountModel->where('user_id', $userId)->paginate($perPage, 'accounts');
-            $pager = $accountModel->pager;
-            $total = $accountModel->where('user_id', $userId)->countAllResults();
+            $builder = $accountModel->where('user_id', $userId);
         }
+
+        // Filter berdasarkan tipe akun jika ada (pastikan filter tidak null dan tidak string kosong)
+        if (isset($filter) && $filter !== '') {
+            $builder = $builder->where('tipe_akun', $filter);
+        }
+
+        // Search berdasarkan nama akun atau catatan
+        if (!empty($search)) {
+            $builder = $builder->groupStart()
+                ->like('nama_akun', $search)
+                ->orLike('catatan', $search)
+                ->groupEnd();
+        }
+
+        $accounts = $builder->paginate($perPage, 'accounts');
+        $pager = $accountModel->pager;
+        $total = $builder->countAllResults(false); // false agar tidak reset builder
+
+        // Ambil semua tipe akun unik untuk filter dropdown (urutkan ASC)
+        $tipeAkunList = $accountModel->select('tipe_akun')->distinct()->orderBy('tipe_akun', 'ASC')->findAll();
+
         return view('Accounts/index', [
             'pageTitle' => 'Akun',
             'title' => 'Akun | Aplikasi Keuangan',
             'accounts' => $accounts,
             'pager' => $pager,
             'total_accounts' => $total,
-            'perPage' => $perPage // Kirim perPage ke view
+            'perPage' => $perPage,
+            'search' => $search,
+            'filter' => $filter,
+            'tipeAkunList' => $tipeAkunList
         ]);
     }
 
