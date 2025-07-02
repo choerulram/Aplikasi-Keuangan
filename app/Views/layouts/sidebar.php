@@ -1,33 +1,51 @@
 <aside class="bg-light border-r border-gray-200 shadow-md min-h-screen w-60 fixed top-0 left-0 pt-20 px-4 z-10">
+    <!-- User Name Display Simple, no icon, no border, only underline -->
+    <div class="mb-0 px-0 py-6">
+        <span class="font-bold text-main text-base truncate block px-4">
+            <?= esc(session('nama')) ?>
+        </span>
+        <hr class="mt-4 border-b border-gray-300 w-full">
+    </div>
     <ul class="space-y-2">
         <li><a href="/" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('/') ? 'bg-highlight text-main' : 'hover:bg-highlight text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 17v-2a4 4 0 014-4h10a4 4 0 014 4v2M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 4l9 5.75V19a2 2 0 01-2 2H5a2 2 0 01-2-2V9.75z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 22V12h6v10"/></svg>
             Dashboard
         </a></li>
         <li><a href="/accounts" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('accounts*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a5 5 0 00-10 0v2M5 20h14a2 2 0 002-2v-5a2 2 0 00-2-2H5a2 2 0 00-2 2v5a2 2 0 002 2z"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M2 11h20"/></svg>
             Akun
         </a></li>
         <li><a href="/transactions" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('transactions*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-6 0V5a3 3 0 016 0v1"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 10l4-4m0 0l-4-4m4 4H7"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 14l-4 4m0 0l4 4m-4-4h14"/></svg>
             Transaksi
         </a></li>
         <li><a href="/categories" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('categories*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 7a1 1 0 011-1h3.586a1 1 0 01.707.293l7.414 7.414a1 1 0 010 1.414l-5.586 5.586a1 1 0 01-1.414 0L4.293 13.707a1 1 0 010-1.414L7 7zm0 0V3a1 1 0 011-1h3.586a1 1 0 01.707.293l7.414 7.414a1 1 0 010 1.414l-5.586 5.586a1 1 0 01-1.414 0L4.293 13.707a1 1 0 010-1.414L7 7z"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7 7V5a2 2 0 012-2h6a2 2 0 012 2v2" opacity=".5"/>
+            </svg>
             Kategori
         </a></li>
         <li><a href="/reports" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('reports*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-6a2 2 0 012-2h2a2 2 0 012 2v6m-6 0h6"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <rect x="3.5" y="5" width="5" height="14" rx="1"/>
+                <rect x="10" y="9" width="5" height="10" rx="1"/>
+                <rect x="16.5" y="12" width="5" height="6" rx="1"/>
+                <rect x="3" y="18.5" width="18.5" height="0.5" rx="1"/>
+            </svg>
             Laporan
         </a></li>
         <?php if (session('role') === 'admin'): ?>
         <li><a href="/users" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('users*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 3.13a4 4 0 010 7.75M8 3.13a4 4 0 000 7.75"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 12c2.67 0 8 1.34 8 4v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2c0-2.66 5.33-4 8-4z"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
             User
         </a></li>
         <?php endif; ?>
         <li><a href="/settings" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('settings*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0a1.724 1.724 0 002.573 1.01c.797-.46 1.757.3 1.516 1.176a1.724 1.724 0 002.293 2.293c.876-.241 1.636.719 1.176 1.516a1.724 1.724 0 001.01 2.573c.921.3.921 1.603 0 1.902a1.724 1.724 0 00-1.01 2.573c.46.797-.3 1.757-1.176 1.516a1.724 1.724 0 00-2.293 2.293c.241.876-.719 1.636-1.516 1.176a1.724 1.724 0 00-2.573 1.01c-.3.921-1.603.921-1.902 0a1.724 1.724 0 00-2.573-1.01c-.797.46-1.757-.3-1.516-1.176a1.724 1.724 0 00-2.293-2.293c-.876.241-1.636-.719-1.176-1.516a1.724 1.724 0 00-1.01-2.573c-.921-.3-.921-1.603 0-1.902a1.724 1.724 0 001.01-2.573c-.46-.797.3-1.757 1.176-1.516a1.724 1.724 0 002.293-2.293c-.241-.876.719-1.636 1.516-1.176a1.724 1.724 0 002.573-1.01z"/></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h.09a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h.09a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v.09a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
             Pengaturan
         </a></li>
     </ul>
