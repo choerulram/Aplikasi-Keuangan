@@ -19,9 +19,12 @@ class AccountsController extends BaseController
         $search = $this->request->getGet('search');
         $filter = trim($this->request->getGet('filter'));
 
-        // Query dasar
+
+        // Query dasar dengan join ke tabel users untuk admin
         if ($role === 'admin') {
-            $builder = $accountModel;
+            $builder = $accountModel
+                ->select('accounts.*, users.username')
+                ->join('users', 'users.id = accounts.user_id', 'left');
         } else {
             $builder = $accountModel->where('user_id', $userId);
         }

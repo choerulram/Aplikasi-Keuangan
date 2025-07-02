@@ -42,6 +42,9 @@
                 <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Saldo Awal</th>
                 <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Catatan</th>
                 <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Tanggal Dibuat</th>
+                <?php if (session('role') === 'admin'): ?>
+                <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">User</th>
+                <?php endif; ?>
                 <th class="py-3 px-2 w-40 text-center text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Aksi</th>
             </tr>
         </thead>
@@ -57,6 +60,15 @@
                         <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">Rp <?= number_format($akun['saldo_awal'],2,',','.') ?></td>
                         <td class="py-2 px-4 text-sm text-gray-600 border-b border-r border-gray-200"><?= esc($akun['catatan']) ?></td>
                         <td class="py-2 px-4 text-sm text-gray-500 border-b border-r border-gray-200"><?= esc($akun['created_at']) ?></td>
+                        <?php if (session('role') === 'admin'): ?>
+                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200">
+                            <?php if (!empty($akun['username'])): ?>
+                                <?= esc($akun['username']) ?>
+                            <?php else: ?>
+                                <span class="text-gray-400 italic">-</span>
+                            <?php endif; ?>
+                        </td>
+                        <?php endif; ?>
                         <td class="py-2 px-2 w-40 text-center border-b border-r border-gray-200">
                             <div class="flex justify-center gap-1">
                                 <a href="#" onclick="toggleDetailAccountModal(true, {
@@ -100,7 +112,7 @@
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="7" class="py-4 px-4 text-center text-gray-400 border-b border-r border-gray-200">Tidak ada data akun.</td>
+                    <td colspan="<?= session('role') === 'admin' ? 8 : 7 ?>" class="py-4 px-4 text-center text-gray-400 border-b border-r border-gray-200">Tidak ada data akun.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
