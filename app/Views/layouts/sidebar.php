@@ -19,13 +19,33 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 10l4-4m0 0l-4-4m4 4H7"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 14l-4 4m0 0l4 4m-4-4h14"/></svg>
             Transaksi
         </a></li>
-        <li><a href="/categories" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('categories*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
-                <path stroke-linecap="round" stroke-linejoin="round" d="M7 7V5a2 2 0 012-2h6a2 2 0 012 2v2" opacity=".5"/>
-            </svg>
-            Kategori
-        </a></li>
+        <li x-data="{ open: <?= url_is('categories*') ? 'true' : 'false' ?> }" class="relative">
+            <button @click="open = !open" type="button"
+                class="flex items-center gap-2 w-full py-2 px-3 rounded transition font-semibold <?= url_is('categories*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 7a2 2 0 012-2h4l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M7 7V5a2 2 0 012-2h6a2 2 0 012 2v2" opacity=".5"/>
+                </svg>
+                Kategori
+                <svg class="w-4 h-4 ml-auto transition-transform" :class="{'rotate-180': open}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <ul x-show="open" @click.away="open = false" class="pl-8 py-1 space-y-1 bg-white rounded shadow absolute left-0 w-full z-20">
+                <li>
+                    <a href="/categories/income"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('categories/income*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Pemasukan
+                    </a>
+                </li>
+                <li>
+                    <a href="/categories/expense"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('categories/expense*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Pengeluaran
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li><a href="/reports" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('reports*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <rect x="3.5" y="5" width="5" height="14" rx="1"/>
