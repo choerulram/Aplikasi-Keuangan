@@ -94,4 +94,6 @@
 </div>
 <?php endif; ?>
 
+<?php include(APPPATH.'Views/Categories/modal_detail.php'); ?>
+
 <?= $this->endSection() ?>
