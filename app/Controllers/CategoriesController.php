@@ -70,6 +70,39 @@ class CategoriesController extends BaseController
         return redirect()->to('/categories/income')->with('success', 'Kategori pemasukan berhasil ditambahkan!');
     }
 
+    public function editIncome()
+    {
+        if ($this->request->getMethod() !== 'POST') {
+            return redirect()->to('/categories/income');
+        }
+
+        $id = $this->request->getPost('id');
+        if (!$id) {
+            return redirect()->to('/categories/income')->with('error', 'ID kategori tidak ditemukan.');
+        }
+
+        $categoryModel = new \App\Models\CategoryModel();
+        $kategori = $categoryModel->find($id);
+        if (!$kategori) {
+            return redirect()->to('/categories/income')->with('error', 'Data kategori tidak ditemukan.');
+        }
+
+        // Hanya admin atau pemilik kategori yang boleh edit
+        $role = session('role');
+        $userId = session('user_id');
+        if ($role !== 'admin' && $kategori['user_id'] != $userId) {
+            return redirect()->to('/categories/income')->with('error', 'Anda tidak berhak mengubah kategori ini.');
+        }
+
+        $data = [
+            'nama_kategori' => $this->request->getPost('nama_kategori'),
+            'updated_at' => date('Y-m-d H:i:s'),
+        ];
+
+        $categoryModel->update($id, $data);
+        return redirect()->to('/categories/income')->with('success', 'Kategori pemasukan berhasil diubah!');
+    }
+
     public function expense()
     {
         $categoryModel = new \App\Models\CategoryModel();
