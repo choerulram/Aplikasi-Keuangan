@@ -114,8 +114,10 @@
 
 
 
+
 <?php include(APPPATH.'Views/Categories/modal_add.php'); ?>
 <?php include(APPPATH.'Views/Categories/modal_edit.php'); ?>
 <?php include(APPPATH.'Views/Categories/modal_detail.php'); ?>
+<?php include(APPPATH.'Views/Categories/modal_delete.php'); ?>
 
 <?= $this->endSection() ?>

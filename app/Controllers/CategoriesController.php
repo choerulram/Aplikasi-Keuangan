@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Controllers;
-
 use App\Controllers\BaseController;
 
 class CategoriesController extends BaseController
@@ -101,6 +99,26 @@ class CategoriesController extends BaseController
 
         $categoryModel->update($id, $data);
         return redirect()->to('/categories/income')->with('success', 'Kategori pemasukan berhasil diubah!');
+    }
+
+    public function deleteIncome($id)
+    {
+        $categoryModel = new \App\Models\CategoryModel();
+        $kategori = $categoryModel->find($id);
+        if (!$kategori) {
+            return redirect()->to('/categories/income')->with('error', 'Data kategori tidak ditemukan.');
+        }
+        $role = session('role');
+        $userId = session('user_id');
+        // Hanya admin atau pemilik kategori yang boleh hapus
+        if ($role !== 'admin' && $kategori['user_id'] != $userId) {
+            return redirect()->to('/categories/income')->with('error', 'Anda tidak berhak menghapus kategori ini.');
+        }
+        if ($categoryModel->delete($id)) {
+            return redirect()->to('/categories/income')->with('success', 'Kategori pemasukan berhasil dihapus!');
+        } else {
+            return redirect()->to('/categories/income')->with('error', 'Gagal menghapus kategori.');
+        }
     }
 
     public function expense()
