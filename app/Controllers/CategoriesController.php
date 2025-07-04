@@ -127,6 +127,7 @@ class CategoriesController extends BaseController
         $role = session('role');
         $userId = session('user_id');
         $perPage = 10;
+        $search = $this->request->getGet('search');
 
         if ($role === 'admin') {
             $builder = $categoryModel
@@ -137,6 +138,12 @@ class CategoriesController extends BaseController
             $builder = $categoryModel->where('user_id', $userId)->where('tipe', 'expense');
         }
 
+        // Search by nama_kategori
+        if (!empty($search)) {
+            $builder = $builder->like('nama_kategori', $search);
+        }
+
+        $builder = $builder->orderBy('created_at', 'DESC');
         $categories = $builder->paginate($perPage, 'categories');
         $pager = $categoryModel->pager;
         $total = $builder->countAllResults(false);
@@ -148,7 +155,8 @@ class CategoriesController extends BaseController
             'pager' => $pager,
             'total_categories' => $total,
             'perPage' => $perPage,
-            'role' => $role
+            'role' => $role,
+            'search' => $search
         ]);
     }
 }
