@@ -24,6 +24,7 @@
 </div>
 
 <?php include(APPPATH.'Views/Categories/modal_add_expense.php'); ?>
+<?php include(APPPATH.'Views/Categories/modal_detail_expense.php'); ?>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
     <table class="min-w-full border border-gray-300">
@@ -61,7 +62,7 @@
                         <?php endif; ?>
                         <td class="py-2 px-2 w-40 text-center border-b border-r border-gray-200">
                             <div class="flex justify-center gap-1">
-                                <a href="#" onclick="toggleDetailCategoryModal(true, {
+                                <a href="#" onclick="toggleDetailCategoryModalExpense(true, {
                                     id: '<?= $kategori['id'] ?>',
                                     nama_kategori: '<?= esc($kategori['nama_kategori'], 'js') ?>',
                                     tipe: '<?= esc($kategori['tipe'], 'js') ?>',
