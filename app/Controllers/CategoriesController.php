@@ -159,4 +159,29 @@ class CategoriesController extends BaseController
             'search' => $search
         ]);
     }
+
+    public function addExpense()
+    {
+        if ($this->request->getMethod() !== 'POST') {
+            return redirect()->to('/categories/expense');
+        }
+
+        $categoryModel = new \App\Models\CategoryModel();
+
+        $data = [
+            'nama_kategori' => $this->request->getPost('nama_kategori'),
+            'tipe' => 'expense',
+            'user_id' => session('user_id'),
+            'created_at' => date('Y-m-d H:i:s')
+        ];
+
+        // Validasi sederhana
+        if (empty($data['nama_kategori'])) {
+            return redirect()->to('/categories/expense')->with('error', 'Nama kategori wajib diisi.');
+        }
+
+        $categoryModel->insert($data);
+
+        return redirect()->to('/categories/expense')->with('success', 'Kategori pengeluaran berhasil ditambahkan!');
+    }
 }

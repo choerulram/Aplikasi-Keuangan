@@ -17,10 +17,13 @@
             <?php endif; ?>
         </div>
     </form>
-    <a id="btnShowAddCategoryModal" href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-main text-white rounded-lg shadow hover:bg-highlight transition h-11">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
-        Tambah
-    </a>
+<a id="btnShowAddCategoryModalExpense" href="#" class="inline-flex items-center gap-2 px-4 py-2 bg-main text-white rounded-lg shadow hover:bg-highlight transition h-11">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+    Tambah
+</a>
+</div>
+
+<?php include(APPPATH.'Views/Categories/modal_add_expense.php'); ?>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
     <table class="min-w-full border border-gray-300">
