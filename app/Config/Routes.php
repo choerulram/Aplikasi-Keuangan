@@ -25,6 +25,7 @@ $routes->match(['POST', 'DELETE'], 'categories/income/delete/(:num)', 'Categorie
 $routes->get('categories/expense', 'CategoriesController::expense');
 $routes->post('categories/expense/add', 'CategoriesController::addExpense');
 $routes->post('categories/expense/edit', 'CategoriesController::editExpense');
+$routes->match(['POST', 'DELETE'], 'categories/expense/delete/(:num)', 'CategoriesController::deleteExpense/$1');
 
 // =======================
 // Other Routes

@@ -217,4 +217,24 @@ class CategoriesController extends BaseController
         $categoryModel->update($id, $data);
         return redirect()->to('/categories/expense')->with('success', 'Kategori pengeluaran berhasil diubah!');
     }
+
+    public function deleteExpense($id)
+    {
+        $categoryModel = new \App\Models\CategoryModel();
+        $kategori = $categoryModel->find($id);
+        if (!$kategori) {
+            return redirect()->to('/categories/expense')->with('error', 'Data kategori tidak ditemukan.');
+        }
+        $role = session('role');
+        $userId = session('user_id');
+        // Hanya admin atau pemilik kategori yang boleh hapus
+        if ($role !== 'admin' && $kategori['user_id'] != $userId) {
+            return redirect()->to('/categories/expense')->with('error', 'Anda tidak berhak menghapus kategori ini.');
+        }
+        if ($categoryModel->delete($id)) {
+            return redirect()->to('/categories/expense')->with('success', 'Kategori pengeluaran berhasil dihapus!');
+        } else {
+            return redirect()->to('/categories/expense')->with('error', 'Gagal menghapus kategori.');
+        }
+    }
 }

@@ -26,6 +26,7 @@
 <?php include(APPPATH.'Views/Categories/modal_add_expense.php'); ?>
 <?php include(APPPATH.'Views/Categories/modal_edit_expense.php'); ?>
 <?php include(APPPATH.'Views/Categories/modal_detail_expense.php'); ?>
+<?php include(APPPATH.'Views/Categories/modal_delete_expense.php'); ?>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
     <table class="min-w-full border border-gray-300">
@@ -87,10 +88,10 @@
                                     </svg>
                                     Ubah
                                 </a>
-                                <a href="#" onclick="toggleDeleteCategoryModal(true, {
+                                <a href="#" onclick="toggleDeleteCategoryModalExpense(true, {
                                     id: '<?= $kategori['id'] ?>',
                                     nama_kategori: '<?= esc($kategori['nama_kategori'], 'js') ?>'
-                                })" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded hover:bg-red-600" title="Hapus">
+                                })" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded hover:bg-red-600" title="Hapus" onclick="toggleDeleteCategoryModalExpense(true, { id: '<?= $kategori['id'] ?>', nama_kategori: '<?= esc($kategori['nama_kategori'], 'js') ?>' })">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                       <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M8 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
                                     </svg>
