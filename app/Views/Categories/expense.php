@@ -24,6 +24,7 @@
 </div>
 
 <?php include(APPPATH.'Views/Categories/modal_add_expense.php'); ?>
+<?php include(APPPATH.'Views/Categories/modal_edit_expense.php'); ?>
 <?php include(APPPATH.'Views/Categories/modal_detail_expense.php'); ?>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
@@ -75,7 +76,7 @@
                                     </svg>
                                     Detail
                                 </a>
-                                <a href="#" onclick="toggleEditCategoryModal(true, {
+                                <a href="#" onclick="toggleEditCategoryModalExpense(true, {
                                     id: '<?= $kategori['id'] ?>',
                                     nama_kategori: '<?= esc($kategori['nama_kategori'], 'js') ?>',
                                     tipe: '<?= esc($kategori['tipe'], 'js') ?>'
