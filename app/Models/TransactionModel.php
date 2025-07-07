@@ -26,4 +26,18 @@ class TransactionModel extends Model
         $builder->orderBy('transactions.tanggal', 'DESC');
         return $builder->findAll();
     }
+
+    public function getTransactionsByType($type, $userId = null, $isAdmin = false)
+    {
+        $builder = $this->select('transactions.*, users.username, accounts.nama_akun, categories.nama_kategori')
+            ->join('users', 'users.id = transactions.user_id', 'left')
+            ->join('accounts', 'accounts.id = transactions.account_id', 'left')
+            ->join('categories', 'categories.id = transactions.category_id', 'left')
+            ->where('transactions.tipe', $type);
+        if (!$isAdmin && $userId !== null) {
+            $builder->where('transactions.user_id', $userId);
+        }
+        $builder->orderBy('transactions.tanggal', 'DESC');
+        return $builder->findAll();
+    }
 }
