@@ -19,26 +19,34 @@ class TransactionsController extends BaseController
         $isAdmin = ($role === 'admin');
 
         $transactionModel = new \App\Models\TransactionModel();
+        $accountModel = new \App\Models\AccountModel();
+        $categoryModel = new \App\Models\CategoryModel();
         $pager = \Config\Services::pager();
         $perPage = 10;
-        $transactions = $transactionModel
-            ->where('transactions.tipe', 'income')
-            ->select('transactions.*, users.username, accounts.nama_akun, categories.nama_kategori')
-            ->join('users', 'users.id = transactions.user_id', 'left')
-            ->join('accounts', 'accounts.id = transactions.account_id', 'left')
-            ->join('categories', 'categories.id = transactions.category_id', 'left');
-        if (!$isAdmin && $userId !== null) {
-            $transactions->where('transactions.user_id', $userId);
-        }
-        $transactions = $transactions->orderBy('transactions.tanggal', 'DESC')
-            ->paginate($perPage, 'transactions');
 
-        $total_transactions = $transactionModel
-            ->where('transactions.tipe', 'income')
-            ->when(!$isAdmin && $userId !== null, function($query) use ($userId) {
-                return $query->where('transactions.user_id', $userId);
-            })
-            ->countAllResults();
+        // Ambil filter dari GET
+        $search = $this->request->getGet('search');
+        $account = $this->request->getGet('account');
+        $category = $this->request->getGet('category');
+        $date = $this->request->getGet('date');
+
+        $filter = [
+            'search' => $search,
+            'account' => $account,
+            'category' => $category,
+            'date' => $date
+        ];
+
+        $transactions = $transactionModel->getFilteredTransactions('income', $userId, $isAdmin, $filter, $perPage, 'transactions');
+        $total_transactions = $transactionModel->getFilteredTransactionsCount('income', $userId, $isAdmin, $filter);
+
+        // Data akun & kategori untuk filter
+        $accounts = $accountModel
+            ->where($isAdmin ? [] : ['user_id' => $userId])
+            ->findAll();
+        $categories = $categoryModel
+            ->where(['tipe' => 'income'] + ($isAdmin ? [] : ['user_id' => $userId]))
+            ->findAll();
 
         return view('Transactions/income', [
             'pageTitle' => 'Transaksi Pemasukan',
@@ -47,7 +55,13 @@ class TransactionsController extends BaseController
             'isAdmin' => $isAdmin,
             'pager' => $transactionModel->pager,
             'total_transactions' => $total_transactions,
-            'perPage' => $perPage
+            'perPage' => $perPage,
+            'accounts' => $accounts,
+            'categories' => $categories,
+            'search' => $search,
+            'account' => $account,
+            'category' => $category,
+            'date' => $date
         ]);
     }
 
@@ -59,26 +73,34 @@ class TransactionsController extends BaseController
         $isAdmin = ($role === 'admin');
 
         $transactionModel = new \App\Models\TransactionModel();
+        $accountModel = new \App\Models\AccountModel();
+        $categoryModel = new \App\Models\CategoryModel();
         $pager = \Config\Services::pager();
         $perPage = 10;
-        $transactions = $transactionModel
-            ->where('transactions.tipe', 'expense')
-            ->select('transactions.*, users.username, accounts.nama_akun, categories.nama_kategori')
-            ->join('users', 'users.id = transactions.user_id', 'left')
-            ->join('accounts', 'accounts.id = transactions.account_id', 'left')
-            ->join('categories', 'categories.id = transactions.category_id', 'left');
-        if (!$isAdmin && $userId !== null) {
-            $transactions->where('transactions.user_id', $userId);
-        }
-        $transactions = $transactions->orderBy('transactions.tanggal', 'DESC')
-            ->paginate($perPage, 'transactions');
 
-        $total_transactions = $transactionModel
-            ->where('transactions.tipe', 'expense')
-            ->when(!$isAdmin && $userId !== null, function($query) use ($userId) {
-                return $query->where('transactions.user_id', $userId);
-            })
-            ->countAllResults();
+        // Ambil filter dari GET
+        $search = $this->request->getGet('search');
+        $account = $this->request->getGet('account');
+        $category = $this->request->getGet('category');
+        $date = $this->request->getGet('date');
+
+        $filter = [
+            'search' => $search,
+            'account' => $account,
+            'category' => $category,
+            'date' => $date
+        ];
+
+        $transactions = $transactionModel->getFilteredTransactions('expense', $userId, $isAdmin, $filter, $perPage, 'transactions');
+        $total_transactions = $transactionModel->getFilteredTransactionsCount('expense', $userId, $isAdmin, $filter);
+
+        // Data akun & kategori untuk filter
+        $accounts = $accountModel
+            ->where($isAdmin ? [] : ['user_id' => $userId])
+            ->findAll();
+        $categories = $categoryModel
+            ->where(['tipe' => 'expense'] + ($isAdmin ? [] : ['user_id' => $userId]))
+            ->findAll();
 
         return view('Transactions/expense', [
             'pageTitle' => 'Transaksi Pengeluaran',
@@ -87,7 +109,13 @@ class TransactionsController extends BaseController
             'isAdmin' => $isAdmin,
             'pager' => $transactionModel->pager,
             'total_transactions' => $total_transactions,
-            'perPage' => $perPage
+            'perPage' => $perPage,
+            'accounts' => $accounts,
+            'categories' => $categories,
+            'search' => $search,
+            'account' => $account,
+            'category' => $category,
+            'date' => $date
         ]);
     }
 }

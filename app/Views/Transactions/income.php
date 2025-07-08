@@ -1,8 +1,49 @@
 <?= $this->extend('layouts/app') ?>
 <?= $this->section('content') ?>
 
+
 <div class="mb-2">
     <h1 class="text-3xl font-bold text-main tracking-tight drop-shadow-sm mb-4">Transaksi Pemasukan</h1>
+</div>
+<div class="flex flex-wrap items-end gap-2 mb-6">
+    <form method="get" action="" class="flex flex-wrap gap-2 items-end flex-1">
+        <div>
+            <label for="search" class="block text-xs font-semibold text-gray-600 mb-1">Cari Deskripsi</label>
+            <input type="text" name="search" id="search" value="<?= esc($search ?? '') ?>" placeholder="Cari deskripsi..." class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-64 md:w-80" />
+        </div>
+        <div>
+            <label for="account" class="block text-xs font-semibold text-gray-600 mb-1">Akun</label>
+            <select name="account" id="account" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                <option value="">Semua Akun</option>
+                <?php foreach (($accounts ?? []) as $acc): ?>
+                    <option value="<?= $acc['id'] ?>" <?= (isset($account) && $account == $acc['id']) ? 'selected' : '' ?>><?= esc($acc['nama_akun']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label for="category" class="block text-xs font-semibold text-gray-600 mb-1">Kategori</label>
+            <select name="category" id="category" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                <option value="">Semua Kategori</option>
+                <?php foreach (($categories ?? []) as $cat): ?>
+                    <option value="<?= $cat['id'] ?>" <?= (isset($category) && $category == $cat['id']) ? 'selected' : '' ?>><?= esc($cat['nama_kategori']) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div>
+            <label for="date" class="block text-xs font-semibold text-gray-600 mb-1">Tanggal</label>
+            <input type="date" name="date" id="date" value="<?= esc($date ?? '') ?>" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" />
+        </div>
+        <div class="flex gap-2 items-end">
+            <button type="submit" class="px-4 py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition">Terapkan</button>
+            <?php if (!empty($search) || !empty($account) || !empty($category) || !empty($date)): ?>
+                <a href="/transactions/income" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">Reset</a>
+            <?php endif; ?>
+        </div>
+    </form>
+    <a href="/transactions/add?type=income" class="inline-flex items-center gap-2 px-4 py-2 bg-main text-white rounded-lg shadow hover:bg-highlight transition h-11">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+        Tambah
+    </a>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
     <table class="min-w-full border border-gray-300">
