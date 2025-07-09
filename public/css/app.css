@@ -780,6 +780,10 @@ video {
   width: 15rem;
 }
 
+.w-64 {
+  width: 16rem;
+}
+
 .w-7 {
   width: 1.75rem;
 }
@@ -790,10 +794,6 @@ video {
 
 .w-full {
   width: 100%;
-}
-
-.w-64 {
-  width: 16rem;
 }
 
 .min-w-full {
@@ -1619,11 +1619,11 @@ video {
     display: inline-block;
   }
 
-  .md\:w-\[28rem\] {
-    width: 28rem;
-  }
-
   .md\:w-80 {
     width: 20rem;
+  }
+
+  .md\:w-\[28rem\] {
+    width: 28rem;
   }
 }
