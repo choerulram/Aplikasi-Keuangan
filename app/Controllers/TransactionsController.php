@@ -6,11 +6,6 @@ use App\Controllers\BaseController;
 
 class TransactionsController extends BaseController
 {
-    public function index()
-    {
-        return redirect()->to('/transactions/income');
-    }
-
     public function income()
     {
         $session = session();
@@ -41,12 +36,13 @@ class TransactionsController extends BaseController
         $total_transactions = $transactionModel->getFilteredTransactionsCount('income', $userId, $isAdmin, $filter);
 
         // Data akun & kategori untuk filter
-        $accounts = $accountModel
-            ->where($isAdmin ? [] : ['user_id' => $userId])
-            ->findAll();
-        $categories = $categoryModel
-            ->where(['tipe' => 'income'] + ($isAdmin ? [] : ['user_id' => $userId]))
-            ->findAll();
+        if ($isAdmin) {
+            $accounts = $accountModel->findAll();
+            $categories = $categoryModel->where(['tipe' => 'income'])->findAll();
+        } else {
+            $accounts = $accountModel->where(['user_id' => $userId])->findAll();
+            $categories = $categoryModel->where(['tipe' => 'income', 'user_id' => $userId])->findAll();
+        }
 
         return view('Transactions/income', [
             'pageTitle' => 'Transaksi Pemasukan',
@@ -63,6 +59,31 @@ class TransactionsController extends BaseController
             'category' => $category,
             'date' => $date
         ]);
+    }
+
+    public function addIncome()
+    {
+        $session = session();
+        $userId = $session->get('user_id');
+        if (!$userId) {
+            return redirect()->back()->with('error', 'Anda harus login.');
+        }
+        $transactionModel = new \App\Models\TransactionModel();
+        $data = [
+            'user_id' => $userId,
+            'account_id' => $this->request->getPost('account_id'),
+            'category_id' => $this->request->getPost('category_id'),
+            'tipe' => 'income',
+            'jumlah' => $this->request->getPost('jumlah'),
+            'tanggal' => $this->request->getPost('tanggal'),
+            'deskripsi' => $this->request->getPost('deskripsi'),
+        ];
+        // Validasi sederhana
+        if (!$data['account_id'] || !$data['category_id'] || !$data['jumlah'] || !$data['tanggal'] || !$data['deskripsi']) {
+            return redirect()->back()->with('error', 'Semua field wajib diisi.');
+        }
+        $transactionModel->insert($data);
+        return redirect()->back()->with('success', 'Transaksi pemasukan berhasil ditambahkan.');
     }
 
     public function expense()
