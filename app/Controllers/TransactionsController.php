@@ -86,6 +86,42 @@ class TransactionsController extends BaseController
         return redirect()->back()->with('success', 'Transaksi pemasukan berhasil ditambahkan.');
     }
 
+    public function editIncome()
+    {
+        $session = session();
+        $userId = $session->get('user_id');
+        $role = $session->get('role');
+        $isAdmin = ($role === 'admin');
+
+        $transactionModel = new \App\Models\TransactionModel();
+
+        $id = $this->request->getPost('id');
+        $data = [
+            'account_id' => $this->request->getPost('account_id'),
+            'category_id' => $this->request->getPost('category_id'),
+            'jumlah' => $this->request->getPost('jumlah'),
+            'tanggal' => $this->request->getPost('tanggal'),
+            'deskripsi' => $this->request->getPost('deskripsi'),
+        ];
+
+        // Validasi sederhana
+        if (!$id || !$data['account_id'] || !$data['category_id'] || !$data['jumlah'] || !$data['tanggal'] || !$data['deskripsi']) {
+            return redirect()->back()->with('error', 'Semua field wajib diisi.');
+        }
+
+        // Cek hak akses: hanya admin atau pemilik data yang boleh edit
+        $trx = $transactionModel->find($id);
+        if (!$trx) {
+            return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
+        }
+        if (!$isAdmin && $trx['user_id'] != $userId) {
+            return redirect()->back()->with('error', 'Anda tidak berhak mengubah transaksi ini.');
+        }
+
+        $transactionModel->update($id, $data);
+        return redirect()->back()->with('success', 'Transaksi pemasukan berhasil diubah.');
+    }
+
     public function expense()
     {
         $session = session();

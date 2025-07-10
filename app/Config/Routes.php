@@ -32,6 +32,7 @@ $routes->match(['POST', 'DELETE'], 'categories/expense/delete/(:num)', 'Categori
 // =======================
 $routes->get('transactions/income', 'TransactionsController::income');
 $routes->post('transactions/income/add', 'TransactionsController::addIncome');
+$routes->post('transactions/income/edit', 'TransactionsController::editIncome');
 $routes->get('transactions/expense', 'TransactionsController::expense');
 $routes->get('reports', 'ReportsController::index');
 $routes->get('users', 'UsersController::index');
