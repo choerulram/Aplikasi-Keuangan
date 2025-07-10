@@ -45,6 +45,7 @@
         Tambah
     </button>
 <?= view('Transactions/modal_add_income', ['accounts' => $accounts, 'categories' => $categories]) ?>
+<?= view('Transactions/modal_detail_income', ['isAdmin' => $isAdmin]) ?>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
     <table class="min-w-full border border-gray-300">
@@ -87,13 +88,16 @@
                         <?php endif; ?>
                         <td class="py-2 px-2 w-40 text-center border-b border-r border-gray-200">
                             <div class="flex justify-center gap-1">
-                                <a href="#" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600" title="Detail">
+                                <button type="button"
+                                    class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
+                                    title="Detail"
+                                    onclick='toggleDetailIncomeTransactionModal(true, <?= json_encode($trx, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                       <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s3.5-7 10.5-7 10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/>
                                       <circle cx="12" cy="12" r="3"/>
                                     </svg>
                                     Detail
-                                </a>
+                                </button>
                                 <a href="#" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600" title="Ubah">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                       <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 5.487l1.65 1.65a2.121 2.121 0 010 3l-8.486 8.486a2 2 0 01-.878.513l-3.06.765a.5.5 0 01-.606-.606l.765-3.06a2 2 0 01.513-.878l8.486-8.486a2.121 2.121 0 013 0z"/>
