@@ -27,16 +27,34 @@ $routes->post('categories/expense/add', 'CategoriesController::addExpense');
 $routes->post('categories/expense/edit', 'CategoriesController::editExpense');
 $routes->match(['POST', 'DELETE'], 'categories/expense/delete/(:num)', 'CategoriesController::deleteExpense/$1');
 
+
 // =======================
-// Other Routes
+// Transactions Routes
 // =======================
 $routes->get('transactions/income', 'TransactionsController::income');
 $routes->post('transactions/income/add', 'TransactionsController::addIncome');
 $routes->post('transactions/income/edit', 'TransactionsController::editIncome');
+$routes->match(['POST', 'DELETE'], 'transactions/income/delete/(:num)', 'TransactionsController::deleteIncome/$1');
 $routes->get('transactions/expense', 'TransactionsController::expense');
+
+// =======================
+// Reports Routes
+// =======================
 $routes->get('reports', 'ReportsController::index');
+
+// =======================
+// Users Routes
+// =======================
 $routes->get('users', 'UsersController::index');
+
+// =======================
+// Settings Routes
+// =======================
 $routes->get('settings', 'SettingsController::index');
+
+// =======================
+// Auth Routes
+// =======================
 $routes->match(['GET', 'POST'], 'login', 'AuthController::login');
 $routes->match(['GET', 'POST'], 'register', 'AuthController::register');
 $routes->get('logout', 'AuthController::logout');

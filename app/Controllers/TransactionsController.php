@@ -122,6 +122,26 @@ class TransactionsController extends BaseController
         return redirect()->back()->with('success', 'Transaksi pemasukan berhasil diubah.');
     }
 
+    public function deleteIncome($id)
+    {
+        $session = session();
+        $userId = $session->get('user_id');
+        $role = $session->get('role');
+        $isAdmin = ($role === 'admin');
+
+        $transactionModel = new \App\Models\TransactionModel();
+        $trx = $transactionModel->find($id);
+        if (!$trx) {
+            return redirect()->back()->with('error', 'Transaksi tidak ditemukan.');
+        }
+        // Cek hak akses: hanya admin atau pemilik data yang boleh hapus
+        if (!$isAdmin && $trx['user_id'] != $userId) {
+            return redirect()->back()->with('error', 'Anda tidak berhak menghapus transaksi ini.');
+        }
+        $transactionModel->delete($id);
+        return redirect()->back()->with('success', 'Transaksi pemasukan berhasil dihapus.');
+    }
+
     public function expense()
     {
         $session = session();

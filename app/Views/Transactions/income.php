@@ -47,6 +47,7 @@
 <?= view('Transactions/modal_add_income', ['accounts' => $accounts, 'categories' => $categories]) ?>
 <?= view('Transactions/modal_detail_income', ['isAdmin' => $isAdmin]) ?>
 <?= view('Transactions/modal_edit_income', ['accounts' => $accounts, 'categories' => $categories]) ?>
+<?= view('Transactions/modal_delete_income') ?>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
     <table class="min-w-full border border-gray-300">
@@ -109,12 +110,15 @@
                                     </svg>
                                     Ubah
                                 </button>
-                                <a href="#" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded hover:bg-red-600" title="Hapus">
+                                <button type="button"
+                                    class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded hover:bg-red-600"
+                                    title="Hapus"
+                                    onclick='toggleDeleteIncomeTransactionModal(true, <?= json_encode($trx, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                       <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M8 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
                                     </svg>
                                     Hapus
-                                </a>
+                                </button>
                             </div>
                         </td>
                     </tr>

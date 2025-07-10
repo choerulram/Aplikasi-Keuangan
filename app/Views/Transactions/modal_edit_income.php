@@ -70,7 +70,6 @@ function toggleEditIncomeTransactionModal(show, data = null) {
     if (data) {
       document.getElementById('edit_income_id').value = data.id;
       document.getElementById('edit_income_deskripsi').value = data.deskripsi;
-      // Format jumlah: jika desimal dua nol di belakang, tampilkan hanya angka bulat
       let jumlahValue = data.jumlah;
       if (typeof jumlahValue === 'string') {
         jumlahValue = jumlahValue.replace(/\.00$/, '');
