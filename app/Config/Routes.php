@@ -37,6 +37,7 @@ $routes->post('transactions/income/edit', 'TransactionsController::editIncome');
 $routes->match(['POST', 'DELETE'], 'transactions/income/delete/(:num)', 'TransactionsController::deleteIncome/$1');
 $routes->get('transactions/expense', 'TransactionsController::expense');
 $routes->post('transactions/expense/add', 'TransactionsController::addExpense');
+$routes->post('transactions/expense/edit', 'TransactionsController::editExpense');
 
 // =======================
 // Reports Routes

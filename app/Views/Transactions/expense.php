@@ -46,6 +46,7 @@
     </button>
 <?= view('Transactions/modal_add_expense', ['accounts' => $accounts, 'categories' => $categories]) ?>
 <?= view('Transactions/modal_detail_expense', ['isAdmin' => $isAdmin]) ?>
+<?= view('Transactions/modal_edit_expense', ['accounts' => $accounts, 'categories' => $categories]) ?>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
     <table class="min-w-full border border-gray-300">
@@ -95,7 +96,7 @@
                                     </svg>
                                     Detail
                                 </a>
-                                <a href="#" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600" title="Ubah">
+                                <a href="#" onclick='toggleEditExpenseTransactionModal(true, { id: "<?= $trx['id'] ?>", deskripsi: "<?= esc($trx['deskripsi']) ?>", jumlah: "<?= esc($trx['jumlah']) ?>", account_id: "<?= esc($trx['account_id']) ?>", category_id: "<?= esc($trx['category_id']) ?>", tanggal: "<?= esc($trx['tanggal']) ?>" })' class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600" title="Ubah">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                       <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 5.487l1.65 1.65a2.121 2.121 0 010 3l-8.486 8.486a2 2 0 01-.878.513l-3.06.765a.5.5 0 01-.606-.606l.765-3.06a2 2 0 01.513-.878l8.486-8.486a2.121 2.121 0 013 0z"/>
                                       <path stroke-linecap="round" stroke-linejoin="round" d="M15 7l2 2"/>
