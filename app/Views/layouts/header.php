@@ -12,7 +12,6 @@
         </svg>
         <span class="hidden sm:inline">Keluar</span>
     </button>
-</header>
 
 <!-- Modal Logout -->
 <div id="logoutModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden transition-opacity duration-200">
@@ -76,13 +75,3 @@
     });
   }
 </script>
-        <span class="text-lg font-semibold text-secondary hidden sm:inline-block">|</span>
-        <span class="text-xl font-bold text-main drop-shadow-sm hidden md:inline-block"> <?= esc($pageTitle ?? 'Dashboard Sistem') ?> </span>
-    </div>
-    <a href="/logout" class="inline-flex items-center gap-2 px-5 py-2 rounded-lg bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800 text-white font-bold shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-red-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-6 0V5a3 3 0 016 0v1" />
-        </svg>
-        <span class="hidden sm:inline">Logout</span>
-    </a>
-</header>
