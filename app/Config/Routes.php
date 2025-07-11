@@ -38,6 +38,7 @@ $routes->match(['POST', 'DELETE'], 'transactions/income/delete/(:num)', 'Transac
 $routes->get('transactions/expense', 'TransactionsController::expense');
 $routes->post('transactions/expense/add', 'TransactionsController::addExpense');
 $routes->post('transactions/expense/edit', 'TransactionsController::editExpense');
+$routes->match(['POST', 'DELETE'], 'transactions/expense/delete/(:num)', 'TransactionsController::deleteExpense/$1');
 
 // =======================
 // Reports Routes
