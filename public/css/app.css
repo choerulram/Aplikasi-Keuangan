@@ -825,6 +825,10 @@ video {
   cursor: not-allowed;
 }
 
+.cursor-default {
+  cursor: default;
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -1232,6 +1236,10 @@ video {
 
 .pt-24 {
   padding-top: 6rem;
+}
+
+.pl-4 {
+  padding-left: 1rem;
 }
 
 .text-left {
