@@ -195,4 +195,29 @@ class TransactionsController extends BaseController
             'date' => $date
         ]);
     }
+
+    public function addExpense()
+    {
+        $session = session();
+        $userId = $session->get('user_id');
+        if (!$userId) {
+            return redirect()->back()->with('error', 'Anda harus login.');
+        }
+        $transactionModel = new \App\Models\TransactionModel();
+        $data = [
+            'user_id' => $userId,
+            'account_id' => $this->request->getPost('account_id'),
+            'category_id' => $this->request->getPost('category_id'),
+            'tipe' => 'expense',
+            'jumlah' => $this->request->getPost('jumlah'),
+            'tanggal' => $this->request->getPost('tanggal'),
+            'deskripsi' => $this->request->getPost('deskripsi'),
+        ];
+        // Validasi sederhana
+        if (!$data['account_id'] || !$data['category_id'] || !$data['jumlah'] || !$data['tanggal'] || !$data['deskripsi']) {
+            return redirect()->back()->with('error', 'Semua field wajib diisi.');
+        }
+        $transactionModel->insert($data);
+        return redirect()->back()->with('success', 'Transaksi pengeluaran berhasil ditambahkan.');
+    }
 }
