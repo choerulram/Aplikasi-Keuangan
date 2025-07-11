@@ -15,6 +15,7 @@ class UsersController extends BaseController
         $userModel = new UserModel();
         $search = $this->request->getGet('search');
         $role = $this->request->getGet('role');
+        $perPage = 10;
         if ($search) {
             $userModel->groupStart()
                 ->like('username', $search)
@@ -24,13 +25,16 @@ class UsersController extends BaseController
         if ($role) {
             $userModel->where('role', $role);
         }
-        $users = $userModel->findAll();
+        $users = $userModel->paginate($perPage, 'users');
+        $pager = $userModel->pager;
         return view('Users/index', [
             'pageTitle' => 'User',
             'title' => 'User | Aplikasi Keuangan',
             'users' => $users,
             'search' => $search,
-            'role' => $role
+            'role' => $role,
+            'pager' => $pager,
+            'perPage' => $perPage
         ]);
     }
 }

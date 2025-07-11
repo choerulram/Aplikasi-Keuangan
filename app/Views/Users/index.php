@@ -51,7 +51,9 @@
             <tbody class="bg-white">
                 <?php if (!empty($users)): ?>
                     <?php 
-                        $no = 1;
+                        $pager = $pager ?? null;
+                        $perPage = $perPage ?? 10;
+                        $no = 1 + ($pager ? $pager->getCurrentPage('users') - 1 : 0) * $perPage;
                         foreach ($users as $user): ?>
                         <tr class="hover:bg-gray-50 transition">
                             <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
@@ -107,6 +109,14 @@
             </tbody>
         </table>
     </div>
+    
+    <?php if (isset($pager) && $pager->getPageCount('users') > 1): ?>
+        <div class="mt-4 flex justify-center">
+            <nav class="inline-flex rounded-md shadow-sm" aria-label="Pagination">
+                <?= view('Users/pagination', ['pager' => $pager, 'group' => 'users']) ?>
+            </nav>
+        </div>
+    <?php endif; ?>
 <?php endif; ?>
 
 <?= $this->endSection() ?>
