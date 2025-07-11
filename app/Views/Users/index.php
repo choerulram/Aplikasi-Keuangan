@@ -9,6 +9,63 @@
     </div>
     <a href="<?= site_url('dashboard') ?>" class="text-main font-semibold">Kembali ke Dashboard</a>
 <?php else: ?>
+    <?php if (session('success')): ?>
+        <div id="alertSuccess" class="alert-fade bg-green-100 border-l-4 border-green-500 text-green-700 p-4 mb-4" role="alert">
+            <p class="font-bold">Sukses</p>
+            <p><?= session('success') ?></p>
+        </div>
+    <?php endif; ?>
+    <?php if (session('errors')): ?>
+        <div id="alertError" class="alert-fade bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
+            <p class="font-bold">Terjadi Kesalahan</p>
+            <ul class="list-disc pl-5">
+                <?php foreach(session('errors') as $err): ?>
+                    <li><?= esc($err) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleAddUserModal(true);
+        });
+        </script>
+    <?php endif; ?>
+    <style>
+    .alert-fade {
+        transition: opacity 0.7s ease, max-height 0.7s ease;
+        opacity: 1;
+        max-height: 500px;
+        overflow: hidden;
+    }
+    .alert-fade.hide {
+        opacity: 0;
+        max-height: 0;
+        padding: 0 1rem;
+        margin: 0;
+    }
+    </style>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const alertSuccess = document.getElementById('alertSuccess');
+        const alertError = document.getElementById('alertError');
+        if (alertSuccess) {
+            setTimeout(() => {
+                alertSuccess.classList.add('hide');
+            }, 3000);
+            setTimeout(() => {
+                if (alertSuccess) alertSuccess.style.display = 'none';
+            }, 4000);
+        }
+        if (alertError) {
+            setTimeout(() => {
+                alertError.classList.add('hide');
+            }, 4000);
+            setTimeout(() => {
+                if (alertError) alertError.style.display = 'none';
+            }, 5000);
+        }
+    });
+    </script>
     <div class="flex flex-wrap items-end gap-2 mb-6">
         <form method="get" action="" class="flex flex-wrap gap-2 items-end flex-1">
             <div>
@@ -34,6 +91,7 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
             Tambah
         </button>
+        <?= view('Users/modal_add_user') ?>
     </div>
     <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white mt-6">
         <table class="min-w-full border border-gray-300">
@@ -109,7 +167,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <?php if (isset($pager) && $pager->getPageCount('users') > 1): ?>
         <div class="mt-4 flex justify-center">
             <nav class="inline-flex rounded-md shadow-sm" aria-label="Pagination">

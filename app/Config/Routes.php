@@ -49,6 +49,7 @@ $routes->get('reports', 'ReportsController::index');
 // Users Routes
 // =======================
 $routes->get('users', 'UsersController::index');
+$routes->post('users/add', 'UsersController::add');
 
 // =======================
 // Settings Routes
