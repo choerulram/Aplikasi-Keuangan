@@ -45,6 +45,7 @@
         Tambah
     </button>
 <?= view('Transactions/modal_add_expense', ['accounts' => $accounts, 'categories' => $categories]) ?>
+<?= view('Transactions/modal_detail_expense', ['isAdmin' => $isAdmin]) ?>
 </div>
 <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
     <table class="min-w-full border border-gray-300">
@@ -87,7 +88,7 @@
                         <?php endif; ?>
                         <td class="py-2 px-2 w-40 text-center border-b border-r border-gray-200">
                             <div class="flex justify-center gap-1">
-                                <a href="#" class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600" title="Detail">
+                                <a href="#" onclick='toggleDetailExpenseTransactionModal(true, { deskripsi: "<?= esc($trx['deskripsi']) ?>", jumlah: "<?= esc($trx['jumlah']) ?>", nama_akun: "<?= esc($trx['nama_akun']) ?>", nama_kategori: "<?= esc($trx['nama_kategori']) ?>", tanggal: "<?= esc($trx['tanggal']) ?>", tipe: "<?= esc($trx['tipe']) ?>"<?= $isAdmin ? ", username: \"" . esc($trx['username']) . "\"" : "" ?> })' class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600" title="Detail">
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                       <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s3.5-7 10.5-7 10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/>
                                       <circle cx="12" cy="12" r="3"/>
