@@ -800,6 +800,18 @@ video {
   width: 100%;
 }
 
+.w-32 {
+  width: 8rem;
+}
+
+.w-24 {
+  width: 6rem;
+}
+
+.w-56 {
+  width: 14rem;
+}
+
 .min-w-full {
   min-width: 100%;
 }
