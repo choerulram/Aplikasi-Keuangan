@@ -71,4 +71,55 @@ class UsersController extends BaseController
 
         return redirect()->to('/users')->with('success', 'User berhasil ditambahkan.');
     }
+
+    public function edit()
+    {
+        if (session('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $id = $this->request->getPost('id');
+        if (!$id) {
+            return redirect()->back()->with('errors', ['ID user tidak ditemukan.']);
+        }
+
+        $userModel = new UserModel();
+        $user = $userModel->find($id);
+        if (!$user) {
+            return redirect()->back()->with('errors', ['User tidak ditemukan.']);
+        }
+
+        $validation = \Config\Services::validation();
+        $rules = [
+            'username' => 'required|is_unique[users.username,id,{id}]',
+            'email'    => 'required|valid_email|is_unique[users.email,id,{id}]',
+            'nama'     => 'required',
+            'role'     => 'required|in_list[admin,user]'
+        ];
+        $data = [
+            'id'       => $id,
+            'username' => $this->request->getPost('username'),
+            'email'    => $this->request->getPost('email'),
+            'nama'     => $this->request->getPost('nama'),
+            'role'     => $this->request->getPost('role'),
+        ];
+        $password = $this->request->getPost('password');
+        if ($password) {
+            $rules['password'] = 'min_length[6]';
+            $data['password_hash'] = password_hash($password, PASSWORD_DEFAULT);
+        }
+
+        // Replace {id} in rules
+        foreach ($rules as $key => $rule) {
+            $rules[$key] = str_replace('{id}', $id, $rule);
+        }
+
+        if (!$this->validate($rules)) {
+            return redirect()->back()->withInput()->with('errors', $validation->getErrors());
+        }
+
+        $userModel->update($id, $data);
+
+        return redirect()->to('/users')->with('success', 'User berhasil diubah.');
+    }
 }

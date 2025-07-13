@@ -93,6 +93,7 @@
         </button>
         <?= view('Users/modal_add_user') ?>
         <?= view('Users/modal_detail_user') ?>
+        <?= view('Users/modal_edit_user') ?>
     </div>
     <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white mt-6">
         <table class="min-w-full border border-gray-300">
