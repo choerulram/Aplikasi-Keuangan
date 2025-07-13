@@ -122,4 +122,26 @@ class UsersController extends BaseController
 
         return redirect()->to('/users')->with('success', 'User berhasil diubah.');
     }
+
+    public function delete()
+    {
+        if (session('role') !== 'admin') {
+            return redirect()->to('/');
+        }
+
+        $id = $this->request->getPost('id');
+        if (!$id) {
+            return redirect()->back()->with('errors', ['ID user tidak ditemukan.']);
+        }
+
+        $userModel = new UserModel();
+        $user = $userModel->find($id);
+        if (!$user) {
+            return redirect()->back()->with('errors', ['User tidak ditemukan.']);
+        }
+
+        $userModel->delete($id);
+
+        return redirect()->to('/users')->with('success', 'User berhasil dihapus.');
+    }
 }
