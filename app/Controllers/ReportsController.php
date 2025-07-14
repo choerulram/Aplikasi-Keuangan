@@ -20,6 +20,7 @@ class ReportsController extends BaseController
         $filters = [
             'account_id' => $this->request->getGet('account_id'),
             'category_id' => $this->request->getGet('category_id'),
+            'tipe' => $this->request->getGet('tipe'),
             'start_date' => $this->request->getGet('start_date'),
             'end_date' => $this->request->getGet('end_date'),
         ];

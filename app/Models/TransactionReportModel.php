@@ -24,6 +24,9 @@ class TransactionReportModel extends Model
         if (!empty($filters['category_id'])) {
             $builder->where('transactions.category_id', $filters['category_id']);
         }
+        if (!empty($filters['tipe'])) {
+            $builder->where('transactions.tipe', $filters['tipe']);
+        }
         if (!empty($filters['start_date'])) {
             $builder->where('transactions.tanggal >=', $filters['start_date']);
         }
@@ -47,6 +50,9 @@ class TransactionReportModel extends Model
         }
         if (!empty($filters['category_id'])) {
             $builder->where('category_id', $filters['category_id']);
+        }
+        if (!empty($filters['tipe'])) {
+            $builder->where('tipe', $filters['tipe']);
         }
         if (!empty($filters['start_date'])) {
             $builder->where('tanggal >=', $filters['start_date']);
