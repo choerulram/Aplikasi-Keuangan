@@ -47,18 +47,41 @@
     </form>
 </div>
 
-<div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-    <div class="p-4 bg-white rounded shadow">
-        <div class="text-gray-500 text-sm">Total Pemasukan</div>
-        <div class="text-xl font-bold text-green-600">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></div>
+<div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="flex items-center p-6 bg-green-50 border-2 border-green-300 rounded-2xl shadow-lg">
+        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-200 mr-5">
+            <svg class="w-10 h-10 text-green-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8" />
+            </svg>
+        </div>
+        <div>
+            <div class="text-base font-bold text-green-800 mb-1 tracking-wide">Total Pemasukan</div>
+            <div class="text-3xl font-extrabold text-green-700">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></div>
+        </div>
     </div>
-    <div class="p-4 bg-white rounded shadow">
-        <div class="text-gray-500 text-sm">Total Pengeluaran</div>
-        <div class="text-xl font-bold text-red-600">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></div>
+    <div class="flex items-center p-6 bg-red-50 border-2 border-red-300 rounded-2xl shadow-lg">
+        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-red-200 mr-5">
+            <svg class="w-10 h-10 text-red-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 7l6 6 4-4 8 8" />
+            </svg>
+        </div>
+        <div>
+            <div class="text-base font-bold text-red-800 mb-1 tracking-wide">Total Pengeluaran</div>
+            <div class="text-3xl font-extrabold text-red-700">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></div>
+        </div>
     </div>
-    <div class="p-4 bg-white rounded shadow">
-        <div class="text-gray-500 text-sm">Saldo Akhir</div>
-        <div class="text-xl font-bold text-blue-600">Rp <?= number_format(($summary['total_income'] ?? 0) - ($summary['total_expense'] ?? 0), 0, ',', '.') ?></div>
+    <div class="flex items-center p-6 bg-blue-50 border-2 border-blue-300 rounded-2xl shadow-lg">
+        <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-200 mr-5">
+            <svg class="w-10 h-10 text-blue-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                <path d="M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7z" stroke="currentColor" stroke-width="2.5" fill="#e0e7ff"/>
+                <path d="M22 9H18a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4" stroke="currentColor" stroke-width="2.5"/>
+                <circle cx="18.5" cy="12" r="1" fill="currentColor"/>
+            </svg>
+        </div>
+        <div>
+            <div class="text-base font-bold text-blue-800 mb-1 tracking-wide">Saldo Akhir</div>
+            <div class="text-3xl font-extrabold text-blue-700">Rp <?= number_format(($summary['total_income'] ?? 0) - ($summary['total_expense'] ?? 0), 0, ',', '.') ?></div>
+        </div>
     </div>
 </div>
 
