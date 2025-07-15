@@ -31,6 +31,25 @@
             </select>
         </div>
         <div>
+            <label for="month" class="block text-xs font-semibold text-gray-600 mb-1">Bulan</label>
+            <select name="month" id="month" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-32">
+                <option value="">Semua</option>
+                <?php for ($m = 1; $m <= 12; $m++): ?>
+                    <option value="<?= $m ?>" <?= (isset($filters['month']) && $filters['month'] == $m) ? 'selected' : '' ?>><?= date('F', mktime(0,0,0,$m,1)) ?></option>
+                <?php endfor; ?>
+            </select>
+        </div>
+        <div>
+            <label for="year" class="block text-xs font-semibold text-gray-600 mb-1">Tahun</label>
+            <select name="year" id="year" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-32">
+                <option value="">Semua</option>
+                <?php $yearNow = date('Y');
+                for ($y = $yearNow; $y >= $yearNow-10; $y--): ?>
+                    <option value="<?= $y ?>" <?= (isset($filters['year']) && $filters['year'] == $y) ? 'selected' : '' ?>><?= $y ?></option>
+                <?php endfor; ?>
+            </select>
+        </div>
+        <div>
             <label for="start_date" class="block text-xs font-semibold text-gray-600 mb-1">Dari Tanggal</label>
             <input type="date" name="start_date" id="start_date" value="<?= esc($filters['start_date']) ?>" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" />
         </div>
@@ -47,6 +66,18 @@
     </form>
 </div>
 
+<div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+    <div class="flex gap-2">
+        <form method="post" action="/reports/export/pdf" target="_blank">
+            <?php foreach ($filters as $k => $v): if ($v): ?><input type="hidden" name="<?= $k ?>" value="<?= esc($v) ?>" /><?php endif; endforeach; ?>
+            <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition">Ekspor PDF</button>
+        </form>
+        <form method="post" action="/reports/export/excel" target="_blank">
+            <?php foreach ($filters as $k => $v): if ($v): ?><input type="hidden" name="<?= $k ?>" value="<?= esc($v) ?>" /><?php endif; endforeach; ?>
+            <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition">Ekspor Excel</button>
+        </form>
+    </div>
+</div>
 <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
     <div class="flex items-center p-6 bg-green-50 border-2 border-green-300 rounded-2xl shadow-lg">
         <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-200 mr-5">

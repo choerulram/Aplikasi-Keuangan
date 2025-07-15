@@ -27,6 +27,12 @@ class TransactionReportModel extends Model
         if (!empty($filters['tipe'])) {
             $builder->where('transactions.tipe', $filters['tipe']);
         }
+        if (!empty($filters['month'])) {
+            $builder->where('MONTH(transactions.tanggal)', $filters['month']);
+        }
+        if (!empty($filters['year'])) {
+            $builder->where('YEAR(transactions.tanggal)', $filters['year']);
+        }
         if (!empty($filters['start_date'])) {
             $builder->where('transactions.tanggal >=', $filters['start_date']);
         }
@@ -53,6 +59,12 @@ class TransactionReportModel extends Model
         }
         if (!empty($filters['tipe'])) {
             $builder->where('tipe', $filters['tipe']);
+        }
+        if (!empty($filters['month'])) {
+            $builder->where('MONTH(tanggal)', $filters['month']);
+        }
+        if (!empty($filters['year'])) {
+            $builder->where('YEAR(tanggal)', $filters['year']);
         }
         if (!empty($filters['start_date'])) {
             $builder->where('tanggal >=', $filters['start_date']);
