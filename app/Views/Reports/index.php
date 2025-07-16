@@ -59,7 +59,7 @@
         </div>
         <div class="flex gap-2 items-end">
             <button type="submit" class="px-4 py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition">Terapkan</button>
-            <?php if (!empty($filters['account_id']) || !empty($filters['category_id']) || !empty($filters['tipe']) || !empty($filters['start_date']) || !empty($filters['end_date'])): ?>
+            <?php if (!empty($filters['account_id']) || !empty($filters['category_id']) || !empty($filters['tipe']) || !empty($filters['start_date']) || !empty($filters['end_date']) || !empty($filters['month']) || !empty($filters['year'])): ?>
                 <a href="/reports" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">Reset</a>
             <?php endif; ?>
         </div>
