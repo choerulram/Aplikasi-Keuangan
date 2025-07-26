@@ -154,4 +154,13 @@
     </table>
 </div>
 
+<!-- Pagination -->
+<?php if (isset($pager) && isset($total_transactions) && $total_transactions > $perPage): ?>
+<div class="mt-4 flex justify-center">
+    <nav class="inline-flex rounded-md shadow-sm" aria-label="Pagination">
+        <?= view('Reports/pagination', ['pager' => $pager, 'group' => 'transactions']) ?>
+    </nav>
+</div>
+<?php endif; ?>
+
 <?= $this->endSection() ?>

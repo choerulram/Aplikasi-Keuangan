@@ -55,7 +55,22 @@ class ReportsController extends BaseController
 
         // Data laporan
         $summary = $reportModel->getSummary($filters);
-        $transactions = $reportModel->getReport($filters);
+        
+        // Konfigurasi pagination
+        $perPage = 10; // Jumlah item per halaman
+        $currentPage = $this->request->getGet('page_transactions') ?? 1;
+        
+        // Ambil total records untuk pagination
+        $total_transactions = $reportModel->getTotal($filters);
+        
+        // Set up pager
+        $pager = service('pager');
+        
+        // Buat instance pager untuk group 'transactions'
+        $pager->store('transactions', $currentPage, $perPage, $total_transactions);
+        
+        // Ambil data dengan pagination
+        $transactions = $reportModel->getReport($filters, $perPage, ($currentPage - 1) * $perPage);
 
         return view('Reports/index', [
             'pageTitle' => 'Laporan',
@@ -64,7 +79,10 @@ class ReportsController extends BaseController
             'categories' => $categories,
             'filters' => $filters,
             'summary' => $summary,
-            'transactions' => $transactions
+            'transactions' => $transactions,
+            'pager' => $pager,
+            'perPage' => $perPage,
+            'total_transactions' => $total_transactions
         ]);
     }
 

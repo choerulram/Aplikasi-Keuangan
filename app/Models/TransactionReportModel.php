@@ -11,7 +11,7 @@ class TransactionReportModel extends Model
         'id', 'user_id', 'account_id', 'category_id', 'tipe', 'jumlah', 'tanggal', 'deskripsi', 'lampiran', 'created_at', 'updated_at'
     ];
 
-    public function getReport($filters = [])
+    public function getReport($filters = [], $limit = null, $offset = 0)
     {
         $builder = $this->db->table($this->table)
             ->select('transactions.*, accounts.nama_akun as account_name, categories.nama_kategori as category_name')
@@ -40,7 +40,39 @@ class TransactionReportModel extends Model
             $builder->where('transactions.tanggal <=', $filters['end_date']);
         }
 
-        return $builder->orderBy('transactions.tanggal', 'DESC')->get()->getResultArray();
+        return $builder->orderBy('transactions.tanggal', 'DESC')
+                      ->limit($limit, $offset)
+                      ->get()
+                      ->getResultArray();
+    }
+
+    public function getTotal($filters = [])
+    {
+        $builder = $this->db->table($this->table);
+
+        if (!empty($filters['account_id'])) {
+            $builder->where('account_id', $filters['account_id']);
+        }
+        if (!empty($filters['category_id'])) {
+            $builder->where('category_id', $filters['category_id']);
+        }
+        if (!empty($filters['tipe'])) {
+            $builder->where('tipe', $filters['tipe']);
+        }
+        if (!empty($filters['month'])) {
+            $builder->where('MONTH(tanggal)', $filters['month']);
+        }
+        if (!empty($filters['year'])) {
+            $builder->where('YEAR(tanggal)', $filters['year']);
+        }
+        if (!empty($filters['start_date'])) {
+            $builder->where('tanggal >=', $filters['start_date']);
+        }
+        if (!empty($filters['end_date'])) {
+            $builder->where('tanggal <=', $filters['end_date']);
+        }
+
+        return $builder->countAllResults();
     }
 
     public function getSummary($filters = [])
