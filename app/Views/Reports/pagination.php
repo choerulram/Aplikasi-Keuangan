@@ -1,7 +1,7 @@
 <?php
-$group = $group ?? 'default';
+$group = $group ?? 'transactions';
 $currentPage = $pager->getCurrentPage($group);
-$pageCount = $pager->getPageCount();
+$pageCount = $pager->getPageCount($group);
 
 // Window pagination logic: tampilkan maksimal 5 nomor, dan jika di halaman 6 dst, window bergeser
 $window = 5;
