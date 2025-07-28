@@ -14,9 +14,10 @@ class TransactionReportModel extends Model
     public function getReport($filters = [], $limit = null, $offset = 0)
     {
         $builder = $this->db->table($this->table)
-            ->select('transactions.*, accounts.nama_akun as account_name, categories.nama_kategori as category_name')
+            ->select('transactions.*, accounts.nama_akun as account_name, categories.nama_kategori as category_name, users.username')
             ->join('accounts', 'accounts.id = transactions.account_id', 'left')
-            ->join('categories', 'categories.id = transactions.category_id', 'left');
+            ->join('categories', 'categories.id = transactions.category_id', 'left')
+            ->join('users', 'users.id = transactions.user_id', 'left');
 
         if (!empty($filters['account_id'])) {
             $builder->where('transactions.account_id', $filters['account_id']);

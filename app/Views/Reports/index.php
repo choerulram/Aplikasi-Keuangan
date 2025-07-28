@@ -128,6 +128,9 @@
                 <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Kategori</th>
                 <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Tipe</th>
                 <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Tanggal</th>
+                <?php if (session()->get('role') === 'admin'): ?>
+                <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">User</th>
+                <?php endif; ?>
             </tr>
         </thead>
         <tbody class="bg-white">
@@ -143,11 +146,14 @@
                             <?= ucfirst(esc($trx['tipe'])) ?>
                         </td>
                         <td class="py-2 px-4 text-sm text-gray-800 border-b border-r border-gray-200"><?= esc($trx['tanggal']) ?></td>
+                        <?php if (session()->get('role') === 'admin'): ?>
+                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['username']) ?></td>
+                        <?php endif; ?>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="7" class="py-4 px-4 text-center text-gray-400 border-b border-r border-gray-200">Tidak ada data transaksi.</td>
+                    <td colspan="<?= session()->get('role') === 'admin' ? '8' : '7' ?>" class="py-4 px-4 text-center text-gray-400 border-b border-r border-gray-200">Tidak ada data transaksi.</td>
                 </tr>
             <?php endif; ?>
         </tbody>
