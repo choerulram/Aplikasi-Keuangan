@@ -101,13 +101,78 @@ class ReportsController extends BaseController
         ]);
     }
 
-    // Stub ekspor PDF
     public function exportPdf()
     {
+        $reportModel = new TransactionReportModel();
+        $accountModel = new AccountModel();
+        $categoryModel = new CategoryModel();
+
         // Ambil filter dari request POST
-        $filters = $this->request->getPost();
-        // TODO: Implementasi ekspor PDF
-        return $this->response->setBody('Fitur ekspor PDF belum diimplementasikan.')->setContentType('text/plain');
+        $filters = [
+            'account_id' => $this->request->getPost('account_id') ?? '',
+            'category_id' => $this->request->getPost('category_id') ?? '',
+            'tipe' => $this->request->getPost('tipe') ?? '',
+            'start_date' => $this->request->getPost('start_date') ?? '',
+            'end_date' => $this->request->getPost('end_date') ?? '',
+            'month' => $this->request->getPost('month') ?? '',
+            'year' => $this->request->getPost('year') ?? ''
+        ];
+
+        // Jika filter bulan/tahun diisi, override start_date & end_date
+        if (!empty($filters['month']) && !empty($filters['year'])) {
+            $month = str_pad($filters['month'], 2, '0', STR_PAD_LEFT);
+            $filters['start_date'] = $filters['year'] . '-' . $month . '-01';
+            $filters['end_date'] = date('Y-m-t', strtotime($filters['start_date']));
+        } elseif (!empty($filters['year']) && empty($filters['month'])) {
+            $filters['start_date'] = $filters['year'] . '-01-01';
+            $filters['end_date'] = $filters['year'] . '-12-31';
+        }
+
+        // Ambil data untuk PDF
+        $data = [
+            'transactions' => $reportModel->getReport($filters),
+            'summary' => $reportModel->getSummary($filters),
+            'filters' => $filters,
+            'periode' => $this->getPeriodeText($filters),
+        ];
+
+        // Tambahkan nama akun dan kategori jika ada filter
+        if (!empty($filters['account_id'])) {
+            $account = $accountModel->find($filters['account_id']);
+            $data['account_name'] = $account['nama_akun'] ?? '';
+        }
+        if (!empty($filters['category_id'])) {
+            $category = $categoryModel->find($filters['category_id']);
+            $data['category_name'] = $category['nama_kategori'] ?? '';
+        }
+
+        // Generate PDF menggunakan Dompdf
+        $dompdf = new \Dompdf\Dompdf(['isRemoteEnabled' => true]);
+        $html = view('Reports/pdf_template', $data);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Generate nama file
+        $filename = 'Laporan_Transaksi_' . date('Y-m-d_H-i-s') . '.pdf';
+
+        // Download PDF
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'attachment; filename="' . $filename . '"')
+            ->setBody($dompdf->output());
+    }
+
+    private function getPeriodeText($filters)
+    {
+        if (!empty($filters['start_date']) && !empty($filters['end_date'])) {
+            return date('d/m/Y', strtotime($filters['start_date'])) . ' - ' . date('d/m/Y', strtotime($filters['end_date']));
+        } elseif (!empty($filters['month']) && !empty($filters['year'])) {
+            return date('F Y', mktime(0, 0, 0, $filters['month'], 1, $filters['year']));
+        } elseif (!empty($filters['year'])) {
+            return 'Tahun ' . $filters['year'];
+        }
+        return 'Semua Periode';
     }
 
     // Stub ekspor Excel

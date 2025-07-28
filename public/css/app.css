@@ -568,6 +568,10 @@ video {
   }
 }
 
+.collapse {
+  visibility: collapse;
+}
+
 .static {
   position: static;
 }
@@ -834,6 +838,10 @@ video {
 
 .flex-1 {
   flex: 1 1 0%;
+}
+
+.border-collapse {
+  border-collapse: collapse;
 }
 
 .rotate-180 {
@@ -1317,6 +1325,10 @@ video {
 
 .text-center {
   text-align: center;
+}
+
+.text-right {
+  text-align: right;
 }
 
 .text-3xl {
