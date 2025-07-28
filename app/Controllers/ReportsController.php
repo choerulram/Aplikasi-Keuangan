@@ -175,11 +175,117 @@ class ReportsController extends BaseController
         return 'Semua Periode';
     }
 
-    // Stub ekspor Excel
     public function exportExcel()
     {
-        $filters = $this->request->getPost();
-        // TODO: Implementasi ekspor Excel
-        return $this->response->setBody('Fitur ekspor Excel belum diimplementasikan.')->setContentType('text/plain');
+        $reportModel = new TransactionReportModel();
+        $accountModel = new AccountModel();
+        $categoryModel = new CategoryModel();
+
+        // Ambil filter dari request POST
+        $filters = [
+            'account_id' => $this->request->getPost('account_id') ?? '',
+            'category_id' => $this->request->getPost('category_id') ?? '',
+            'tipe' => $this->request->getPost('tipe') ?? '',
+            'start_date' => $this->request->getPost('start_date') ?? '',
+            'end_date' => $this->request->getPost('end_date') ?? '',
+            'month' => $this->request->getPost('month') ?? '',
+            'year' => $this->request->getPost('year') ?? ''
+        ];
+
+        // Jika filter bulan/tahun diisi, override start_date & end_date
+        if (!empty($filters['month']) && !empty($filters['year'])) {
+            $month = str_pad($filters['month'], 2, '0', STR_PAD_LEFT);
+            $filters['start_date'] = $filters['year'] . '-' . $month . '-01';
+            $filters['end_date'] = date('Y-m-t', strtotime($filters['start_date']));
+        } elseif (!empty($filters['year']) && empty($filters['month'])) {
+            $filters['start_date'] = $filters['year'] . '-01-01';
+            $filters['end_date'] = $filters['year'] . '-12-31';
+        }
+
+        // Ambil data transaksi
+        $transactions = $reportModel->getReport($filters);
+        $summary = $reportModel->getSummary($filters);
+
+        // Buat objek spreadsheet baru
+        $spreadsheet = new \PhpOffice\PhpSpreadsheet\Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set judul laporan
+        $sheet->setCellValue('A1', 'LAPORAN TRANSAKSI KEUANGAN');
+        $sheet->mergeCells('A1:H1');
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // Set periode
+        $periode = $this->getPeriodeText($filters);
+        $sheet->setCellValue('A2', 'Periode: ' . $periode);
+        $sheet->mergeCells('A2:H2');
+        $sheet->getStyle('A2')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // Set ringkasan
+        $row = 4;
+        $sheet->setCellValue('A' . $row, 'Total Pemasukan:');
+        $sheet->setCellValue('B' . $row, 'Rp ' . number_format($summary['total_income'] ?? 0, 0, ',', '.'));
+        $row++;
+        $sheet->setCellValue('A' . $row, 'Total Pengeluaran:');
+        $sheet->setCellValue('B' . $row, 'Rp ' . number_format($summary['total_expense'] ?? 0, 0, ',', '.'));
+        $row++;
+        $sheet->setCellValue('A' . $row, 'Saldo Akhir:');
+        $sheet->setCellValue('B' . $row, 'Rp ' . number_format(($summary['total_income'] ?? 0) - ($summary['total_expense'] ?? 0), 0, ',', '.'));
+
+        // Header tabel
+        $row = 8;
+        $headers = ['No', 'Tanggal', 'Deskripsi', 'Akun', 'Kategori', 'Tipe', 'Jumlah'];
+        if (session()->get('role') === 'admin') {
+            $headers[] = 'User';
+        }
+        
+        $col = 'A';
+        foreach ($headers as $header) {
+            $sheet->setCellValue($col . $row, $header);
+            $sheet->getStyle($col . $row)->getFont()->setBold(true);
+            $col++;
+        }
+
+        // Style header tabel
+        $headerRange = 'A' . $row . ':' . $col . $row;
+        $sheet->getStyle($headerRange)->getFill()->setFillType(\PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID)->getStartColor()->setRGB('CCCCCC');
+        $sheet->getStyle($headerRange)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+
+        // Isi tabel
+        $row++;
+        $no = 1;
+        foreach ($transactions as $trx) {
+            $col = 'A';
+            $sheet->setCellValue($col++ . $row, $no++);
+            $sheet->setCellValue($col++ . $row, date('d/m/Y', strtotime($trx['tanggal'])));
+            $sheet->setCellValue($col++ . $row, $trx['deskripsi']);
+            $sheet->setCellValue($col++ . $row, $trx['account_name']);
+            $sheet->setCellValue($col++ . $row, $trx['category_name']);
+            $sheet->setCellValue($col++ . $row, ucfirst($trx['tipe']));
+            $sheet->setCellValue($col++ . $row, 'Rp ' . number_format($trx['jumlah'], 0, ',', '.'));
+            if (session()->get('role') === 'admin') {
+                $sheet->setCellValue($col++ . $row, $trx['username']);
+            }
+            $row++;
+        }
+
+        // Auto size kolom
+        foreach (range('A', $col) as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+        // Create Excel file
+        $writer = new \PhpOffice\PhpSpreadsheet\Writer\Xlsx($spreadsheet);
+        $filename = 'Laporan_Transaksi_' . date('Y-m-d_H-i-s') . '.xlsx';
+
+        // Set header untuk download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // Output file
+        $writer->save('php://output');
+        exit();
     }
 }
