@@ -16,6 +16,11 @@
     </div>
     <form id="formAddBudget" method="POST" action="/budgets/add">
       <?= csrf_field() ?>
+      <div id="alertMessage" class="mb-3 hidden">
+        <div class="px-4 py-3 rounded relative" role="alert">
+          <span class="block sm:inline message-text"></span>
+        </div>
+      </div>
       <div class="mb-3">
         <label class="block text-sm font-semibold mb-1">Kategori</label>
         <select name="category_id" id="category_id" class="w-full border rounded px-3 py-2 focus:outline-none focus:ring focus:border-main" 
@@ -80,13 +85,60 @@ function toggleAddBudgetModal(show) {
   const modal = document.getElementById('modalAddBudget');
   if (show) {
     modal.classList.remove('hidden');
+    // Reset form dan alert saat modal dibuka
+    document.getElementById('formAddBudget').reset();
+    hideAlert();
   } else {
     modal.classList.add('hidden');
   }
 }
 
+function showAlert(message, isSuccess) {
+  const alertDiv = document.getElementById('alertMessage');
+  const messageSpan = alertDiv.querySelector('.message-text');
+  
+  alertDiv.classList.remove('hidden');
+  alertDiv.querySelector('div').className = `px-4 py-3 rounded relative ${isSuccess ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`;
+  messageSpan.textContent = message;
+}
+
+function hideAlert() {
+  const alertDiv = document.getElementById('alertMessage');
+  alertDiv.classList.add('hidden');
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   const btn = document.getElementById('btnAddBudget');
   if (btn) btn.onclick = () => toggleAddBudgetModal(true);
+
+  // Handle form submission
+  const form = document.getElementById('formAddBudget');
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    fetch('/budgets/add', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    })
+    .then(response => response.json())
+    .then(data => {
+      showAlert(data.message, data.status);
+      
+      if (data.status) {
+        // Jika berhasil, reload halaman setelah 1.5 detik
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
+    })
+    .catch(error => {
+      showAlert('Terjadi kesalahan saat memproses permintaan.', false);
+    });
+  });
 });
 </script>
