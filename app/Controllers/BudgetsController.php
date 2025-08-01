@@ -24,7 +24,7 @@ class BudgetsController extends BaseController
             : $this->categoryModel->where('user_id', $userId)->findAll();
 
         $data = [
-            'title' => 'Anggaran',
+            'title' => 'Aplikasi Keuangan | Anggaran',
             'budgets' => $budgets,
             'categories' => $categories,
             'budgetModel' => $this->budgetModel,
