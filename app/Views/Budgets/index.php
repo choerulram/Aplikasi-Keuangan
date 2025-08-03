@@ -25,6 +25,7 @@
         </button>
     </div>
     <?= view('Budgets/modal_add_budget', ['categories' => $categories]) ?>
+    <?= view('Budgets/modal_edit_budget', ['categories' => $categories]) ?>
 
     <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
         <table class="min-w-full border border-gray-300">
@@ -105,7 +106,7 @@
                                 </svg>
                                 Detail
                             </button>
-                            <button type="button" onclick="openEditModal(<?= json_encode($budget) ?>)"
+                            <button type="button" onclick="toggleEditBudgetModal(true, <?= json_encode($budget) ?>)"
                                 class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600"
                                 title="Ubah">
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
