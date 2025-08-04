@@ -65,24 +65,37 @@ function toggleEditBudgetModal(show, data = null) {
   }
 }
 
-document.getElementById('formEditBudget').addEventListener('submit', async function(e) {
-  e.preventDefault();
-  
-  const formData = new FormData(this);
-  try {
-    const response = await fetch('/budgets/edit', {
-      method: 'POST',
-      body: formData
-    });
-    
-    const result = await response.json();
-    if (result.status) {
-      location.reload();
-    } else {
-      alert(result.message || 'Terjadi kesalahan saat mengubah anggaran');
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('formEditBudget');
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            try {
+                const formData = new FormData(this);
+                console.log('Data yang dikirim:', Object.fromEntries(formData));
+                
+                const response = await fetch('/budgets/edit', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+                
+                const result = await response.json();
+                console.log('Response dari server:', result);
+                
+                if (result.status === true) {
+                    window.location.reload();
+                } else {
+                    alert(result.message || 'Terjadi kesalahan saat mengubah anggaran');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan saat mengirim data');
+            }
+        });
     }
-  } catch (error) {
-    alert('Terjadi kesalahan saat mengirim data');
-  }
 });
 </script>

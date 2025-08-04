@@ -41,12 +41,21 @@ class BudgetsController extends BaseController
             ]);
         }
 
-        // Cek apakah data yang akan diedit ada dan milik user yang sedang login
+        // Cek apakah data yang akan diedit ada
         $existingBudget = $this->budgetModel->find($id);
-        if (!$existingBudget || $existingBudget['user_id'] != $userId) {
+        if (!$existingBudget) {
             return $this->response->setJSON([
                 'status' => false,
                 'message' => 'Data anggaran tidak ditemukan!'
+            ]);
+        }
+
+        // Cek kepemilikan data kecuali untuk admin
+        $isAdmin = session('role') === 'admin';
+        if (!$isAdmin && $existingBudget['user_id'] != $userId) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Anda tidak memiliki akses untuk mengubah data ini!'
             ]);
         }
 
@@ -72,7 +81,8 @@ class BudgetsController extends BaseController
         ];
 
         try {
-            if ($this->budgetModel->update($id, $data)) {
+            $result = $this->budgetModel->update($id, $data);
+            if ($result) {
                 return $this->response->setJSON([
                     'status' => true,
                     'message' => 'Anggaran berhasil diperbarui!'
