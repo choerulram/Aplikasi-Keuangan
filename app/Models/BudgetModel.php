@@ -27,9 +27,11 @@ class BudgetModel extends Model
                 ->join('categories', 'categories.id = budgets.category_id', 'left')
                 ->join('users', 'users.id = budgets.user_id', 'left');
 
-            if (!$isAdmin && $userId !== null) {
+            // Jika bukan admin, hanya tampilkan data user tersebut
+            if (!$isAdmin) {
                 $builder->where('budgets.user_id', $userId);
             }
+            // Jika admin, tampilkan semua data (tidak perlu filter user_id)
 
             $builder->orderBy('budgets.periode', 'DESC');
             return $builder->get()->getResultArray();
