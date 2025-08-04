@@ -62,11 +62,6 @@ $routes->post('users/edit', 'UsersController::edit');
 $routes->post('users/delete', 'UsersController::delete');
 
 // =======================
-// Budgets Routes
-// =======================
-$routes->get('budgets', 'BudgetsController::index');
-
-// =======================
 // Settings Routes
 // =======================
 $routes->get('settings', 'SettingsController::index');

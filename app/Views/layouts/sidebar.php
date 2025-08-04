@@ -15,33 +15,6 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M2 11h20"/></svg>
             Akun
         </a></li>
-        <li x-data="{ openTrans: <?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'true' : 'false' ?> }" class="relative">
-            <button
-                @click="!('<?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'true' : 'false' ?>' === 'true') ? (openTrans = !openTrans) : null"
-                :disabled="<?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'true' : 'false' ?>"
-                type="button"
-                class="flex items-center gap-2 w-full py-2 px-3 rounded transition font-semibold <?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'hover:bg-highlight text-dark hover:text-main' : (url_is('transactions*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main') ?> <?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'cursor-default' : '' ?>">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 10l4-4m0 0l-4-4m4 4H7"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 14l-4 4m0 0l4 4m-4-4h14"/></svg>
-                Transaksi
-                <svg class="w-4 h-4 ml-auto transition-transform" :class="{'rotate-180': openTrans}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                </svg>
-            </button>
-            <ul x-show="openTrans" @click.away="<?= url_is('transactions/income*') || url_is('transactions/expense*') ? '' : 'openTrans = false' ?>" class="pl-4 py-1 space-y-1 static left-0 w-full z-20 mb-2">
-                <li>
-                    <a href="/transactions/income"
-                        class="block py-2 px-3 rounded transition font-normal <?= url_is('transactions/income*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-                        Pemasukan
-                    </a>
-                </li>
-                <li>
-                    <a href="/transactions/expense"
-                        class="block py-2 px-3 rounded transition font-normal <?= url_is('transactions/expense*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-                        Pengeluaran
-                    </a>
-                </li>
-            </ul>
-        </li>
         <li x-data="{ open: <?= url_is('categories/income*') || url_is('categories/expense*') ? 'true' : 'false' ?> }" class="relative">
             <button
                 @click="!('<?= url_is('categories/income*') || url_is('categories/expense*') ? 'true' : 'false' ?>' === 'true') ? (open = !open) : null"
@@ -67,6 +40,33 @@
                 <li>
                     <a href="/categories/expense"
                         class="block py-2 px-3 rounded transition font-normal <?= url_is('categories/expense*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Pengeluaran
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li x-data="{ openTrans: <?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'true' : 'false' ?> }" class="relative">
+            <button
+                @click="!('<?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'true' : 'false' ?>' === 'true') ? (openTrans = !openTrans) : null"
+                :disabled="<?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'true' : 'false' ?>"
+                type="button"
+                class="flex items-center gap-2 w-full py-2 px-3 rounded transition font-semibold <?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'hover:bg-highlight text-dark hover:text-main' : (url_is('transactions*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main') ?> <?= url_is('transactions/income*') || url_is('transactions/expense*') ? 'cursor-default' : '' ?>">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 10l4-4m0 0l-4-4m4 4H7"/><path stroke-linecap="round" stroke-linejoin="round" d="M7 14l-4 4m0 0l4 4m-4-4h14"/></svg>
+                Transaksi
+                <svg class="w-4 h-4 ml-auto transition-transform" :class="{'rotate-180': openTrans}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <ul x-show="openTrans" @click.away="<?= url_is('transactions/income*') || url_is('transactions/expense*') ? '' : 'openTrans = false' ?>" class="pl-4 py-1 space-y-1 static left-0 w-full z-20 mb-2">
+                <li>
+                    <a href="/transactions/income"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('transactions/income*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Pemasukan
+                    </a>
+                </li>
+                <li>
+                    <a href="/transactions/expense"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('transactions/expense*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
                         Pengeluaran
                     </a>
                 </li>
