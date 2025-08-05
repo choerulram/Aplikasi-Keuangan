@@ -174,7 +174,14 @@ class BudgetsController extends BaseController
     {
         $userId = session('user_id');
         $isAdmin = session('role') === 'admin';
-        $budgets = $this->budgetModel->getBudgetsByUser($userId, $isAdmin);
+        
+        // Konfigurasi pagination
+        $perPage = 10; // Jumlah item per halaman
+        $group = 'budgets';
+        
+        // Ambil data dengan pagination
+        $budgets = $this->budgetModel->getBudgetsByUser($userId, $isAdmin, $perPage, $group);
+        $total_budgets = $this->budgetModel->getTotalBudgets($userId, $isAdmin);
 
         $categories = $isAdmin 
             ? $this->categoryModel->findAll() 
@@ -185,7 +192,10 @@ class BudgetsController extends BaseController
             'budgets' => $budgets,
             'categories' => $categories,
             'budgetModel' => $this->budgetModel,
-            'isAdmin' => $isAdmin
+            'isAdmin' => $isAdmin,
+            'pager' => $this->budgetModel->pager,
+            'perPage' => $perPage,
+            'total_budgets' => $total_budgets
         ];
 
         return view('Budgets/index', $data);

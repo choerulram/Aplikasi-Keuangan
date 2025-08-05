@@ -16,29 +16,47 @@ class BudgetModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
-    public function getBudgetsByUser($userId, $isAdmin = false)
+    public function getBudgetsByUser($userId, $isAdmin = false, $perPage = null, $group = 'budgets')
     {
         try {
-            $builder = $this->db->table('budgets')
-                ->select('budgets.id, budgets.user_id, budgets.category_id, budgets.jumlah_anggaran, 
-                         budgets.periode, budgets.created_at, budgets.updated_at,
-                         categories.nama_kategori, categories.tipe, 
-                         users.username')
-                ->join('categories', 'categories.id = budgets.category_id', 'left')
-                ->join('users', 'users.id = budgets.user_id', 'left');
+            $select = 'budgets.*, categories.nama_kategori, categories.tipe, users.username';
+            $this->select($select);
+            $this->join('categories', 'categories.id = budgets.category_id', 'left');
+            $this->join('users', 'users.id = budgets.user_id', 'left');
 
             // Jika bukan admin, hanya tampilkan data user tersebut
             if (!$isAdmin) {
-                $builder->where('budgets.user_id', $userId);
+                $this->where('budgets.user_id', $userId);
             }
-            // Jika admin, tampilkan semua data (tidak perlu filter user_id)
 
-            $builder->orderBy('budgets.periode', 'DESC');
-            return $builder->get()->getResultArray();
+            $this->orderBy('budgets.periode', 'DESC');
+            
+            // Jika perPage diset, gunakan pagination
+            if ($perPage !== null) {
+                return $this->paginate($perPage, $group);
+            }
+            
+            return $this->findAll();
 
         } catch (\Exception $e) {
             log_message('error', 'Error in getBudgetsByUser: ' . $e->getMessage());
             return [];
+        }
+    }
+
+    public function getTotalBudgets($userId, $isAdmin = false)
+    {
+        try {
+            $builder = $this->db->table('budgets');
+            
+            if (!$isAdmin) {
+                $builder->where('user_id', $userId);
+            }
+            
+            return $builder->countAllResults();
+        } catch (\Exception $e) {
+            log_message('error', 'Error in getTotalBudgets: ' . $e->getMessage());
+            return 0;
         }
     }
 
