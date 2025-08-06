@@ -260,4 +260,93 @@ class BudgetsController extends BaseController
 
         return view('Budgets/expense', $data);
     }
+
+    public function delete($id = null)
+    {
+        if (!$this->request->isAJAX()) {
+            return redirect()->back();
+        }
+
+        // Validasi session
+        if (!session('user_id')) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Sesi Anda telah berakhir. Silakan login kembali.'
+            ]);
+        }
+
+        $userId = session('user_id');
+        $isAdmin = session('role') === 'admin';
+
+        // Cek apakah data yang akan dihapus ada
+        $budget = $this->budgetModel->find($id);
+        if (!$budget) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Data anggaran tidak ditemukan.'
+            ]);
+        }
+
+        // Dapatkan tipe kategori untuk pesan
+        $category = $this->categoryModel->find($budget['category_id']);
+        $tipeBudget = $category['tipe'] === 'income' ? 'Target Pendapatan' : 'Batas Pengeluaran';
+
+        // Cek kepemilikan data kecuali untuk admin
+        if (!$isAdmin && $budget['user_id'] != $userId) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Anda tidak memiliki akses untuk menghapus data ini.'
+            ]);
+        }
+
+        try {
+            // Hapus data anggaran
+            if ($this->budgetModel->delete($id)) {
+                session()->setFlashdata('success', $tipeBudget . ' berhasil dihapus.');
+                return $this->response->setJSON([
+                    'status' => true,
+                    'message' => $tipeBudget . ' berhasil dihapus.',
+                    'redirect' => $category['tipe'] === 'income' ? '/budgets/income' : '/budgets/expense'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'status' => false,
+                    'message' => 'Gagal menghapus ' . strtolower($tipeBudget) . '.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Error deleting budget: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data anggaran.'
+            ]);
+        }
+        if (!$isAdmin && $budget['user_id'] != $userId) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Anda tidak memiliki akses untuk menghapus data ini.'
+            ]);
+        }
+
+        try {
+            // Hapus data anggaran
+            if ($this->budgetModel->delete($id)) {
+                return $this->response->setJSON([
+                    'status' => true,
+                    'message' => $tipeBudget . ' berhasil dihapus.'
+                ]);
+            } else {
+                return $this->response->setJSON([
+                    'status' => false,
+                    'message' => 'Gagal menghapus ' . strtolower($tipeBudget) . '.'
+                ]);
+            }
+        } catch (\Exception $e) {
+            log_message('error', 'Error deleting budget: ' . $e->getMessage());
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data anggaran.'
+            ]);
+        }
+    }
 }

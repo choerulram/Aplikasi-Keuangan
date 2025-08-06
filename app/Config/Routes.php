@@ -34,6 +34,7 @@ $routes->get('budgets/income', 'BudgetsController::income');
 $routes->get('budgets/expense', 'BudgetsController::expense');
 $routes->post('budgets/add', 'BudgetsController::add');
 $routes->post('budgets/edit', 'BudgetsController::edit');
+$routes->match(['POST', 'DELETE'], 'budgets/delete/(:num)', 'BudgetsController::delete/$1');
 
 // =======================
 // Transactions Routes
