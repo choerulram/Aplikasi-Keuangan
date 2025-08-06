@@ -30,7 +30,8 @@ $routes->match(['POST', 'DELETE'], 'categories/expense/delete/(:num)', 'Categori
 // =======================
 // Budgets Routes
 // =======================
-$routes->get('budgets', 'BudgetsController::index');
+$routes->get('budgets/income', 'BudgetsController::income');
+$routes->get('budgets/expense', 'BudgetsController::expense');
 $routes->post('budgets/add', 'BudgetsController::add');
 $routes->post('budgets/edit', 'BudgetsController::edit');
 

@@ -170,25 +170,26 @@ class BudgetsController extends BaseController
         }
     }
 
-    public function index()
+    public function income()
     {
         $userId = session('user_id');
         $isAdmin = session('role') === 'admin';
         
         // Konfigurasi pagination
-        $perPage = 10; // Jumlah item per halaman
-        $group = 'budgets';
+        $perPage = 10;
+        $group = 'budgets_income';
         
-        // Ambil data dengan pagination
-        $budgets = $this->budgetModel->getBudgetsByUser($userId, $isAdmin, $perPage, $group);
-        $total_budgets = $this->budgetModel->getTotalBudgets($userId, $isAdmin);
+        // Ambil data anggaran pendapatan
+        $budgets = $this->budgetModel->getBudgetsByType($userId, 'income', $isAdmin, $perPage, $group);
+        $total_budgets = $this->budgetModel->getTotalBudgetsByType($userId, 'income', $isAdmin);
 
+        // Ambil kategori pendapatan saja
         $categories = $isAdmin 
-            ? $this->categoryModel->findAll() 
-            : $this->categoryModel->where('user_id', $userId)->findAll();
+            ? $this->categoryModel->where('tipe', 'income')->findAll()
+            : $this->categoryModel->where(['user_id' => $userId, 'tipe' => 'income'])->findAll();
 
         $data = [
-            'title' => 'Aplikasi Keuangan | Anggaran',
+            'title' => 'Aplikasi Keuangan | Perencanaan Pendapatan',
             'budgets' => $budgets,
             'categories' => $categories,
             'budgetModel' => $this->budgetModel,
@@ -198,6 +199,38 @@ class BudgetsController extends BaseController
             'total_budgets' => $total_budgets
         ];
 
-        return view('Budgets/index', $data);
+        return view('Budgets/income', $data);
+    }
+
+    public function expense()
+    {
+        $userId = session('user_id');
+        $isAdmin = session('role') === 'admin';
+        
+        // Konfigurasi pagination
+        $perPage = 10;
+        $group = 'budgets_expense';
+        
+        // Ambil data anggaran pengeluaran
+        $budgets = $this->budgetModel->getBudgetsByType($userId, 'expense', $isAdmin, $perPage, $group);
+        $total_budgets = $this->budgetModel->getTotalBudgetsByType($userId, 'expense', $isAdmin);
+
+        // Ambil kategori pengeluaran saja
+        $categories = $isAdmin 
+            ? $this->categoryModel->where('tipe', 'expense')->findAll()
+            : $this->categoryModel->where(['user_id' => $userId, 'tipe' => 'expense'])->findAll();
+
+        $data = [
+            'title' => 'Aplikasi Keuangan | Pelacakan Pengeluaran',
+            'budgets' => $budgets,
+            'categories' => $categories,
+            'budgetModel' => $this->budgetModel,
+            'isAdmin' => $isAdmin,
+            'pager' => $this->budgetModel->pager,
+            'perPage' => $perPage,
+            'total_budgets' => $total_budgets
+        ];
+
+        return view('Budgets/expense', $data);
     }
 }
