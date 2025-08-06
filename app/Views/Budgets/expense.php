@@ -24,7 +24,7 @@
             Tambah
         </button>
     </div>
-    <?= view('Budgets/modal_add_budget', ['categories' => $categories]) ?>
+    <?= view('Budgets/modal_add_expense_budget', ['categories' => $categories]) ?>
     <?= view('Budgets/modal_edit_budget', ['categories' => $categories]) ?>
     <?= view('Budgets/modal_detail_budget', ['isAdmin' => $isAdmin]) ?>
 
