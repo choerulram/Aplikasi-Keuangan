@@ -26,6 +26,7 @@
     </div>
     <?= view('Budgets/modal_add_budget', ['categories' => $categories]) ?>
     <?= view('Budgets/modal_edit_budget', ['categories' => $categories]) ?>
+    <?= view('Budgets/modal_detail_budget', ['isAdmin' => $isAdmin]) ?>
 
     <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
         <table class="min-w-full border border-gray-300">
@@ -100,7 +101,16 @@
                             <button type="button"
                                 class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
                                 title="Detail"
-                                onclick='toggleDetailIncomeTransactionModal(true, <?= json_encode($budget, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
+                                onclick='toggleDetailBudgetModal(true, {
+                                    "id": <?= $budget["id"] ?>,
+                                    "nama_kategori": "<?= $budget["nama_kategori"] ?>",
+                                    "periode": "<?= $budget["periode"] ?>",
+                                    "jumlah_anggaran": <?= $budget["jumlah_anggaran"] ?>,
+                                    "current_usage": <?= $usage ?>,
+                                    "username": "<?= $budget["username"] ?? "" ?>",
+                                    "created_at": "<?= $budget["created_at"] ?>",
+                                    "updated_at": "<?= $budget["updated_at"] ?>"
+                                })'>
                                 <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M1.5 12s3.5-7 10.5-7 10.5 7 10.5 7-3.5 7-10.5 7S1.5 12 1.5 12z"/>
                                   <circle cx="12" cy="12" r="3"/>
