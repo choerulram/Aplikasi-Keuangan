@@ -44,9 +44,12 @@ class BudgetsController extends BaseController
         // Cek apakah data yang akan diedit ada
         $existingBudget = $this->budgetModel->find($id);
         if (!$existingBudget) {
+            // Dapatkan tipe kategori dari budget yang ada
+            $category = $this->categoryModel->find($existingBudget['category_id']);
+            $tipeBudget = $category['tipe'] === 'income' ? 'Target Pendapatan' : 'Batas Pengeluaran';
             return $this->response->setJSON([
                 'status' => false,
-                'message' => 'Data anggaran tidak ditemukan!'
+                'message' => 'Data ' . strtolower($tipeBudget) . ' tidak ditemukan!'
             ]);
         }
 
@@ -59,6 +62,15 @@ class BudgetsController extends BaseController
             ]);
         }
 
+        // Dapatkan tipe kategori (income/expense)
+        $category = $this->categoryModel->find($categoryId);
+        if (!$category) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Kategori tidak ditemukan!'
+            ]);
+        }
+
         // Cek duplikasi kategori dan periode (kecuali untuk data yang sedang diedit)
         $duplicateBudget = $this->budgetModel->where([
             'user_id' => $userId,
@@ -67,9 +79,10 @@ class BudgetsController extends BaseController
         ])->where('id !=', $id)->first();
 
         if ($duplicateBudget) {
+            $tipeBudget = $category['tipe'] === 'income' ? 'Target Pendapatan' : 'Batas Pengeluaran';
             return $this->response->setJSON([
                 'status' => false,
-                'message' => 'Anggaran untuk kategori ini pada periode yang sama sudah ada!'
+                'message' => $tipeBudget . ' untuk kategori ini pada periode yang sama sudah ada!'
             ]);
         }
 
@@ -83,14 +96,16 @@ class BudgetsController extends BaseController
         try {
             $result = $this->budgetModel->update($id, $data);
             if ($result) {
+                $tipeBudget = $category['tipe'] === 'income' ? 'Target Pendapatan' : 'Batas Pengeluaran';
                 return $this->response->setJSON([
                     'status' => true,
-                    'message' => 'Anggaran berhasil diperbarui!'
+                    'message' => $tipeBudget . ' berhasil diperbarui!'
                 ]);
             } else {
+                $tipeBudget = $category['tipe'] === 'income' ? 'Target Pendapatan' : 'Batas Pengeluaran';
                 return $this->response->setJSON([
                     'status' => false,
-                    'message' => 'Gagal memperbarui anggaran!'
+                    'message' => 'Gagal memperbarui ' . strtolower($tipeBudget) . '!'
                 ]);
             }
         } catch (\Exception $e) {
@@ -128,6 +143,15 @@ class BudgetsController extends BaseController
             ]);
         }
 
+        // Dapatkan tipe kategori (income/expense)
+        $category = $this->categoryModel->find($categoryId);
+        if (!$category) {
+            return $this->response->setJSON([
+                'status' => false,
+                'message' => 'Kategori tidak ditemukan!'
+            ]);
+        }
+
         // Cek apakah sudah ada anggaran untuk kategori dan periode yang sama
         $existingBudget = $this->budgetModel->where([
             'user_id' => $userId,
@@ -136,9 +160,10 @@ class BudgetsController extends BaseController
         ])->first();
 
         if ($existingBudget) {
+            $tipeBudget = $category['tipe'] === 'income' ? 'Target Pendapatan' : 'Batas Pengeluaran';
             return $this->response->setJSON([
                 'status' => false,
-                'message' => 'Anggaran untuk kategori ini pada periode yang sama sudah ada!'
+                'message' => $tipeBudget . ' untuk kategori ini pada periode yang sama sudah ada!'
             ]);
         }
 
@@ -152,14 +177,16 @@ class BudgetsController extends BaseController
 
         try {
             if ($this->budgetModel->insert($data)) {
+                $tipeBudget = $category['tipe'] === 'income' ? 'Target Pendapatan' : 'Batas Pengeluaran';
                 return $this->response->setJSON([
                     'status' => true,
-                    'message' => 'Anggaran berhasil ditambahkan!'
+                    'message' => $tipeBudget . ' berhasil ditambahkan!'
                 ]);
             } else {
+                $tipeBudget = $category['tipe'] === 'income' ? 'Target Pendapatan' : 'Batas Pengeluaran';
                 return $this->response->setJSON([
                     'status' => false,
-                    'message' => 'Gagal menambahkan anggaran!'
+                    'message' => 'Gagal menambahkan ' . strtolower($tipeBudget) . '!'
                 ]);
             }
         } catch (\Exception $e) {

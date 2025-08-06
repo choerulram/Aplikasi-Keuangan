@@ -25,7 +25,7 @@
         </button>
     </div>
     <?= view('Budgets/modal_add_income_budget', ['categories' => $categories]) ?>
-    <?= view('Budgets/modal_edit_budget', ['categories' => $categories]) ?>
+    <?= view('Budgets/modal_edit_income_budget', ['categories' => $categories]) ?>
     <?= view('Budgets/modal_detail_budget', ['isAdmin' => $isAdmin]) ?>
 
     <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
@@ -109,7 +109,7 @@
                                 <button type="button"
                                     class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600"
                                     title="Ubah"
-                                    onclick='toggleEditBudgetModal(true, <?= json_encode($budget, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
+                                    onclick='toggleEditIncomeBudgetModal(true, <?= json_encode($budget, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
                                     <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                     </svg>
