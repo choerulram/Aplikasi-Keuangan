@@ -825,6 +825,10 @@ video {
   height: 100%;
 }
 
+.h-2\.5 {
+  height: 0.625rem;
+}
+
 .min-h-\[120px\] {
   min-height: 120px;
 }
@@ -1504,6 +1508,10 @@ video {
 
 .pt-2 {
   padding-top: 0.5rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
 }
 
 .text-left {

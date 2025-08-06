@@ -26,7 +26,7 @@
     </div>
     <?= view('Budgets/modal_add_expense_budget', ['categories' => $categories]) ?>
     <?= view('Budgets/modal_edit_expense_budget', ['categories' => $categories]) ?>
-    <?= view('Budgets/modal_detail_budget', ['isAdmin' => $isAdmin]) ?>
+    <?= view('Budgets/modal_detail_expense_budget', ['isAdmin' => $isAdmin]) ?>
 
     <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white">
         <table class="min-w-full border border-gray-300">
@@ -90,7 +90,7 @@
                                 <button type="button"
                                     class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
                                     title="Detail"
-                                    onclick='toggleDetailBudgetModal(true, {
+                                    onclick='toggleDetailExpenseBudgetModal(true, {
                                         "id": <?= $budget["id"] ?>,
                                         "nama_kategori": "<?= esc($budget["nama_kategori"]) ?>",
                                         "periode": "<?= $budget["periode"] ?>",
