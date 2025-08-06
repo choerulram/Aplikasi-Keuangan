@@ -63,11 +63,22 @@ class BudgetModel extends Model
     public function getCurrentUsage($categoryId, $periode)
     {
         try {
+            // Dapatkan tipe kategori (income/expense)
+            $category = $this->db->table('categories')
+                ->select('tipe')
+                ->where('id', $categoryId)
+                ->get()
+                ->getRow();
+
+            if (!$category) {
+                return 0.0;
+            }
+
             $builder = $this->db->table('transactions');
             $result = $builder->select('COALESCE(SUM(jumlah), 0) as total')
                 ->where([
                     'category_id' => $categoryId,
-                    'tipe' => 'expense'
+                    'tipe' => $category->tipe
                 ])
                 ->where("DATE_FORMAT(tanggal, '%Y-%m')", $periode)
                 ->get()
