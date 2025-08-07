@@ -16,7 +16,7 @@ class BudgetModel extends Model
     protected $createdField  = 'created_at';
     protected $updatedField  = 'updated_at';
 
-    public function getBudgetsByType($userId, $type, $isAdmin = false, $perPage = null, $group = 'budgets')
+    public function getBudgetsByType($userId, $type, $isAdmin = false, $perPage = null, $group = 'budgets', $filters = [])
     {
         try {
             $select = 'budgets.*, categories.nama_kategori, categories.tipe, users.username';
@@ -30,6 +30,19 @@ class BudgetModel extends Model
             // Jika bukan admin, hanya tampilkan data user tersebut
             if (!$isAdmin) {
                 $this->where('budgets.user_id', $userId);
+            }
+
+            // Apply filters
+            if (!empty($filters['search'])) {
+                $this->like('categories.nama_kategori', $filters['search']);
+            }
+            
+            if (!empty($filters['category_id'])) {
+                $this->where('budgets.category_id', $filters['category_id']);
+            }
+            
+            if (!empty($filters['periode'])) {
+                $this->where('budgets.periode', $filters['periode']);
             }
 
             $this->orderBy('budgets.periode', 'DESC');
@@ -47,7 +60,7 @@ class BudgetModel extends Model
         }
     }
 
-    public function getTotalBudgetsByType($userId, $type, $isAdmin = false)
+    public function getTotalBudgetsByType($userId, $type, $isAdmin = false, $filters = [])
     {
         try {
             $builder = $this->db->table('budgets')
@@ -56,6 +69,19 @@ class BudgetModel extends Model
             
             if (!$isAdmin) {
                 $builder->where('budgets.user_id', $userId);
+            }
+
+            // Apply filters
+            if (!empty($filters['search'])) {
+                $builder->like('categories.nama_kategori', $filters['search']);
+            }
+            
+            if (!empty($filters['category_id'])) {
+                $builder->where('budgets.category_id', $filters['category_id']);
+            }
+            
+            if (!empty($filters['periode'])) {
+                $builder->where('budgets.periode', $filters['periode']);
             }
             
             return $builder->countAllResults();

@@ -205,10 +205,35 @@ class BudgetsController extends BaseController
         // Konfigurasi pagination
         $perPage = 10;
         $group = 'budgets_income';
+
+        // Get filter parameters
+        $search = $this->request->getGet('search');
+        $categoryId = $this->request->getGet('category');
+        $periode = $this->request->getGet('periode');
         
-        // Ambil data anggaran pendapatan
-        $budgets = $this->budgetModel->getBudgetsByType($userId, 'income', $isAdmin, $perPage, $group);
-        $total_budgets = $this->budgetModel->getTotalBudgetsByType($userId, 'income', $isAdmin);
+        // Ambil data anggaran pendapatan dengan filter
+        $budgets = $this->budgetModel->getBudgetsByType(
+            $userId, 
+            'income', 
+            $isAdmin, 
+            $perPage, 
+            $group,
+            [
+                'search' => $search,
+                'category_id' => $categoryId,
+                'periode' => $periode
+            ]
+        );
+        $total_budgets = $this->budgetModel->getTotalBudgetsByType(
+            $userId, 
+            'income', 
+            $isAdmin,
+            [
+                'search' => $search,
+                'category_id' => $categoryId,
+                'periode' => $periode
+            ]
+        );
 
         // Ambil kategori pendapatan saja
         $categories = $isAdmin 
@@ -223,7 +248,10 @@ class BudgetsController extends BaseController
             'isAdmin' => $isAdmin,
             'pager' => $this->budgetModel->pager,
             'perPage' => $perPage,
-            'total_budgets' => $total_budgets
+            'total_budgets' => $total_budgets,
+            'search' => $search,
+            'category' => $categoryId,
+            'periode' => $periode
         ];
 
         return view('Budgets/income', $data);
@@ -237,10 +265,35 @@ class BudgetsController extends BaseController
         // Konfigurasi pagination
         $perPage = 10;
         $group = 'budgets_expense';
+
+        // Get filter parameters
+        $search = $this->request->getGet('search');
+        $categoryId = $this->request->getGet('category');
+        $periode = $this->request->getGet('periode');
         
-        // Ambil data anggaran pengeluaran
-        $budgets = $this->budgetModel->getBudgetsByType($userId, 'expense', $isAdmin, $perPage, $group);
-        $total_budgets = $this->budgetModel->getTotalBudgetsByType($userId, 'expense', $isAdmin);
+        // Ambil data anggaran pengeluaran dengan filter
+        $budgets = $this->budgetModel->getBudgetsByType(
+            $userId, 
+            'expense', 
+            $isAdmin, 
+            $perPage, 
+            $group,
+            [
+                'search' => $search,
+                'category_id' => $categoryId,
+                'periode' => $periode
+            ]
+        );
+        $total_budgets = $this->budgetModel->getTotalBudgetsByType(
+            $userId, 
+            'expense', 
+            $isAdmin,
+            [
+                'search' => $search,
+                'category_id' => $categoryId,
+                'periode' => $periode
+            ]
+        );
 
         // Ambil kategori pengeluaran saja
         $categories = $isAdmin 
@@ -255,7 +308,10 @@ class BudgetsController extends BaseController
             'isAdmin' => $isAdmin,
             'pager' => $this->budgetModel->pager,
             'perPage' => $perPage,
-            'total_budgets' => $total_budgets
+            'total_budgets' => $total_budgets,
+            'search' => $search,
+            'category' => $categoryId,
+            'periode' => $periode
         ];
 
         return view('Budgets/expense', $data);

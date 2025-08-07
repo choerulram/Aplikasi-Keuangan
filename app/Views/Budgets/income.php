@@ -19,6 +19,22 @@
     <?php endif; ?>
 
     <div class="flex flex-wrap items-end gap-2 mb-6">
+        <form method="get" action="" class="flex flex-wrap gap-2 items-end flex-1">
+            <div>
+                <label for="search" class="block text-xs font-semibold text-gray-600 mb-1">Cari Kategori</label>
+                <input type="text" name="search" id="search" value="<?= esc($search ?? '') ?>" placeholder="Cari kategori..." class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-64 md:w-80" />
+            </div>
+            <div>
+                <label for="periode" class="block text-xs font-semibold text-gray-600 mb-1">Periode</label>
+                <input type="month" name="periode" id="periode" value="<?= esc($periode ?? '') ?>" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" />
+            </div>
+            <div class="flex gap-2 items-end">
+                <button type="submit" class="px-4 py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition">Terapkan</button>
+                <?php if (!empty($search) || !empty($category) || !empty($periode)): ?>
+                    <a href="/budgets/income" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">Reset</a>
+                <?php endif; ?>
+            </div>
+        </form>
         <button id="btnAddBudget" type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-main text-white rounded-lg shadow hover:bg-highlight transition h-11">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
             Tambah
