@@ -4,7 +4,7 @@ namespace App\Controllers;
 
 use App\Controllers\BaseController;
 
-use App\Models\TransactionReportModel;
+use App\Models\ReportModel;
 use App\Models\AccountModel;
 use App\Models\CategoryModel;
 
@@ -14,7 +14,7 @@ class ReportsController extends BaseController
     {
         $accountModel = new AccountModel();
         $categoryModel = new CategoryModel();
-        $reportModel = new TransactionReportModel();
+        $reportModel = new ReportModel();
 
         // Ambil filter dari request dan pastikan semua field tersedia
         $filters = [
@@ -101,9 +101,65 @@ class ReportsController extends BaseController
         ]);
     }
 
+    public function cashflow()
+    {
+        $reportModel = new ReportModel();
+        $accountModel = new AccountModel();
+        $categoryModel = new CategoryModel();
+
+        // Ambil filter dari request
+        $filters = [
+            'start_date' => $this->request->getGet('start_date'),
+            'end_date' => $this->request->getGet('end_date'),
+            'period' => $this->request->getGet('period') ?? 'this_month'
+        ];
+
+        // Set default filter berdasarkan period yang dipilih
+        if ($filters['period'] === 'this_month') {
+            $filters['start_date'] = date('Y-m-01'); // Awal bulan ini
+            $filters['end_date'] = date('Y-m-t'); // Akhir bulan ini
+        } elseif ($filters['period'] === 'last_month') {
+            $filters['start_date'] = date('Y-m-01', strtotime('last month'));
+            $filters['end_date'] = date('Y-m-t', strtotime('last month'));
+        } elseif ($filters['period'] === 'this_year') {
+            $filters['start_date'] = date('Y-01-01');
+            $filters['end_date'] = date('Y-12-31');
+        } elseif ($filters['period'] === 'last_year') {
+            $filters['start_date'] = date('Y-01-01', strtotime('-1 year'));
+            $filters['end_date'] = date('Y-12-31', strtotime('-1 year'));
+        }
+
+        // Ambil data
+        $summary = $reportModel->getSummary($filters);
+        
+        // Set up pagination
+        $perPage = 10;
+        $currentPage = (int)($this->request->getGet('page') ?? 1);
+        $total = $reportModel->getTotal($filters);
+        
+        $pager = service('pager');
+        $pager->setPath('reports/cashflow');
+        $pager->store('default', $currentPage, $perPage, $total);
+        
+        // Ambil transaksi dengan pagination
+        $transactions = $reportModel->getReport($filters, $perPage, ($currentPage - 1) * $perPage);
+
+        // Data untuk view
+        $data = [
+            'summary' => $summary,
+            'transactions' => $transactions,
+            'pager' => $pager,
+            'filters' => $filters,
+            'accounts' => $accountModel->findAll(),
+            'categories' => $categoryModel->findAll()
+        ];
+
+        return view('Reports/cashflow', $data);
+    }
+
     public function exportPdf()
     {
-        $reportModel = new TransactionReportModel();
+        $reportModel = new ReportModel();
         $accountModel = new AccountModel();
         $categoryModel = new CategoryModel();
 
@@ -177,7 +233,7 @@ class ReportsController extends BaseController
 
     public function exportExcel()
     {
-        $reportModel = new TransactionReportModel();
+        $reportModel = new ReportModel();
         $accountModel = new AccountModel();
         $categoryModel = new CategoryModel();
 

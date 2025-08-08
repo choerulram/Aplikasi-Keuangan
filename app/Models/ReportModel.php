@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class TransactionReportModel extends Model
+class ReportModel extends Model
 {
     protected $table = 'transactions';
     protected $allowedFields = [

@@ -52,6 +52,7 @@ $routes->match(['POST', 'DELETE'], 'transactions/expense/delete/(:num)', 'Transa
 // Reports Routes
 // =======================
 $routes->get('reports', 'ReportsController::index');
+$routes->get('reports/cashflow', 'ReportsController::cashflow');
 $routes->post('reports/export/pdf', 'ReportsController::exportPdf');
 $routes->post('reports/export/excel', 'ReportsController::exportExcel');
 
