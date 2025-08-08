@@ -101,15 +101,56 @@
                 </li>
             </ul>
         </li>
-        <li><a href="/reports" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('reports*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <rect x="3.5" y="5" width="5" height="14" rx="1"/>
-                <rect x="10" y="9" width="5" height="10" rx="1"/>
-                <rect x="16.5" y="12" width="5" height="6" rx="1"/>
-                <rect x="3" y="18.5" width="18.5" height="0.5" rx="1"/>
-            </svg>
-            Laporan
-        </a></li>
+        <li x-data="{ openReport: <?= url_is('reports/cashflow*') || url_is('reports/budget*') || url_is('reports/category*') || url_is('reports/account*') || url_is('reports/trend*') ? 'true' : 'false' ?> }" class="relative">
+            <button
+                @click="!('<?= url_is('reports/cashflow*') || url_is('reports/budget*') || url_is('reports/category*') || url_is('reports/account*') || url_is('reports/trend*') ? 'true' : 'false' ?>' === 'true') ? (openReport = !openReport) : null"
+                :disabled="<?= url_is('reports/cashflow*') || url_is('reports/budget*') || url_is('reports/category*') || url_is('reports/account*') || url_is('reports/trend*') ? 'true' : 'false' ?>"
+                type="button"
+                class="flex items-start gap-2 w-full py-2 px-3 rounded transition font-semibold text-left <?= url_is('reports/cashflow*') || url_is('reports/budget*') || url_is('reports/category*') || url_is('reports/account*') || url_is('reports/trend*') ? 'hover:bg-highlight text-dark hover:text-main' : (url_is('reports*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main') ?> <?= url_is('reports/cashflow*') || url_is('reports/budget*') || url_is('reports/category*') || url_is('reports/account*') || url_is('reports/trend*') ? 'cursor-default' : '' ?>">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="3.5" y="5" width="5" height="14" rx="1"/>
+                    <rect x="10" y="9" width="5" height="10" rx="1"/>
+                    <rect x="16.5" y="12" width="5" height="6" rx="1"/>
+                    <rect x="3" y="18.5" width="18.5" height="0.5" rx="1"/>
+                </svg>
+                <span class="flex-grow text-left">Laporan</span>
+                <svg class="w-4 h-4 ml-auto transition-transform" :class="{'rotate-180': openReport}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <ul x-show="openReport" @click.away="<?= url_is('reports/cashflow*') || url_is('reports/budget*') || url_is('reports/category*') || url_is('reports/account*') || url_is('reports/trend*') ? '' : 'openReport = false' ?>" class="pl-4 py-1 space-y-1 static left-0 w-full z-20 mb-2">
+                <li>
+                    <a href="/reports/cashflow"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('reports/cashflow*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Arus Kas
+                    </a>
+                </li>
+                <li>
+                    <a href="/reports/budget"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('reports/budget*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Budget vs Aktual
+                    </a>
+                </li>
+                <li>
+                    <a href="/reports/category"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('reports/category*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Laporan per Kategori
+                    </a>
+                </li>
+                <li>
+                    <a href="/reports/account"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('reports/account*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Saldo per Akun
+                    </a>
+                </li>
+                <li>
+                    <a href="/reports/trend"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('reports/trend*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Tren Bulanan
+                    </a>
+                </li>
+            </ul>
+        </li>
         <?php if (session('role') === 'admin'): ?>
         <li><a href="/users" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('users*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
