@@ -11,35 +11,41 @@
         <div class="flex gap-4">
             <!-- Period Filter -->
             <div class="relative">
-                <select id="period" name="period" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2.5 focus:ring-main focus:border-main block w-48">
-                    <option value="this_month">Bulan Ini</option>
-                    <option value="last_month">Bulan Lalu</option>
-                    <option value="this_year">Tahun Ini</option>
-                    <option value="last_year">Tahun Lalu</option>
-                    <option value="custom">Kustom...</option>
-                </select>
+                <form id="filterForm" action="" method="get">
+                    <select id="period" name="period" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2.5 focus:ring-main focus:border-main block w-48" onchange="this.form.submit()">
+                        <option value="this_month" <?= ($period ?? '') === 'this_month' ? 'selected' : '' ?>>Bulan Ini</option>
+                        <option value="last_month" <?= ($period ?? '') === 'last_month' ? 'selected' : '' ?>>Bulan Lalu</option>
+                        <option value="this_year" <?= ($period ?? '') === 'this_year' ? 'selected' : '' ?>>Tahun Ini</option>
+                        <option value="last_year" <?= ($period ?? '') === 'last_year' ? 'selected' : '' ?>>Tahun Lalu</option>
+                        <option value="custom" <?= ($period ?? '') === 'custom' ? 'selected' : '' ?>>Pilih Tanggal</option>
+                    </select>
+                </form>
             </div>
 
-            <!-- Custom Date Range (initially hidden) -->
-            <div id="dateRange" class="hidden flex gap-2 items-center">
-                <input type="date" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 focus:ring-main focus:border-main">
+            <!-- Custom Date Range -->
+            <div id="dateRange" class="<?= ($period ?? '') === 'custom' ? 'flex' : 'hidden' ?> gap-2 items-center">
+                <input type="date" name="start_date" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 focus:ring-main focus:border-main" form="filterForm" value="<?= $filters['start_date'] ?? '' ?>">
                 <span class="text-gray-500">sampai</span>
-                <input type="date" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 focus:ring-main focus:border-main">
+                <input type="date" name="end_date" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 focus:ring-main focus:border-main" form="filterForm" value="<?= $filters['end_date'] ?? '' ?>">
             </div>
 
             <!-- Export Buttons -->
-            <button class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
-                Excel
-            </button>
-            <button class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                </svg>
-                PDF
-            </button>
+            <form action="<?= base_url('reports/export-excel') ?>" method="post" class="inline">
+                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    Excel
+                </button>
+            </form>
+            <form action="<?= base_url('reports/export-pdf') ?>" method="post" class="inline">
+                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    </svg>
+                    PDF
+                </button>
+            </form>
         </div>
     </div>
 
@@ -52,37 +58,36 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                 </svg>
             </div>
-            <p class="text-3xl font-bold text-green-600">Rp 15.000.000</p>
-            <p class="text-sm text-gray-500 mt-2">+20% dari bulan lalu</p>
+            <p class="text-3xl font-bold text-green-600">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></p>
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-gray-600 text-lg font-semibold">Total Pengeluaran</h3>
                 <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4m8 8V4"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
                 </svg>
             </div>
-            <p class="text-3xl font-bold text-red-600">Rp 8.000.000</p>
-            <p class="text-sm text-gray-500 mt-2">-5% dari bulan lalu</p>
+            <p class="text-3xl font-bold text-red-600">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></p>
         </div>
 
         <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="text-gray-600 text-lg font-semibold">Arus Kas Bersih</h3>
                 <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4m8 8V4"/>
                 </svg>
             </div>
-            <p class="text-3xl font-bold text-blue-600">Rp 7.000.000</p>
-            <p class="text-sm text-gray-500 mt-2">+45% dari bulan lalu</p>
+            <p class="text-3xl font-bold text-blue-600">Rp <?= number_format(($summary['total_income'] ?? 0) - ($summary['total_expense'] ?? 0), 0, ',', '.') ?></p>
         </div>
     </div>
 
     <!-- Chart -->
     <div class="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-200">
         <h3 class="text-gray-600 text-lg font-semibold mb-4">Tren Arus Kas</h3>
-        <canvas id="cashFlowChart" class="w-full" style="height: 400px;"></canvas>
+        <div style="position: relative; height: 400px; width: 100%; max-height: 400px;">
+            <canvas id="cashFlowChart"></canvas>
+        </div>
     </div>
 
     <!-- Table -->
@@ -162,26 +167,28 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Chart
+    // Initialize Chart with fixed dimensions
     const ctx = document.getElementById('cashFlowChart').getContext('2d');
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
+            labels: <?= json_encode(array_column($chartData, 'month')) ?>,
             datasets: [{
                 label: 'Pemasukan',
-                data: [12000000, 15000000, 18000000, 14000000, 16000000, 15000000, 17000000, 15000000],
+                data: <?= json_encode(array_column($chartData, 'income')) ?>,
                 borderColor: '#10B981',
                 backgroundColor: 'rgba(16, 185, 129, 0.1)',
                 tension: 0.4,
-                fill: true
+                fill: true,
+                borderWidth: 2
             }, {
                 label: 'Pengeluaran',
-                data: [8000000, 9000000, 11000000, 8500000, 10000000, 8000000, 9500000, 8000000],
+                data: <?= json_encode(array_column($chartData, 'expense')) ?>,
                 borderColor: '#EF4444',
                 backgroundColor: 'rgba(239, 68, 68, 0.1)',
                 tension: 0.4,
-                fill: true
+                fill: true,
+                borderWidth: 2
             }]
         },
         options: {
@@ -194,19 +201,61 @@ document.addEventListener('DOMContentLoaded', function() {
             plugins: {
                 legend: {
                     position: 'top',
+                    labels: {
+                        usePointStyle: true,
+                        padding: 20,
+                        font: {
+                            size: 12
+                        }
+                    }
                 },
                 title: {
                     display: false
                 }
             },
             scales: {
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    ticks: {
+                        font: {
+                            size: 11
+                        }
+                    }
+                },
                 y: {
                     beginAtZero: true,
                     ticks: {
                         callback: function(value) {
-                            return 'Rp ' + value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                        },
+                        font: {
+                            size: 11
                         }
+                    },
+                    grid: {
+                        borderDash: [2, 2],
+                        color: 'rgba(0, 0, 0, 0.1)'
                     }
+                }
+            },
+            layout: {
+                padding: {
+                    top: 20,
+                    right: 20,
+                    bottom: 20,
+                    left: 20
+                }
+            },
+            elements: {
+                point: {
+                    radius: 4,
+                    hitRadius: 10,
+                    hoverRadius: 6
+                },
+                line: {
+                    tension: 0.4
                 }
             }
         }

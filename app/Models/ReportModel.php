@@ -108,4 +108,29 @@ class ReportModel extends Model
 
         return $builder->get()->getRowArray();
     }
+
+    public function getMonthlyTotals($startDate = null, $endDate = null)
+    {
+        $query = $this->db->table($this->table)
+            ->select([
+                "DATE_FORMAT(tanggal, '%Y-%m') as month",
+                "SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END) as income",
+                "SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END) as expense"
+            ])
+            ->where('tanggal >=', $startDate)
+            ->where('tanggal <=', $endDate)
+            ->groupBy('DATE_FORMAT(tanggal, "%Y-%m")')
+            ->orderBy('month', 'ASC')
+            ->get();
+
+        $result = $query->getResultArray();
+
+        // Format the month labels
+        foreach ($result as &$row) {
+            $date = date_create_from_format('Y-m', $row['month']);
+            $row['month'] = $date->format('M Y');
+        }
+
+        return $result;
+    }
 }
