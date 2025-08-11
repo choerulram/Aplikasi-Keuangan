@@ -50,10 +50,6 @@ class DashboardController extends BaseController
             'today' => date('l, d F Y')
         ];
 
-        // Debug: Cek data budget
-        var_dump($data['budgets']);
-        
-
         return view('Dashboard/index', $data);
     }
 }
