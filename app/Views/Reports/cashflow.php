@@ -2,165 +2,152 @@
 
 <?= $this->section('content') ?>
 <div class="container px-6 mx-auto grid">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200">
-            Laporan Arus Kas
-        </h2>
-        
-        <!-- Filter Section -->
-        <div class="flex gap-4">
-            <!-- Period Filter -->
-            <div class="relative">
-                <form id="filterForm" action="" method="get">
-                    <select id="period" name="period" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2.5 focus:ring-main focus:border-main block w-48" onchange="this.form.submit()">
-                        <option value="this_month" <?= ($period ?? '') === 'this_month' ? 'selected' : '' ?>>Bulan Ini</option>
-                        <option value="last_month" <?= ($period ?? '') === 'last_month' ? 'selected' : '' ?>>Bulan Lalu</option>
-                        <option value="this_year" <?= ($period ?? '') === 'this_year' ? 'selected' : '' ?>>Tahun Ini</option>
-                        <option value="last_year" <?= ($period ?? '') === 'last_year' ? 'selected' : '' ?>>Tahun Lalu</option>
-                        <option value="custom" <?= ($period ?? '') === 'custom' ? 'selected' : '' ?>>Pilih Tanggal</option>
-                    </select>
-                </form>
+    <h1 class="text-3xl font-bold text-main mb-4">Laporan Arus Kas</h1>
+
+    <!-- Filter & Export Row -->
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+        <form id="filterForm" method="get" action="" class="flex flex-wrap gap-2 items-end flex-1">
+            <div>
+                <label for="period" class="block text-xs font-semibold text-gray-600 mb-1">Periode</label>
+                <select id="period" name="period" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" onchange="this.form.submit()">
+                    <option value="this_month" <?= ($period ?? '') === 'this_month' ? 'selected' : '' ?>>Bulan Ini</option>
+                    <option value="last_month" <?= ($period ?? '') === 'last_month' ? 'selected' : '' ?>>Bulan Lalu</option>
+                    <option value="this_year" <?= ($period ?? '') === 'this_year' ? 'selected' : '' ?>>Tahun Ini</option>
+                    <option value="last_year" <?= ($period ?? '') === 'last_year' ? 'selected' : '' ?>>Tahun Lalu</option>
+                    <option value="custom" <?= ($period ?? '') === 'custom' ? 'selected' : '' ?>>Pilih Tanggal</option>
+                </select>
             </div>
 
-            <!-- Custom Date Range -->
-            <div id="dateRange" class="<?= ($period ?? '') === 'custom' ? 'flex' : 'hidden' ?> gap-2 items-center">
-                <input type="date" name="start_date" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 focus:ring-main focus:border-main" form="filterForm" value="<?= $filters['start_date'] ?? '' ?>">
-                <span class="text-gray-500">sampai</span>
-                <input type="date" name="end_date" class="bg-white border border-gray-300 text-gray-700 rounded-lg px-4 py-2 focus:ring-main focus:border-main" form="filterForm" value="<?= $filters['end_date'] ?? '' ?>">
+            <div id="dateRange" class="<?= ($period ?? '') === 'custom' ? 'flex' : 'hidden' ?> gap-4">
+                <div>
+                    <label for="start_date" class="block text-xs font-semibold text-gray-600 mb-1">Dari Tanggal</label>
+                    <input type="date" name="start_date" id="start_date" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" value="<?= $filters['start_date'] ?? '' ?>">
+                </div>
+                <div>
+                    <label for="end_date" class="block text-xs font-semibold text-gray-600 mb-1">Sampai Tanggal</label>
+                    <input type="date" name="end_date" id="end_date" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" value="<?= $filters['end_date'] ?? '' ?>">
+                </div>
             </div>
+        </form>
 
-            <!-- Export Buttons -->
-            <form action="<?= base_url('reports/export-excel') ?>" method="post" class="inline">
-                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
-                    Excel
-                </button>
+        <div class="flex gap-2 mt-4 md:mt-0">
+            <form method="post" action="/reports/export/pdf" target="_blank">
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition">Ekspor PDF</button>
             </form>
-            <form action="<?= base_url('reports/export-pdf') ?>" method="post" class="inline">
-                <button type="submit" class="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg flex items-center gap-2">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                    </svg>
-                    PDF
-                </button>
+            <form method="post" action="/reports/export/excel" target="_blank">
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition">Ekspor Excel</button>
             </form>
         </div>
     </div>
 
     <!-- Summary Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-gray-600 text-lg font-semibold">Total Pemasukan</h3>
-                <svg class="w-8 h-8 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+    <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="flex items-center p-6 bg-green-50 border-2 border-green-300 rounded-2xl shadow-lg min-h-[120px] h-[140px]">
+            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-200 mr-5">
+                <svg class="w-10 h-10 text-green-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8" />
                 </svg>
             </div>
-            <p class="text-3xl font-bold text-green-600">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></p>
+            <div>
+                <div class="text-base font-bold text-green-800 mb-1 tracking-wide">Total Pemasukan</div>
+                <div class="text-3xl font-extrabold text-green-700">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></div>
+            </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-gray-600 text-lg font-semibold">Total Pengeluaran</h3>
-                <svg class="w-8 h-8 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"/>
+        <div class="flex items-center p-6 bg-red-50 border-2 border-red-300 rounded-2xl shadow-lg min-h-[120px] h-[140px]">
+            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-red-200 mr-5">
+                <svg class="w-10 h-10 text-red-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 7l6 6 4-4 8 8" />
                 </svg>
             </div>
-            <p class="text-3xl font-bold text-red-600">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></p>
+            <div>
+                <div class="text-base font-bold text-red-800 mb-1 tracking-wide">Total Pengeluaran</div>
+                <div class="text-3xl font-extrabold text-red-700">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></div>
+            </div>
         </div>
 
-        <div class="bg-white rounded-lg shadow-md p-6 border border-gray-200">
-            <div class="flex items-center justify-between mb-4">
-                <h3 class="text-gray-600 text-lg font-semibold">Arus Kas Bersih</h3>
-                <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4m8 8V4"/>
+        <div class="flex items-center p-6 bg-blue-50 border-2 border-blue-300 rounded-2xl shadow-lg min-h-[120px] h-[140px]">
+            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-200 mr-5">
+                <svg class="w-10 h-10 text-blue-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+                    <path d="M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7z" stroke="currentColor" stroke-width="2.5" fill="#e0e7ff"/>
+                    <path d="M22 9H18a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4" stroke="currentColor" stroke-width="2.5"/>
+                    <circle cx="18.5" cy="12" r="1" fill="currentColor"/>
                 </svg>
             </div>
-            <p class="text-3xl font-bold text-blue-600">Rp <?= number_format(($summary['total_income'] ?? 0) - ($summary['total_expense'] ?? 0), 0, ',', '.') ?></p>
+            <div>
+                <div class="text-base font-bold text-blue-800 mb-1 tracking-wide">Arus Kas Bersih</div>
+                <div class="text-3xl font-extrabold text-blue-700">Rp <?= number_format(($summary['total_income'] ?? 0) - ($summary['total_expense'] ?? 0), 0, ',', '.') ?></div>
+            </div>
         </div>
     </div>
 
     <!-- Chart -->
-    <div class="bg-white rounded-lg shadow-md p-6 mb-8 border border-gray-200">
-        <h3 class="text-gray-600 text-lg font-semibold mb-4">Tren Arus Kas</h3>
-        <div style="position: relative; height: 400px; width: 100%; max-height: 400px;">
-            <canvas id="cashFlowChart"></canvas>
+    <div class="bg-white rounded-lg shadow border border-gray-200 mb-8">
+        <div class="p-4 border-b border-gray-200">
+            <h3 class="text-gray-600 text-lg font-semibold">Tren Arus Kas</h3>
+        </div>
+        <div class="p-4">
+            <div style="position: relative; height: 400px; width: 100%; max-height: 400px;">
+                <canvas id="cashFlowChart"></canvas>
+            </div>
         </div>
     </div>
 
     <!-- Table -->
-    <div class="bg-white rounded-lg shadow-md border border-gray-200">
+    <div class="bg-white rounded-lg shadow border border-gray-200">
         <div class="p-4 border-b border-gray-200">
             <h3 class="text-gray-600 text-lg font-semibold">Detail Transaksi</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead class="bg-gray-50">
+            <table class="min-w-full border border-gray-300">
+                <thead class="bg-main/90">
                     <tr>
-                        <th class="px-6 py-3 text-gray-600 text-sm font-semibold">Tanggal</th>
-                        <th class="px-6 py-3 text-gray-600 text-sm font-semibold">Akun</th>
-                        <th class="px-6 py-3 text-gray-600 text-sm font-semibold">Pemasukan</th>
-                        <th class="px-6 py-3 text-gray-600 text-sm font-semibold">Pengeluaran</th>
-                        <th class="px-6 py-3 text-gray-600 text-sm font-semibold">Saldo</th>
+                        <th class="py-3 px-2 w-12 text-center text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">No.</th>
+                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Tanggal</th>
+                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Akun</th>
+                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Pemasukan</th>
+                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Pengeluaran</th>
+                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Saldo</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-gray-200">
-                    <!-- Sample data row -->
-                    <tr class="hover:bg-gray-50">
-                        <td class="px-6 py-4 text-sm text-gray-600">2025-08-08</td>
-                        <td class="px-6 py-4 text-sm text-gray-600">Kas Utama</td>
-                        <td class="px-6 py-4 text-sm text-green-600">Rp 5.000.000</td>
-                        <td class="px-6 py-4 text-sm text-red-600">-</td>
-                        <td class="px-6 py-4 text-sm text-blue-600">Rp 5.000.000</td>
+                <tbody class="bg-white">
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center">1</td>
+                        <td class="py-2 px-4 text-sm text-gray-800 border-b border-r border-gray-200">2025-08-13</td>
+                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200">Kas Utama</td>
+                        <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">Rp 5.000.000</td>
+                        <td class="py-2 px-4 text-sm text-red-700 font-bold border-b border-r border-gray-200">-</td>
+                        <td class="py-2 px-4 text-sm text-blue-700 font-bold border-b border-r border-gray-200">Rp 5.000.000</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center">2</td>
+                        <td class="py-2 px-4 text-sm text-gray-800 border-b border-r border-gray-200">2025-08-13</td>
+                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200">Bank BCA</td>
+                        <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">-</td>
+                        <td class="py-2 px-4 text-sm text-red-700 font-bold border-b border-r border-gray-200">Rp 1.500.000</td>
+                        <td class="py-2 px-4 text-sm text-blue-700 font-bold border-b border-r border-gray-200">Rp 3.500.000</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center">3</td>
+                        <td class="py-2 px-4 text-sm text-gray-800 border-b border-r border-gray-200">2025-08-13</td>
+                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200">E-Wallet</td>
+                        <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">Rp 2.000.000</td>
+                        <td class="py-2 px-4 text-sm text-red-700 font-bold border-b border-r border-gray-200">-</td>
+                        <td class="py-2 px-4 text-sm text-blue-700 font-bold border-b border-r border-gray-200">Rp 5.500.000</td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        <!-- Pagination -->
-        <div class="px-6 py-4 border-t border-gray-200">
-            <div class="flex items-center justify-between">
-                <div class="flex-1 flex justify-between sm:hidden">
-                    <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                        Previous
-                    </a>
-                    <a href="#" class="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50">
-                        Next
-                    </a>
-                </div>
-                <div class="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                    <div>
-                        <p class="text-sm text-gray-700">
-                            Showing
-                            <span class="font-medium">1</span>
-                            to
-                            <span class="font-medium">10</span>
-                            of
-                            <span class="font-medium">20</span>
-                            results
-                        </p>
-                    </div>
-                    <div>
-                        <nav class="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                Previous
-                            </a>
-                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                1
-                            </a>
-                            <a href="#" class="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
-                                2
-                            </a>
-                            <a href="#" class="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50">
-                                Next
-                            </a>
-                        </nav>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
+
+    <!-- Pagination -->
+    <?php if (isset($pager) && isset($total_transactions) && $total_transactions > $perPage): ?>
+    <div class="mt-4 flex justify-center">
+        <nav class="inline-flex rounded-md shadow-sm" aria-label="Pagination">
+            <?= view('Reports/pagination', ['pager' => $pager, 'group' => 'transactions']) ?>
+        </nav>
+    </div>
+    <?php endif; ?>
 </div>
 
 <!-- Chart.js Script -->
