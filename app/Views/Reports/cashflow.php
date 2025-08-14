@@ -5,17 +5,70 @@
     <h1 class="text-3xl font-bold text-main mb-4">Laporan Arus Kas</h1>
 
     <!-- Filter & Export Row -->
-    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+    <div class="flex flex-wrap items-end gap-2 mb-6">
         <form id="filterForm" method="get" action="" class="flex flex-wrap gap-2 items-end flex-1">
             <div>
-                <label for="period" class="block text-xs font-semibold text-gray-600 mb-1">Periode</label>
-                <select id="period" name="period" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" onchange="this.form.submit()">
-                    <option value="this_month" <?= ($period ?? '') === 'this_month' ? 'selected' : '' ?>>Bulan Ini</option>
-                    <option value="last_month" <?= ($period ?? '') === 'last_month' ? 'selected' : '' ?>>Bulan Lalu</option>
-                    <option value="this_year" <?= ($period ?? '') === 'this_year' ? 'selected' : '' ?>>Tahun Ini</option>
-                    <option value="last_year" <?= ($period ?? '') === 'last_year' ? 'selected' : '' ?>>Tahun Lalu</option>
-                    <option value="custom" <?= ($period ?? '') === 'custom' ? 'selected' : '' ?>>Pilih Tanggal</option>
+                <label for="view_type" class="block text-xs font-semibold text-gray-600 mb-1">Tampilan</label>
+                <select id="view_type" name="view_type" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                    <option value="monthly" <?= ($view_type ?? 'monthly') === 'monthly' ? 'selected' : '' ?>>Per Bulan</option>
+                    <option value="yearly" <?= ($view_type ?? '') === 'yearly' ? 'selected' : '' ?>>Per Tahun</option>
                 </select>
+            </div>
+            
+            <!-- Filter untuk tampilan bulanan -->
+            <div id="monthlyFilter" class="<?= ($view_type ?? 'monthly') === 'monthly' ? 'flex' : 'hidden' ?> gap-2">
+                <div>
+                    <label for="month" class="block text-xs font-semibold text-gray-600 mb-1">Bulan</label>
+                    <select id="month" name="month" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                        <?php 
+                        $months = [
+                            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+                            '04' => 'April', '05' => 'Mei', '06' => 'Juni',
+                            '07' => 'Juli', '08' => 'Agustus', '09' => 'September',
+                            '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+                        ];
+                        foreach ($months as $value => $label): 
+                            $selected = ($month ?? date('m')) === $value ? 'selected' : '';
+                        ?>
+                            <option value="<?= $value ?>" <?= $selected ?>><?= $label ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div>
+                    <label for="year" class="block text-xs font-semibold text-gray-600 mb-1">Tahun</label>
+                    <select id="year" name="year" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-32">
+                        <?php 
+                        $currentYear = date('Y');
+                        for($y = $currentYear; $y >= $currentYear - 5; $y--): 
+                            $selected = ($year ?? $currentYear) == $y ? 'selected' : '';
+                        ?>
+                            <option value="<?= $y ?>" <?= $selected ?>><?= $y ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Filter untuk tampilan tahunan -->
+            <div id="yearlyFilter" class="<?= ($view_type ?? '') === 'yearly' ? 'flex' : 'hidden' ?> gap-2">
+                <div>
+                    <label for="year_filter" class="block text-xs font-semibold text-gray-600 mb-1">Tahun</label>
+                    <select id="year_filter" name="year_filter" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                        <?php 
+                        $currentYear = date('Y');
+                        for($y = $currentYear; $y >= $currentYear - 5; $y--): 
+                            $selected = ($year_filter ?? $currentYear) == $y ? 'selected' : '';
+                        ?>
+                            <option value="<?= $y ?>" <?= $selected ?>><?= $y ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
+            </div>
+
+            <div class="flex gap-2 items-end">
+                <button type="submit" class="px-4 py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition">Terapkan</button>
+                <?php if (!empty($_GET)): ?>
+                    <a href="/reports/cashflow" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">Reset</a>
+                <?php endif; ?>
             </div>
 
             <div id="dateRange" class="<?= ($period ?? '') === 'custom' ? 'flex' : 'hidden' ?> gap-4">
@@ -82,14 +135,10 @@
     </div>
 
     <!-- Chart -->
-    <div class="bg-white rounded-lg shadow border border-gray-200 mb-8">
-        <div class="p-4 border-b border-gray-200">
-            <h3 class="text-gray-600 text-lg font-semibold">Tren Arus Kas</h3>
-        </div>
-        <div class="p-4">
-            <div style="position: relative; height: 400px; width: 100%; max-height: 400px;">
-                <canvas id="cashFlowChart"></canvas>
-            </div>
+    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <h2 class="text-lg font-semibold text-gray-800 mb-4">Tren Arus Kas</h2>
+        <div class="h-[400px]" id="cashFlowChart">
+            <!-- Chart will be rendered here -->
         </div>
     </div>
 
@@ -102,159 +151,154 @@
             <table class="min-w-full border border-gray-300">
                 <thead class="bg-main/90">
                     <tr>
-                        <th class="py-3 px-2 w-12 text-center text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">No.</th>
-                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Tanggal</th>
-                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Akun</th>
-                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Pemasukan</th>
-                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Pengeluaran</th>
-                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Saldo</th>
+                        <th class="py-3 px-2 w-12 text-center text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">No</th>
+                        <th class="py-3 px-4 w-32 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Tanggal</th>
+                        <th class="py-3 px-4 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Deskripsi</th>
+                        <th class="py-3 px-4 w-36 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Kategori</th>
+                        <th class="py-3 px-4 w-36 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Akun</th>
+                        <th class="py-3 px-4 w-32 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Tipe</th>
+                        <th class="py-3 px-4 w-40 text-right text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Jumlah</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white">
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center">1</td>
-                        <td class="py-2 px-4 text-sm text-gray-800 border-b border-r border-gray-200">2025-08-13</td>
-                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200">Kas Utama</td>
-                        <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">Rp 5.000.000</td>
-                        <td class="py-2 px-4 text-sm text-red-700 font-bold border-b border-r border-gray-200">-</td>
-                        <td class="py-2 px-4 text-sm text-blue-700 font-bold border-b border-r border-gray-200">Rp 5.000.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center">2</td>
-                        <td class="py-2 px-4 text-sm text-gray-800 border-b border-r border-gray-200">2025-08-13</td>
-                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200">Bank BCA</td>
-                        <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">-</td>
-                        <td class="py-2 px-4 text-sm text-red-700 font-bold border-b border-r border-gray-200">Rp 1.500.000</td>
-                        <td class="py-2 px-4 text-sm text-blue-700 font-bold border-b border-r border-gray-200">Rp 3.500.000</td>
-                    </tr>
-                    <tr class="hover:bg-gray-50 transition">
-                        <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center">3</td>
-                        <td class="py-2 px-4 text-sm text-gray-800 border-b border-r border-gray-200">2025-08-13</td>
-                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200">E-Wallet</td>
-                        <td class="py-2 px-4 text-sm text-green-700 font-bold border-b border-r border-gray-200">Rp 2.000.000</td>
-                        <td class="py-2 px-4 text-sm text-red-700 font-bold border-b border-r border-gray-200">-</td>
-                        <td class="py-2 px-4 text-sm text-blue-700 font-bold border-b border-r border-gray-200">Rp 5.500.000</td>
-                    </tr>
+                    <?php if (!empty($transactions)): ?>
+                        <?php 
+                        $currentPage = $pager->getCurrentPage('transactions');
+                        $perPage = 10; // Sesuaikan dengan yang ada di controller
+                        $no = ($currentPage - 1) * $perPage + 1;
+                        ?>
+                        <?php foreach ($transactions as $trx): ?>
+                            <tr class="hover:bg-gray-50 transition">
+                                <td class="py-2 px-2 text-sm text-gray-600 border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
+                                <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= date('d/m/Y', strtotime($trx['tanggal'])) ?></td>
+                                <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['deskripsi']) ?></td>
+                                <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['category_name']) ?></td>
+                                <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['account_name']) ?></td>
+                                <td class="py-2 px-4 text-sm border-b border-r border-gray-200">
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full <?= $trx['tipe'] === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
+                                        <?= $trx['tipe'] === 'income' ? 'Pemasukan' : 'Pengeluaran' ?>
+                                    </span>
+                                </td>
+                                <td class="py-2 px-4 text-sm font-medium border-b border-r border-gray-200 text-right <?= $trx['tipe'] === 'income' ? 'text-green-600' : 'text-red-600' ?>">
+                                    Rp <?= number_format($trx['jumlah'], 0, ',', '.') ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="6" class="px-4 py-3 text-sm text-center text-gray-500">Tidak ada transaksi untuk ditampilkan</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </div>
     </div>
 
     <!-- Pagination -->
-    <?php if (isset($pager) && isset($total_transactions) && $total_transactions > $perPage): ?>
+    <?php if (isset($pager) && $pager->getPageCount('transactions') > 1): ?>
     <div class="mt-4 flex justify-center">
         <nav class="inline-flex rounded-md shadow-sm" aria-label="Pagination">
-            <?= view('Reports/pagination', ['pager' => $pager, 'group' => 'transactions']) ?>
+            <?= view('Reports/pagination', [
+                'pager' => $pager,
+                'group' => 'transactions',
+                'currentPage' => $pager->getCurrentPage('transactions'),
+                'pageCount' => $pager->getPageCount('transactions')
+            ]) ?>
         </nav>
     </div>
     <?php endif; ?>
 </div>
 
-<!-- Chart.js Script -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- Add ApexCharts CDN -->
+<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Chart with fixed dimensions
-    const ctx = document.getElementById('cashFlowChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: <?= json_encode(array_column($chartData, 'month')) ?>,
-            datasets: [{
-                label: 'Pemasukan',
-                data: <?= json_encode(array_column($chartData, 'income')) ?>,
-                borderColor: '#10B981',
-                backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2
-            }, {
-                label: 'Pengeluaran',
-                data: <?= json_encode(array_column($chartData, 'expense')) ?>,
-                borderColor: '#EF4444',
-                backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                tension: 0.4,
-                fill: true,
-                borderWidth: 2
-            }]
+    var options = {
+        series: [{
+            name: 'Pemasukan',
+            data: <?= json_encode(array_column($chartData, 'income')) ?>
+        }, {
+            name: 'Pengeluaran',
+            data: <?= json_encode(array_column($chartData, 'expense')) ?>
+        }],
+        chart: {
+            type: 'area',
+            height: 400,
+            toolbar: {
+                show: false
+            }
         },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            interaction: {
-                intersect: false,
-                mode: 'index'
-            },
-            plugins: {
-                legend: {
-                    position: 'top',
-                    labels: {
-                        usePointStyle: true,
-                        padding: 20,
-                        font: {
-                            size: 12
-                        }
-                    }
+        colors: ['#10B981', '#EF4444'],
+        stroke: {
+            curve: 'smooth',
+            width: 2
+        },
+        fill: {
+            type: 'gradient',
+            gradient: {
+                shadeIntensity: 1,
+                opacityFrom: 0.4,
+                opacityTo: 0.1,
+                stops: [0, 90, 100]
+            }
+        },
+        xaxis: {
+            categories: <?= json_encode(array_column($chartData, 'month')) ?>,
+            labels: {
+                style: {
+                    colors: '#6B7280',
+                    fontSize: '12px'
                 },
-                title: {
-                    display: false
-                }
+                rotate: <?= ($view_type === 'monthly') ? '-45' : '0' ?>,
+                trim: true
             },
-            scales: {
-                x: {
-                    grid: {
-                        display: false
-                    },
-                    ticks: {
-                        font: {
-                            size: 11
-                        }
-                    }
+            tickPlacement: 'on',
+            tickAmount: <?= ($view_type === 'monthly') ? '31' : '12' ?>
+        },
+        yaxis: {
+            labels: {
+                formatter: function(value) {
+                    return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
                 },
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        callback: function(value) {
-                            return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
-                        },
-                        font: {
-                            size: 11
-                        }
-                    },
-                    grid: {
-                        borderDash: [2, 2],
-                        color: 'rgba(0, 0, 0, 0.1)'
-                    }
+                style: {
+                    colors: '#6B7280',
+                    fontSize: '12px'
                 }
-            },
-            layout: {
-                padding: {
-                    top: 20,
-                    right: 20,
-                    bottom: 20,
-                    left: 20
-                }
-            },
-            elements: {
-                point: {
-                    radius: 4,
-                    hitRadius: 10,
-                    hoverRadius: 6
-                },
-                line: {
-                    tension: 0.4
+            }
+        },
+        legend: {
+            position: 'top',
+            horizontalAlign: 'left',
+            offsetX: 40,
+            labels: {
+                colors: '#6B7280'
+            }
+        },
+        grid: {
+            borderColor: '#E5E7EB',
+            strokeDashArray: 4,
+            xaxis: {
+                lines: {
+                    show: true
                 }
             }
         }
-    });
+    };
 
-    // Handle period selection
-    document.getElementById('period').addEventListener('change', function(e) {
-        const dateRange = document.getElementById('dateRange');
-        if (e.target.value === 'custom') {
-            dateRange.classList.remove('hidden');
+    var chart = new ApexCharts(document.querySelector("#cashFlowChart"), options);
+    chart.render();
+
+    // Handle view type selection
+    document.getElementById('view_type').addEventListener('change', function(e) {
+        const monthlyFilter = document.getElementById('monthlyFilter');
+        const yearlyFilter = document.getElementById('yearlyFilter');
+        
+        if (e.target.value === 'monthly') {
+            monthlyFilter.classList.remove('hidden');
+            yearlyFilter.classList.add('hidden');
         } else {
-            dateRange.classList.add('hidden');
+            monthlyFilter.classList.add('hidden');
+            yearlyFilter.classList.remove('hidden');
         }
     });
 });

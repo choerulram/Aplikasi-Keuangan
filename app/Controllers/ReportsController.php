@@ -14,33 +14,19 @@ class ReportsController extends BaseController
     {
         $reportModel = new ReportModel();
         
-        // Get period from request
-        $period = $this->request->getGet('period') ?? 'this_month';
-        $startDate = null;
-        $endDate = null;
+        // Get filter parameters
+        $viewType = $this->request->getGet('view_type') ?? 'monthly';
+        $month = $this->request->getGet('month') ?? date('m');
+        $year = $this->request->getGet('year') ?? date('Y');
+        $yearFilter = $this->request->getGet('year_filter') ?? date('Y');
 
-        // Set date range based on period
-        switch ($period) {
-            case 'this_month':
-                $startDate = date('Y-m-01');
-                $endDate = date('Y-m-t');
-                break;
-            case 'last_month':
-                $startDate = date('Y-m-01', strtotime('-1 month'));
-                $endDate = date('Y-m-t', strtotime('-1 month'));
-                break;
-            case 'this_year':
-                $startDate = date('Y-01-01');
-                $endDate = date('Y-12-31');
-                break;
-            case 'last_year':
-                $startDate = date('Y-01-01', strtotime('-1 year'));
-                $endDate = date('Y-12-31', strtotime('-1 year'));
-                break;
-            case 'custom':
-                $startDate = $this->request->getGet('start_date');
-                $endDate = $this->request->getGet('end_date');
-                break;
+        // Set date range based on view type
+        if ($viewType === 'monthly') {
+            $startDate = "$year-$month-01";
+            $endDate = date('Y-m-t', strtotime($startDate));
+        } else {
+            $startDate = "$yearFilter-01-01";
+            $endDate = "$yearFilter-12-31";
         }
 
         // Prepare filters
@@ -54,23 +40,30 @@ class ReportsController extends BaseController
         $summary = $reportModel->getSummary($filters);
 
         // Get chart data
-        $chartData = $reportModel->getMonthlyTotals($startDate, $endDate);
+        $chartData = $reportModel->getMonthlyTotals($startDate, $endDate, $viewType);
 
         // Get transactions with pagination
         $perPage = 10;
-        $currentPage = (int)($this->request->getGet('page') ?? 1);
+        $currentPage = (int)($this->request->getGet('page_transactions') ?? 1);
         $total = $reportModel->getTotal($filters);
         $transactions = $reportModel->getReport($filters, $perPage, ($currentPage - 1) * $perPage);
 
         // Configure pagination
         $pager = service('pager');
         $pager->setPath('reports/cashflow');
-        $pager->store('default', $currentPage, $perPage, $total);
+        $pager->setSegment(2, 'page_transactions');
+        $pager->store('transactions', $currentPage, $perPage, $total);
+
+        // Total halaman untuk view
+        $totalPages = ceil($total / $perPage);
 
         return view('Reports/cashflow', [
             'pageTitle' => 'Laporan Arus Kas',
             'title' => 'Laporan Arus Kas | Aplikasi Keuangan',
-            'period' => $period,
+            'view_type' => $viewType,
+            'month' => $month,
+            'year' => $year,
+            'year_filter' => $yearFilter,
             'summary' => $summary,
             'chartData' => $chartData,
             'transactions' => $transactions,
