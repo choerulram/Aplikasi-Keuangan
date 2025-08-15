@@ -113,67 +113,85 @@ class ReportModel extends Model
     {
         $builder = $this->db->table($this->table);
         
-        if (in_array($period, ['this_month', 'last_month', 'custom'])) {
-            // Jika periode adalah bulanan, tampilkan per hari
-            $dateFormat = "DATE_FORMAT(tanggal, '%Y-%m-%d')";
-            $monthFormat = "DATE_FORMAT(tanggal, '%d %b')";
+        if ($period === 'monthly') {
+            // Untuk tampilan bulanan (per hari)
             $builder->select([
-                "{$dateFormat} as tanggal",
-                "{$monthFormat} as month",
-                "SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END) as income",
-                "SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END) as expense"
+                "DATE(tanggal) as tanggal",
+                "DAY(tanggal) as month",
+                "COALESCE(SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END), 0) as income",
+                "COALESCE(SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END), 0) as expense"
             ])
-            ->groupBy('tanggal');
+            ->groupBy(['tanggal', 'month']);
         } else {
-            // Jika periode adalah tahunan, tampilkan per bulan
-            $yearMonth = "DATE_FORMAT(tanggal, '%Y-%m')";
-            $monthLabel = "DATE_FORMAT(tanggal, '%M %Y')";
+            // Untuk tampilan tahunan (per bulan)
             $builder->select([
-                "{$yearMonth} as tanggal",
-                "{$monthLabel} as month",
-                "SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END) as income",
-                "SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END) as expense"
+                "DATE_FORMAT(tanggal, '%Y-%m-01') as tanggal",
+                "DATE_FORMAT(tanggal, '%M %Y') as month",
+                "COALESCE(SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END), 0) as income",
+                "COALESCE(SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END), 0) as expense"
             ])
-            ->groupBy('tanggal');
+            ->groupBy('tanggal, month');
         }
 
         $builder->where('tanggal >=', $startDate)
                 ->where('tanggal <=', $endDate)
-                ->orderBy('tanggal', 'ASC')
-                ->having('tanggal IS NOT NULL');
+                ->orderBy('tanggal', 'ASC');
+
+        // Get the raw SQL for debugging if needed
+        // $sql = $builder->getCompiledSelect(false);
+        // log_message('debug', 'SQL Query: ' . $sql);
 
         $result = $builder->get()->getResultArray();
 
-        // Isi data kosong untuk hari/bulan yang tidak memiliki transaksi
+        // Convert numeric strings to floats
+        foreach ($result as &$row) {
+            $row['income'] = (float)$row['income'];
+            $row['expense'] = (float)$row['expense'];
+        }
+
+        // Fill missing dates
         $filledData = $this->fillMissingDates($result, $startDate, $endDate, $period);
         
         return $filledData;
     }
 
-    private function fillMissingDates($data, $startDate, $endDate, $period)
+    private function fillMissingDates($data, $startDate, $endDate, $viewType)
     {
         $start = new \DateTime($startDate);
         $end = new \DateTime($endDate);
-        $interval = in_array($period, ['this_month', 'last_month', 'custom']) ? 'P1D' : 'P1M';
+        
+        if ($viewType === 'monthly') {
+            $interval = 'P1D';
+            $end->modify('+1 day');
+        } else {
+            $interval = 'P1M';
+            $end->modify('first day of next month');
+        }
+
         $dateInterval = new \DateInterval($interval);
-        $period = new \DatePeriod($start, $dateInterval, $end->modify('+1 day'));
+        $datePeriod = new \DatePeriod($start, $dateInterval, $end);
+
+        // Index data by date key for faster lookup
+        $indexedData = [];
+        foreach ($data as $row) {
+            $indexedData[$row['month']] = $row;
+        }
 
         $filledData = [];
-        foreach ($period as $date) {
-            $key = in_array($period, ['this_month', 'last_month', 'custom']) 
-                ? $date->format('d M')
-                : $date->format('F Y');
+        foreach ($datePeriod as $date) {
+            $key = $viewType === 'monthly'
+                ? $date->format('j') // Menggunakan j untuk hari tanpa leading zero
+                : $date->format('F Y'); // Bulan dan tahun untuk tampilan tahunan
 
-            $found = false;
-            foreach ($data as $row) {
-                if ($row['month'] === $key) {
-                    $filledData[] = $row;
-                    $found = true;
-                    break;
-                }
-            }
-
-            if (!$found) {
+            if (isset($indexedData[$key])) {
+                // Data exists for this date, use it
+                $filledData[] = [
+                    'month' => $key,
+                    'income' => (float)$indexedData[$key]['income'],
+                    'expense' => (float)$indexedData[$key]['expense']
+                ];
+            } else {
+                // No data for this date, fill with zeros
                 $filledData[] = [
                     'month' => $key,
                     'income' => 0,

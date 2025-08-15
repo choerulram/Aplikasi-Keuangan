@@ -213,25 +213,43 @@
 <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Data untuk grafik
+    const chartData = {
+        income: <?= json_encode(array_map(function($val) { return floatval($val); }, array_column($chartData, 'income'))) ?>,
+        expense: <?= json_encode(array_map(function($val) { return floatval($val); }, array_column($chartData, 'expense'))) ?>,
+        categories: <?= json_encode(array_column($chartData, 'month')) ?>
+    };
+
+    // Log data untuk debugging
+    console.log('Chart Data:', chartData);
+
     var options = {
         series: [{
             name: 'Pemasukan',
-            data: <?= json_encode(array_column($chartData, 'income')) ?>
+            data: chartData.income,
+            color: '#10B981'
         }, {
             name: 'Pengeluaran',
-            data: <?= json_encode(array_column($chartData, 'expense')) ?>
+            data: chartData.expense,
+            color: '#EF4444'
         }],
         chart: {
             type: 'area',
             height: 400,
             toolbar: {
                 show: false
+            },
+            animations: {
+                enabled: true,
+                easing: 'easeinout',
+                speed: 800
             }
         },
         colors: ['#10B981', '#EF4444'],
         stroke: {
             curve: 'smooth',
-            width: 2
+            width: 2,
+            colors: ['#059669', '#DC2626']
         },
         fill: {
             type: 'gradient',
@@ -242,18 +260,61 @@ document.addEventListener('DOMContentLoaded', function() {
                 stops: [0, 90, 100]
             }
         },
+        dataLabels: {
+            enabled: true,
+            formatter: function(value, { seriesIndex }) {
+                return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+            },
+            style: {
+                fontSize: '11px',
+                fontWeight: 600,
+                colors: ['#059669', '#DC2626']
+            },
+            background: {
+                enabled: true,
+                borderRadius: 4,
+                borderWidth: 1,
+                borderColor: '#E5E7EB',
+                opacity: 0.9,
+                dropShadow: {
+                    enabled: true,
+                    top: 1,
+                    left: 1,
+                    blur: 1,
+                    opacity: 0.1
+                }
+            },
+            offsetY: -10
+        },
         xaxis: {
-            categories: <?= json_encode(array_column($chartData, 'month')) ?>,
+            type: 'category',
+            categories: chartData.categories,
             labels: {
                 style: {
                     colors: '#6B7280',
                     fontSize: '12px'
                 },
-                rotate: <?= ($view_type === 'monthly') ? '-45' : '0' ?>,
+                formatter: function(value) {
+                    if ('<?= $view_type ?>' === 'monthly') {
+                        // Untuk tampilan bulanan, tampilkan tanggal dengan format 01-31
+                        return String(value).padStart(2, '0');
+                    }
+                    // Untuk tampilan tahunan, tampilkan nama bulan (sudah diformat dari model)
+                    return value;
+                },
+                rotate: -45,
                 trim: true
             },
             tickPlacement: 'on',
-            tickAmount: <?= ($view_type === 'monthly') ? '31' : '12' ?>
+            tickAmount: <?= ($view_type === 'monthly') ? 'undefined' : '12' ?>,
+            title: {
+                text: '<?= ($view_type === 'monthly') ? 'Tanggal' : 'Bulan' ?>',
+                style: {
+                    fontSize: '14px',
+                    fontWeight: 600,
+                    color: '#374151'
+                }
+            }
         },
         yaxis: {
             labels: {
@@ -264,7 +325,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     colors: '#6B7280',
                     fontSize: '12px'
                 }
-            }
+            },
+            tickAmount: 5,
+            min: 0
         },
         legend: {
             position: 'top',
