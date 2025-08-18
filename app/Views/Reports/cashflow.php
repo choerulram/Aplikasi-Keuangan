@@ -84,12 +84,11 @@
         </form>
 
         <div class="flex gap-2 mt-4 md:mt-0">
-            <form method="post" action="/reports/export/pdf" target="_blank">
+            <form method="post" action="/reports/exportPDF" target="_blank">
                 <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition">Ekspor PDF</button>
             </form>
-            <form method="post" action="/reports/export/excel" target="_blank">
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition">Ekspor Excel</button>
-            </form>
+            <!-- Export Excel akan diimplementasikan nanti -->
+            <button disabled class="px-4 py-2 bg-gray-400 text-white rounded-lg font-semibold shadow cursor-not-allowed">Ekspor Excel</button>
         </div>
     </div>
 

@@ -7,9 +7,53 @@ use App\Controllers\BaseController;
 use App\Models\ReportModel;
 use App\Models\AccountModel;
 use App\Models\CategoryModel;
+use Dompdf\Dompdf;
+use Dompdf\Options;
 
 class ReportsController extends BaseController
 {
+    public function exportPDF()
+    {
+        $reportModel = new ReportModel();
+        
+        // Ambil data yang akan diekspor
+        $filters = [
+            'start_date' => date('Y-m-01'),
+            'end_date' => date('Y-m-t')
+        ];
+        
+        $summary = $reportModel->getSummary($filters);
+        $transactions = $reportModel->getReport($filters);
+        $chartData = $reportModel->getMonthlyTotals($filters['start_date'], $filters['end_date'], 'monthly');
+
+        // Persiapkan data untuk view
+        $data = [
+            'title' => 'Laporan Arus Kas',
+            'summary' => $summary,
+            'transactions' => $transactions,
+            'chartData' => $chartData,
+            'periode' => 'Periode ' . date('F Y')
+        ];
+
+        // Load Dompdf
+        $dompdf = new \Dompdf\Dompdf();
+        $options = new \Dompdf\Options();
+        $options->setIsRemoteEnabled(true);
+        $dompdf->setOptions($options);
+
+        // Load view ke HTML
+        $html = view('Reports/pdf_cashflow', $data);
+
+        // Convert ke PDF
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Download file
+        $filename = 'Laporan_Arus_Kas_' . date('Y-m') . '.pdf';
+        return $dompdf->stream($filename);
+    }
+
     public function cashflow()
     {
         $reportModel = new ReportModel();
