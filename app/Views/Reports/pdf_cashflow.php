@@ -40,6 +40,9 @@
         .text-danger {
             color: #dc3545;
         }
+        .text-center {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -70,17 +73,19 @@
     <table>
         <thead>
             <tr>
-                <th>Tanggal</th>
-                <th>Tipe</th>
-                <th>Akun</th>
-                <th>Kategori</th>
-                <th>Deskripsi</th>
-                <th class="text-right">Jumlah</th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 12%;">Tanggal</th>
+                <th style="width: 12%;">Tipe</th>
+                <th style="width: 15%;">Akun</th>
+                <th style="width: 15%;">Kategori</th>
+                <th style="width: 23%;">Deskripsi</th>
+                <th style="width: 18%;" class="text-right">Jumlah</th>
             </tr>
         </thead>
         <tbody>
-            <?php foreach ($transactions as $transaction): ?>
+            <?php foreach ($transactions as $key => $transaction): ?>
             <tr>
+                <td class="text-center"><?= $key + 1 ?></td>
                 <td><?= date('d/m/Y', strtotime($transaction['tanggal'])) ?></td>
                 <td><?= $transaction['tipe'] === 'income' ? 'Pemasukan' : 'Pengeluaran' ?></td>
                 <td><?= $transaction['account_name'] ?></td>
