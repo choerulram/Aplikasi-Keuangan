@@ -87,8 +87,9 @@
             <form method="post" action="/reports/exportPDF" target="_blank">
                 <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition">Ekspor PDF</button>
             </form>
-            <!-- Export Excel akan diimplementasikan nanti -->
-            <button disabled class="px-4 py-2 bg-gray-400 text-white rounded-lg font-semibold shadow cursor-not-allowed">Ekspor Excel</button>
+            <form method="post" action="/reports/exportExcel" target="_blank">
+                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition">Ekspor Excel</button>
+            </form>
         </div>
     </div>
 
