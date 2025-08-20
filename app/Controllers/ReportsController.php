@@ -17,6 +17,125 @@ use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class ReportsController extends BaseController
 {
+    public function budget()
+    {
+        $reportModel = new ReportModel();
+        
+        // Get filter parameters
+        $period = $this->request->getGet('period') ?? date('Y-m');
+        
+        // Get data from model
+        $categories = $reportModel->getBudgetVsActual($period);
+        
+        // Calculate summary
+        $summary = [
+            'total_budget' => array_sum(array_column($categories, 'budget')),
+            'total_actual' => array_sum(array_column($categories, 'actual'))
+        ];
+
+        $data = [
+            'categories' => $categories,
+            'summary' => $summary,
+            'period' => $period
+        ];
+
+        return view('Reports/budget_actual', $data);
+    }
+
+    public function exportBudgetPDF()
+    {
+        $reportModel = new ReportModel();
+        $period = $this->request->getPost('period') ?? date('Y-m');
+        
+        $categories = $reportModel->getBudgetVsActual($period);
+        $summary = [
+            'total_budget' => array_sum(array_column($categories, 'budget')),
+            'total_actual' => array_sum(array_column($categories, 'actual'))
+        ];
+
+        $data = [
+            'categories' => $categories,
+            'summary' => $summary,
+            'period' => $period
+        ];
+
+        // Load Dompdf
+        $dompdf = new \Dompdf\Dompdf();
+        $options = new \Dompdf\Options();
+        $options->setIsRemoteEnabled(true);
+        $dompdf->setOptions($options);
+
+        // Load view ke HTML
+        $html = view('Reports/pdf_budget', $data);
+
+        // Convert ke PDF
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Download file
+        $filename = 'Laporan_Budget_vs_Aktual_' . $period . '.pdf';
+        return $dompdf->stream($filename);
+    }
+
+    public function exportBudgetExcel()
+    {
+        $reportModel = new ReportModel();
+        $period = $this->request->getPost('period') ?? date('Y-m');
+        
+        $categories = $reportModel->getBudgetVsActual($period);
+        $summary = [
+            'total_budget' => array_sum(array_column($categories, 'budget')),
+            'total_actual' => array_sum(array_column($categories, 'actual'))
+        ];
+
+        // Buat spreadsheet baru
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set judul
+        $sheet->setCellValue('A1', 'LAPORAN BUDGET VS AKTUAL');
+        $sheet->setCellValue('A2', 'Periode: ' . date('F Y', strtotime($period)));
+        $sheet->mergeCells('A1:E1');
+        $sheet->mergeCells('A2:E2');
+
+        // Style untuk judul
+        $sheet->getStyle('A1:A2')->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Header tabel
+        $sheet->setCellValue('A4', 'No');
+        $sheet->setCellValue('B4', 'Kategori');
+        $sheet->setCellValue('C4', 'Budget');
+        $sheet->setCellValue('D4', 'Aktual');
+        $sheet->setCellValue('E4', 'Persentase');
+
+        // Isi data
+        $row = 5;
+        foreach ($categories as $key => $category) {
+            $sheet->setCellValue('A' . $row, $key + 1);
+            $sheet->setCellValue('B' . $row, $category['nama_kategori']);
+            $sheet->setCellValue('C' . $row, $category['budget']);
+            $sheet->setCellValue('D' . $row, $category['actual']);
+            $sheet->setCellValue('E' . $row, $category['percentage'] . '%');
+            $row++;
+        }
+
+        // Set nama file
+        $filename = 'Laporan_Budget_vs_Aktual_' . $period . '.xlsx';
+
+        // Set header untuk download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // Export ke Excel
+        $writer = new Xlsx($spreadsheet);
+        ob_end_clean();
+        $writer->save('php://output');
+        exit();
+    }
+
     public function exportPDF()
     {
         $reportModel = new ReportModel();

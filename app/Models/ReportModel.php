@@ -155,6 +155,43 @@ class ReportModel extends Model
         return $filledData;
     }
 
+    public function getBudgetVsActual($period)
+    {
+        // Get all expense categories
+        $categoryQuery = $this->db->table('categories')
+            ->where('tipe', 'expense')
+            ->get();
+        $categories = $categoryQuery->getResultArray();
+
+        // For each category, get budget and actual spending
+        foreach ($categories as &$category) {
+            // Get budget
+            $budgetQuery = $this->db->table('budgets')
+                ->where('category_id', $category['id'])
+                ->where('periode', $period)
+                ->get();
+            $budget = $budgetQuery->getRowArray();
+            
+            // Get actual spending
+            $actualQuery = $this->db->table('transactions')
+                ->selectSum('jumlah')
+                ->where('category_id', $category['id'])
+                ->where('tipe', 'expense')
+                ->where('DATE_FORMAT(tanggal, "%Y-%m")', $period)
+                ->get();
+            $actual = $actualQuery->getRowArray();
+
+            // Calculate percentage
+            $category['budget'] = $budget['jumlah_anggaran'] ?? 0;
+            $category['actual'] = $actual['jumlah'] ?? 0;
+            $category['percentage'] = $category['budget'] > 0 
+                ? ($category['actual'] / $category['budget']) * 100 
+                : 0;
+        }
+
+        return $categories;
+    }
+
     private function fillMissingDates($data, $startDate, $endDate, $viewType)
     {
         $start = new \DateTime($startDate);
