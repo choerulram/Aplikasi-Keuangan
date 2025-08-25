@@ -901,6 +901,14 @@ video {
   width: 100%;
 }
 
+.w-1\/3 {
+  width: 33.333333%;
+}
+
+.w-48 {
+  width: 12rem;
+}
+
 .min-w-full {
   min-width: 100%;
 }
@@ -1225,6 +1233,10 @@ video {
 .border-yellow-500 {
   --tw-border-opacity: 1;
   border-color: rgb(234 179 8 / var(--tw-border-opacity));
+}
+
+.border-white\/10 {
+  border-color: rgb(255 255 255 / 0.1);
 }
 
 .bg-black {
@@ -1989,6 +2001,10 @@ video {
 
   .md\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .md\:grid-cols-2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

@@ -447,4 +447,119 @@ class ReportsController extends BaseController
             'filters' => $filters
         ]);
     }
+
+    public function category()
+    {
+        $reportModel = new ReportModel();
+        $categoryModel = new CategoryModel();
+        
+        // Get filter parameters
+        $period = $this->request->getGet('period') ?? 'this_month';
+        $type = $this->request->getGet('type') ?? 'all';
+        
+        // Calculate date range based on period
+        $dateRange = $this->calculateDateRange($period);
+        $startDate = $dateRange['start_date'];
+        $endDate = $dateRange['end_date'];
+        
+        // Prepare filters
+        $filters = [
+            'start_date' => $startDate,
+            'end_date' => $endDate
+        ];
+        
+        if ($type !== 'all') {
+            $filters['tipe'] = $type;
+        }
+
+        // Get transactions grouped by category
+        $transactions = $reportModel->getReport($filters);
+        
+        // Process data for categories
+        $categoryTotals = [];
+        foreach ($transactions as $transaction) {
+            $categoryId = $transaction['category_id'];
+            if (!isset($categoryTotals[$categoryId])) {
+                $categoryTotals[$categoryId] = [
+                    'nama_kategori' => $transaction['category_name'],
+                    'total' => 0,
+                    'jumlah_transaksi' => 0,
+                    'transactions' => []
+                ];
+            }
+            $categoryTotals[$categoryId]['total'] += $transaction['jumlah'];
+            $categoryTotals[$categoryId]['jumlah_transaksi']++;
+            $categoryTotals[$categoryId]['transactions'][] = $transaction;
+        }
+
+        // Calculate grand total
+        $grandTotal = array_sum(array_column($categoryTotals, 'total'));
+
+        // Convert to array and calculate percentages
+        $categories = [];
+        foreach ($categoryTotals as $categoryData) {
+            $categoryData['percentage'] = $grandTotal > 0 ? ($categoryData['total'] / $grandTotal * 100) : 0;
+            $categories[] = $categoryData;
+        }
+
+        // Sort categories by total amount
+        usort($categories, function($a, $b) {
+            return $b['total'] - $a['total'];
+        });
+
+        $data = [
+            'categories' => $categories,
+            'grandTotal' => $grandTotal,
+            'period' => $period,
+            'type' => $type,
+            'startDate' => $startDate,
+            'endDate' => $endDate
+        ];
+
+        return view('Reports/category', $data);
+    }
+
+    private function calculateDateRange($period)
+    {
+        $now = new \DateTime();
+        
+        switch ($period) {
+            case 'this_month':
+                $startDate = $now->format('Y-m-01');
+                $endDate = $now->format('Y-m-t');
+                break;
+                
+            case 'last_month':
+                $now->modify('-1 month');
+                $startDate = $now->format('Y-m-01');
+                $endDate = $now->format('Y-m-t');
+                break;
+                
+            case 'this_year':
+                $startDate = $now->format('Y-01-01');
+                $endDate = $now->format('Y-12-31');
+                break;
+                
+            case 'last_year':
+                $now->modify('-1 year');
+                $startDate = $now->format('Y-01-01');
+                $endDate = $now->format('Y-12-31');
+                break;
+                
+            case 'last_30_days':
+                $endDate = $now->format('Y-m-d');
+                $now->modify('-30 days');
+                $startDate = $now->format('Y-m-d');
+                break;
+                
+            default:
+                $startDate = $now->format('Y-m-01');
+                $endDate = $now->format('Y-m-t');
+        }
+        
+        return [
+            'start_date' => $startDate,
+            'end_date' => $endDate
+        ];
+    }
 }
