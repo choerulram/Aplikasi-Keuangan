@@ -92,34 +92,120 @@ class ReportsController extends BaseController
         // Buat spreadsheet baru
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Budget vs Aktual');
 
         // Set judul
         $sheet->setCellValue('A1', 'LAPORAN BUDGET VS AKTUAL');
         $sheet->setCellValue('A2', 'Periode: ' . date('F Y', strtotime($period)));
-        $sheet->mergeCells('A1:E1');
-        $sheet->mergeCells('A2:E2');
+        $sheet->mergeCells('A1:G1');
+        $sheet->mergeCells('A2:G2');
 
         // Style untuk judul
-        $sheet->getStyle('A1:A2')->getFont()->setBold(true)->setSize(14);
-        $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $titleStyle = [
+            'font' => [
+                'bold' => true,
+                'size' => 14
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E2E8F0']
+            ]
+        ];
+        $sheet->getStyle('A1:G2')->applyFromArray($titleStyle);
+
+        // Ringkasan
+        $sheet->setCellValue('A4', 'RINGKASAN');
+        $sheet->mergeCells('A4:G4');
+        $sheet->getStyle('A4')->getFont()->setBold(true);
+        $sheet->getStyle('A4')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
+
+        // Data ringkasan
+        $sheet->setCellValue('A5', 'Total Budget:');
+        $sheet->setCellValue('B5', $summary['total_budget']);
+        $sheet->setCellValue('A6', 'Total Aktual:');
+        $sheet->setCellValue('B6', $summary['total_actual']);
+        $sheet->setCellValue('A7', 'Selisih Budget:');
+        $sheet->setCellValue('B7', $summary['total_budget'] - $summary['total_actual']);
+
+        // Style untuk ringkasan
+        $sheet->getStyle('A5:A7')->getFont()->setBold(true);
+        $sheet->getStyle('B5:B7')->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle('A5:G7')->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+        // Header detail
+        $sheet->setCellValue('A9', 'DETAIL BUDGET PER KATEGORI');
+        $sheet->mergeCells('A9:G9');
+        $sheet->getStyle('A9')->getFont()->setBold(true);
+        $sheet->getStyle('A9')->getFill()->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('E2E8F0');
 
         // Header tabel
-        $sheet->setCellValue('A4', 'No');
-        $sheet->setCellValue('B4', 'Kategori');
-        $sheet->setCellValue('C4', 'Budget');
-        $sheet->setCellValue('D4', 'Aktual');
-        $sheet->setCellValue('E4', 'Persentase');
+        $sheet->setCellValue('A10', 'No');
+        $sheet->setCellValue('B10', 'Kategori');
+        $sheet->setCellValue('C10', 'Budget');
+        $sheet->setCellValue('D10', 'Aktual');
+        $sheet->setCellValue('E10', 'Progress');
+        $sheet->setCellValue('F10', 'Status');
+
+        // Style untuk header tabel
+        $headerStyle = [
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN]
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E2E8F0']
+            ]
+        ];
+        $sheet->getStyle('A10:F10')->applyFromArray($headerStyle);
 
         // Isi data
-        $row = 5;
+        $row = 11;
         foreach ($categories as $key => $category) {
             $sheet->setCellValue('A' . $row, $key + 1);
             $sheet->setCellValue('B' . $row, $category['nama_kategori']);
             $sheet->setCellValue('C' . $row, $category['budget']);
             $sheet->setCellValue('D' . $row, $category['actual']);
-            $sheet->setCellValue('E' . $row, $category['percentage'] . '%');
+            $sheet->setCellValue('E' . $row, number_format($category['percentage'], 1) . '%');
+            $sheet->setCellValue('F' . $row, $category['percentage'] > 100 ? 'Melebihi Budget' : 'Sesuai Budget');
+            
+            // Style untuk status
+            if ($category['percentage'] > 100) {
+                $sheet->getStyle('F' . $row)->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('DC143C'));
+            } else {
+                $sheet->getStyle('F' . $row)->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('228B22'));
+            }
+            
             $row++;
         }
+
+        // Style untuk seluruh data
+        $lastRow = $row - 1;
+        $sheet->getStyle('A11:F' . $lastRow)->applyFromArray([
+            'borders' => [
+                'allBorders' => ['borderStyle' => Border::BORDER_THIN]
+            ]
+        ]);
+
+        // Format angka dan alignment
+        $sheet->getStyle('C11:D' . $lastRow)->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle('A11:A' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('E11:F' . $lastRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        
+        // Set lebar kolom otomatis
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Tambah footer
+        $row = $lastRow + 2;
+        $sheet->setCellValue('A' . $row, 'Digenerate pada: ' . date('d/m/Y H:i:s'));
+        $sheet->mergeCells('A' . $row . ':F' . $row);
+        $sheet->getStyle('A' . $row)->getFont()->setItalic(true);
 
         // Set nama file
         $filename = 'Laporan_Budget_vs_Aktual_' . $period . '.xlsx';
