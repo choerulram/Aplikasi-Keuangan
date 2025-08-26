@@ -34,6 +34,8 @@ class ReportsController extends BaseController
         ];
 
         $data = [
+            'pageTitle' => 'Laporan Budget vs Aktual',
+            'title' => 'Laporan Budget vs Aktual | Aplikasi Keuangan',
             'categories' => $categories,
             'summary' => $summary,
             'period' => $period
@@ -509,6 +511,8 @@ class ReportsController extends BaseController
         });
 
         $data = [
+            'pageTitle' => 'Laporan Kategori',
+            'title' => 'Laporan Kategori | Aplikasi Keuangan',
             'categories' => $categories,
             'grandTotal' => $grandTotal,
             'period' => $period,
