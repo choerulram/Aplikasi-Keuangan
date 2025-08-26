@@ -482,6 +482,7 @@ class ReportsController extends BaseController
             if (!isset($categoryTotals[$categoryId])) {
                 $categoryTotals[$categoryId] = [
                     'nama_kategori' => $transaction['category_name'],
+                    'tipe' => $transaction['tipe'],
                     'total' => 0,
                     'jumlah_transaksi' => 0,
                     'transactions' => []
@@ -561,5 +562,54 @@ class ReportsController extends BaseController
             'start_date' => $startDate,
             'end_date' => $endDate
         ];
+    }
+
+    public function exportCategoryPDF()
+    {
+        $reportModel = new ReportModel();
+        $categoryModel = new CategoryModel();
+        
+        // Get all categories
+        $categories = $categoryModel->findAll();
+        
+        // Format data for PDF
+        foreach ($categories as &$category) {
+            // Format dates
+            $category['created_at'] = date('d/m/Y', strtotime($category['created_at']));
+            $category['updated_at'] = date('d/m/Y', strtotime($category['updated_at']));
+            
+            // Set default status jika tidak ada
+            $category['status'] = $category['status'] ?? true;
+            
+            // Set default catatan jika tidak ada
+            $category['catatan'] = $category['catatan'] ?? '-';
+        }
+
+        $data = [
+            'categories' => $categories,
+            'title' => 'Daftar Kategori'
+        ];
+
+        // Initialize DOMPDF
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isPhpEnabled', true);
+        
+        $dompdf = new Dompdf($options);
+        
+        // Load the view
+        $html = view('Reports/pdf_category', $data);
+        
+        // Load HTML content
+        $dompdf->loadHtml($html);
+        
+        // Set paper size and orientation
+        $dompdf->setPaper('A4', 'portrait');
+        
+        // Render PDF
+        $dompdf->render();
+        
+        // Stream PDF to browser
+        $dompdf->stream('kategori.pdf', ['Attachment' => 0]);
     }
 }
