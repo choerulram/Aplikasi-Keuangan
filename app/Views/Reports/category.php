@@ -81,36 +81,36 @@
             <table class="min-w-full border border-gray-300">
                 <thead class="bg-main/90">
                     <tr>
-                        <th class="w-16 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">No</th>
-                        <th class="w-1/4 px-6 py-3 text-left text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">Kategori</th>
-                        <th class="w-32 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">Tipe</th>
-                        <th class="w-32 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">Jumlah Transaksi</th>
-                        <th class="w-48 px-6 py-3 text-right text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">Total</th>
-                        <th class="w-32 px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Persentase</th>
+                        <th style="width: 5%;" class="px-2 py-3 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">No</th>
+                        <th style="width: 25%;" class="px-4 py-3 text-left text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">Kategori</th>
+                        <th style="width: 15%;" class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">Tipe</th>
+                        <th style="width: 15%;" class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">Jumlah Transaksi</th>
+                        <th style="width: 25%;" class="px-4 py-3 text-right text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">Total</th>
+                        <th style="width: 15%;" class="px-4 py-3 text-center text-xs font-medium text-white uppercase tracking-wider">Persentase</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white">
                     <?php $no = 1; $totalAmount = array_sum(array_column($categories, 'total')); ?>
                     <?php foreach ($categories as $category): ?>
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200"><?= $no++ ?></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 border-r border-gray-200"><?= esc($category['nama_kategori']) ?></td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200">
+                        <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200"><?= $no++ ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 border-r border-gray-200"><?= esc($category['nama_kategori']) ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200">
                             <span class="px-2 py-1 text-xs rounded-full <?= $category['tipe'] === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
                                 <?= $category['tipe'] === 'income' ? 'Pemasukan' : 'Pengeluaran' ?>
                             </span>
                         </td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200"><?= $category['jumlah_transaksi'] ?></td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600 text-right border-r border-gray-200">Rp <?= number_format($category['total'], 0, ',', '.') ?></td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm text-gray-600 text-center"><?= number_format(($category['total'] / $totalAmount) * 100, 1) ?>%</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200"><?= $category['jumlah_transaksi'] ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 text-right border-r border-gray-200">Rp <?= number_format($category['total'], 0, ',', '.') ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 text-center"><?= number_format(($category['total'] / $totalAmount) * 100, 1) ?>%</td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
                 <tfoot class="bg-main/90">
                     <tr>
-                        <td colspan="4" class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white text-right border-r border-white/10">Total</td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-white text-right border-r border-white/10">Rp <?= number_format($totalAmount, 0, ',', '.') ?></td>
-                        <td class="px-4 py-4 whitespace-nowrap text-sm font-medium text-white text-center">100%</td>
+                        <td colspan="4" class="px-4 py-2 whitespace-nowrap text-sm font-medium text-white text-right border-r border-white/10">Total</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-white text-right border-r border-white/10">Rp <?= number_format($totalAmount, 0, ',', '.') ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-white text-center">100%</td>
                     </tr>
                 </tfoot>
             </table>

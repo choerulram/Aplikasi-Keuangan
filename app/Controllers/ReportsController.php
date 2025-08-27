@@ -5,8 +5,6 @@ namespace App\Controllers;
 use App\Controllers\BaseController;
 
 use App\Models\ReportModel;
-use App\Models\AccountModel;
-use App\Models\CategoryModel;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -108,6 +106,7 @@ class ReportsController extends BaseController
         // Persiapkan data untuk view
         $data = [
             'title' => 'Laporan Arus Kas',
+            'pageTitle' => 'Laporan Arus Kas',
             'summary' => $summary,
             'transactions' => $transactions,
             'chartData' => $chartData,
@@ -298,9 +297,10 @@ class ReportsController extends BaseController
         ];
 
         $data = [
+            'title' => 'Laporan Budget vs Aktual',
+            'period' => $period,
             'categories' => $categories,
-            'summary' => $summary,
-            'period' => $period
+            'summary' => $summary
         ];
 
         // Load Dompdf
@@ -469,11 +469,31 @@ class ReportsController extends BaseController
     /**************************************
      * BAGIAN 3: LAPORAN KATEGORI
      **************************************/
-    
+
+    private function formatPeriode($period) 
+    {
+        $dates = $this->calculateDateRange($period);
+        $startDate = date('d F Y', strtotime($dates['start_date']));
+        $endDate = date('d F Y', strtotime($dates['end_date']));
+        
+        switch ($period) {
+            case 'this_month':
+                return 'Bulan Ini (' . $startDate . ' - ' . $endDate . ')';
+            case 'last_month':
+                return 'Bulan Lalu (' . $startDate . ' - ' . $endDate . ')';
+            case 'this_year':
+                return 'Tahun Ini (' . $startDate . ' - ' . $endDate . ')';
+            case 'last_30_days':
+                return '30 Hari Terakhir (' . $startDate . ' - ' . $endDate . ')';
+            default:
+                return $startDate . ' - ' . $endDate;
+            
+        }
+    }
+
     public function category()
     {
         $reportModel = new ReportModel();
-        $categoryModel = new CategoryModel();
         
         // Get filter parameters
         $period = $this->request->getGet('period') ?? 'this_month';
@@ -591,27 +611,32 @@ class ReportsController extends BaseController
     public function exportCategoryPDF()
     {
         $reportModel = new ReportModel();
-        $categoryModel = new CategoryModel();
         
-        // Get all categories
-        $categories = $categoryModel->findAll();
+        // Get filter parameters
+        $period = $this->request->getPost('period') ?? 'this_month';
+        $type = $this->request->getPost('type') ?? 'all';
         
-        // Format data for PDF
-        foreach ($categories as &$category) {
-            // Format dates
-            $category['created_at'] = date('d/m/Y', strtotime($category['created_at']));
-            $category['updated_at'] = date('d/m/Y', strtotime($category['updated_at']));
-            
-            // Set default status jika tidak ada
-            $category['status'] = $category['status'] ?? true;
-            
-            // Set default catatan jika tidak ada
-            $category['catatan'] = $category['catatan'] ?? '-';
+        // Calculate date range
+        $dateRange = $this->calculateDateRange($period);
+        
+        // Prepare filters
+        $filters = [
+            'start_date' => $dateRange['start_date'],
+            'end_date' => $dateRange['end_date']
+        ];
+        
+        if ($type !== 'all') {
+            $filters['tipe'] = $type;
         }
-
+        
+        // Get category report data
+        $categories = $reportModel->getCategoryReport($filters);
+        
+        // Prepare data for view
         $data = [
             'categories' => $categories,
-            'title' => 'Daftar Kategori'
+            'title' => 'Laporan Kategori',
+            'periode' => $this->formatPeriode($period)
         ];
 
         // Initialize DOMPDF

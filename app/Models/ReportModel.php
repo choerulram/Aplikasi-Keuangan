@@ -155,6 +155,34 @@ class ReportModel extends Model
         return $filledData;
     }
 
+    public function getCategoryReport($filters = [])
+    {
+        $builder = $this->db->table('categories')
+            ->select([
+                'categories.id',
+                'categories.nama_kategori',
+                'categories.tipe',
+                'COUNT(transactions.id) as jumlah_transaksi',
+                'COALESCE(SUM(transactions.jumlah), 0) as total'
+            ])
+            ->join('transactions', 'transactions.category_id = categories.id', 'left');
+
+        if (!empty($filters['start_date'])) {
+            $builder->where('transactions.tanggal >=', $filters['start_date']);
+        }
+        if (!empty($filters['end_date'])) {
+            $builder->where('transactions.tanggal <=', $filters['end_date']);
+        }
+        if (!empty($filters['tipe'])) {
+            $builder->where('categories.tipe', $filters['tipe']);
+        }
+
+        return $builder->groupBy(['categories.id', 'categories.nama_kategori', 'categories.tipe'])
+                      ->orderBy('total', 'DESC')
+                      ->get()
+                      ->getResultArray();
+    }
+
     public function getBudgetVsActual($period)
     {
         // Get all expense categories

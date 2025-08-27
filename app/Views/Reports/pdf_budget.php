@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <title>Laporan Budget vs Aktual</title>
+    <title><?= $title ?></title>
     <style>
         body {
             font-family: Arial, sans-serif;
