@@ -661,4 +661,144 @@ class ReportsController extends BaseController
         // Stream PDF to browser
         $dompdf->stream('kategori.pdf', ['Attachment' => 0]);
     }
+
+    public function exportCategoryExcel()
+    {
+        $reportModel = new ReportModel();
+        
+        // Get filter parameters
+        $period = $this->request->getPost('period') ?? 'this_month';
+        $type = $this->request->getPost('type') ?? 'all';
+        
+        // Calculate date range
+        $dateRange = $this->calculateDateRange($period);
+        
+        // Prepare filters
+        $filters = [
+            'start_date' => $dateRange['start_date'],
+            'end_date' => $dateRange['end_date']
+        ];
+        
+        if ($type !== 'all') {
+            $filters['tipe'] = $type;
+        }
+        
+        // Get category report data
+        $categories = $reportModel->getCategoryReport($filters);
+        
+        // Hitung total
+        $totalAmount = array_sum(array_column($categories, 'total'));
+        
+        // Buat spreadsheet baru
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Laporan Kategori');
+
+        // Set judul
+        $sheet->setCellValue('A1', 'LAPORAN KATEGORI');
+        $sheet->setCellValue('A2', 'Periode: ' . $this->formatPeriode($period));
+        $sheet->mergeCells('A1:F1');
+        $sheet->mergeCells('A2:F2');
+
+        // Style untuk judul
+        $titleStyle = [
+            'font' => [
+                'bold' => true,
+                'size' => 14
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E2E8F0']
+            ]
+        ];
+        $sheet->getStyle('A1:F2')->applyFromArray($titleStyle);
+
+        // Header tabel
+        $sheet->setCellValue('A4', 'No');
+        $sheet->setCellValue('B4', 'Kategori');
+        $sheet->setCellValue('C4', 'Tipe');
+        $sheet->setCellValue('D4', 'Jumlah Transaksi');
+        $sheet->setCellValue('E4', 'Total');
+        $sheet->setCellValue('F4', 'Persentase');
+
+        // Style untuk header tabel
+        $headerStyle = [
+            'font' => ['bold' => true],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E2E8F0']
+            ]
+        ];
+        $sheet->getStyle('A4:F4')->applyFromArray($headerStyle);
+
+        // Isi data kategori
+        $row = 5;
+        $no = 1;
+        foreach ($categories as $category) {
+            $sheet->setCellValue('A' . $row, $no++);
+            $sheet->setCellValue('B' . $row, $category['nama_kategori']);
+            $sheet->setCellValue('C' . $row, $category['tipe'] === 'income' ? 'Pemasukan' : 'Pengeluaran');
+            $sheet->setCellValue('D' . $row, $category['jumlah_transaksi']);
+            $sheet->setCellValue('E' . $row, $category['total']);
+            $sheet->setCellValue('F' . $row, ($category['total'] / $totalAmount) * 100);
+
+            // Warna untuk tipe transaksi
+            $textColor = $category['tipe'] === 'income' ? '28a745' : 'dc3545';
+            $sheet->getStyle('C' . $row)->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color($textColor));
+            
+            $row++;
+        }
+
+        // Total row
+        $lastRow = $row - 1;
+        $totalRow = $row;
+        $sheet->setCellValue('A' . $totalRow, 'Total');
+        $sheet->mergeCells('A' . $totalRow . ':C' . $totalRow);
+        $sheet->setCellValue('D' . $totalRow, '=SUM(D5:D' . $lastRow . ')');
+        $sheet->setCellValue('E' . $totalRow, '=SUM(E5:E' . $lastRow . ')');
+        $sheet->setCellValue('F' . $totalRow, '100');
+
+        // Style untuk total
+        $sheet->getStyle('A' . $totalRow . ':F' . $totalRow)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $totalRow . ':F' . $totalRow)->getFill()
+            ->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8F9FA');
+
+        // Format angka
+        $sheet->getStyle('D5:D' . $totalRow)->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle('E5:E' . $totalRow)->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle('F5:F' . $totalRow)->getNumberFormat()->setFormatCode('#,##0.0"%"');
+
+        // Alignment
+        $sheet->getStyle('A5:A' . $totalRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('C5:C' . $totalRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('D5:F' . $totalRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        // Border untuk seluruh tabel
+        $sheet->getStyle('A4:F' . $totalRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+        // Set lebar kolom otomatis
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Set nama file
+        $filename = 'Laporan_Kategori_' . str_replace(' ', '_', $this->formatPeriode($period)) . '.xlsx';
+
+        // Set header untuk download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // Export ke Excel
+        $writer = new Xlsx($spreadsheet);
+        ob_end_clean();
+        $writer->save('php://output');
+        exit();
+    }
 }
