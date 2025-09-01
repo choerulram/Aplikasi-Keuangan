@@ -155,6 +155,47 @@ class ReportModel extends Model
         return $filledData;
     }
 
+    public function getAccountBalances($dateRange)
+    {
+        // Get initial balances
+        $accounts = $this->db->table('accounts')
+            ->select('accounts.*, users.username')
+            ->join('users', 'users.id = accounts.user_id')
+            ->get()
+            ->getResultArray();
+
+        // Calculate movements and final balances
+        foreach ($accounts as &$account) {
+            // Get income transactions
+            $income = $this->db->table('transactions')
+                ->selectSum('jumlah')
+                ->where('account_id', $account['id'])
+                ->where('tipe', 'income')
+                ->where('tanggal >=', $dateRange['start_date'])
+                ->where('tanggal <=', $dateRange['end_date'])
+                ->get()
+                ->getRowArray();
+
+            // Get expense transactions
+            $expense = $this->db->table('transactions')
+                ->selectSum('jumlah')
+                ->where('account_id', $account['id'])
+                ->where('tipe', 'expense')
+                ->where('tanggal >=', $dateRange['start_date'])
+                ->where('tanggal <=', $dateRange['end_date'])
+                ->get()
+                ->getRowArray();
+
+            // Calculate movements and final balance
+            $account['total_income'] = $income['jumlah'] ?? 0;
+            $account['total_expense'] = $expense['jumlah'] ?? 0;
+            $account['mutasi'] = $account['total_income'] - $account['total_expense'];
+            $account['saldo_akhir'] = $account['saldo_awal'] + $account['mutasi'];
+        }
+
+        return $accounts;
+    }
+
     public function getCategoryReport($filters = [])
     {
         $builder = $this->db->table('categories')

@@ -662,6 +662,27 @@ class ReportsController extends BaseController
         $dompdf->stream('kategori.pdf', ['Attachment' => 0]);
     }
 
+    public function account()
+    {
+        $reportModel = new ReportModel();
+        
+        // Get filter parameters
+        $period = $this->request->getGet('period') ?? 'this_month';
+        
+        // Calculate date range
+        $dateRange = $this->calculateDateRange($period);
+        
+        // Get account balances and movements
+        $accountData = $reportModel->getAccountBalances($dateRange);
+        $totalBalance = array_sum(array_column($accountData, 'saldo_akhir'));
+        
+        return view('Reports/account', [
+            'period' => $period,
+            'accounts' => $accountData,
+            'totalBalance' => $totalBalance
+        ]);
+    }
+
     public function exportCategoryExcel()
     {
         $reportModel = new ReportModel();
