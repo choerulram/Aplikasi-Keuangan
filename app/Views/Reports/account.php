@@ -73,6 +73,7 @@
             <table class="min-w-full">
                 <thead class="bg-main/90">
                     <tr>
+                        <th class="px-6 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">No</th>
                         <th class="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Akun</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Saldo Awal</th>
                         <th class="px-6 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Total Masuk</th>
@@ -82,8 +83,9 @@
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    <?php foreach ($accounts as $account): ?>
+                    <?php $no = 1; foreach ($accounts as $account): ?>
                     <tr>
+                        <td class="px-6 py-4 text-center"><?= $no++ ?></td>
                         <td class="px-6 py-4 whitespace-nowrap"><?= esc($account['nama_akun']) ?></td>
                         <td class="px-6 py-4 text-right">Rp <?= number_format($account['saldo_awal'], 0, ',', '.') ?></td>
                         <td class="px-6 py-4 text-right text-green-600">Rp <?= number_format($account['total_income'], 0, ',', '.') ?></td>
@@ -97,6 +99,7 @@
                 </tbody>
                 <tfoot class="bg-gray-50">
                     <tr>
+                        <td class="px-6 py-4 text-center font-semibold">#</td>
                         <td class="px-6 py-4 font-semibold">Total</td>
                         <td class="px-6 py-4 text-right font-semibold">Rp <?= number_format(array_sum(array_column($accounts, 'saldo_awal')), 0, ',', '.') ?></td>
                         <td class="px-6 py-4 text-right font-semibold text-green-600">Rp <?= number_format(array_sum(array_column($accounts, 'total_income')), 0, ',', '.') ?></td>
