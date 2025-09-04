@@ -70,42 +70,42 @@
             <h3 class="text-gray-600 text-lg font-semibold">Ringkasan Mutasi per Akun</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full">
+            <table class="min-w-full border border-gray-300">
                 <thead class="bg-main/90">
                     <tr>
-                        <th class="px-6 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">No</th>
-                        <th class="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Akun</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Saldo Awal</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Total Masuk</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Total Keluar</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Mutasi</th>
-                        <th class="px-6 py-3 text-right text-xs font-semibold text-white uppercase tracking-wider">Saldo Akhir</th>
+                        <th class="py-3 px-2 w-12 text-center text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">No</th>
+                        <th class="py-3 px-4 w-36 text-left text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Akun</th>
+                        <th class="py-3 px-4 w-40 text-right text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Saldo Awal</th>
+                        <th class="py-3 px-4 w-40 text-right text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Total Masuk</th>
+                        <th class="py-3 px-4 w-40 text-right text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Total Keluar</th>
+                        <th class="py-3 px-4 w-40 text-right text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Mutasi</th>
+                        <th class="py-3 px-4 w-40 text-right text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">Saldo Akhir</th>
                     </tr>
                 </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
+                <tbody class="bg-white">
                     <?php $no = 1; foreach ($accounts as $account): ?>
-                    <tr>
-                        <td class="px-6 py-4 text-center"><?= $no++ ?></td>
-                        <td class="px-6 py-4 whitespace-nowrap"><?= esc($account['nama_akun']) ?></td>
-                        <td class="px-6 py-4 text-right">Rp <?= number_format($account['saldo_awal'], 0, ',', '.') ?></td>
-                        <td class="px-6 py-4 text-right text-green-600">Rp <?= number_format($account['total_income'], 0, ',', '.') ?></td>
-                        <td class="px-6 py-4 text-right text-red-600">Rp <?= number_format($account['total_expense'], 0, ',', '.') ?></td>
-                        <td class="px-6 py-4 text-right <?= $account['mutasi'] >= 0 ? 'text-green-600' : 'text-red-600' ?>">
+                    <tr class="hover:bg-gray-50 transition">
+                        <td class="py-2 px-2 text-sm text-gray-600 border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
+                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($account['nama_akun']) ?></td>
+                        <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200 text-right">Rp <?= number_format($account['saldo_awal'], 0, ',', '.') ?></td>
+                        <td class="py-2 px-4 text-sm text-green-600 border-b border-r border-gray-200 text-right">Rp <?= number_format($account['total_income'], 0, ',', '.') ?></td>
+                        <td class="py-2 px-4 text-sm text-red-600 border-b border-r border-gray-200 text-right">Rp <?= number_format($account['total_expense'], 0, ',', '.') ?></td>
+                        <td class="py-2 px-4 text-sm border-b border-r border-gray-200 text-right <?= $account['mutasi'] >= 0 ? 'text-green-600' : 'text-red-600' ?>">
                             <?= $account['mutasi'] >= 0 ? '+' : '' ?>Rp <?= number_format($account['mutasi'], 0, ',', '.') ?>
                         </td>
-                        <td class="px-6 py-4 text-right font-semibold">Rp <?= number_format($account['saldo_akhir'], 0, ',', '.') ?></td>
+                        <td class="py-2 px-4 text-sm font-semibold border-b border-r border-gray-200 text-right">Rp <?= number_format($account['saldo_akhir'], 0, ',', '.') ?></td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
                 <tfoot class="bg-gray-50">
                     <tr>
-                        <td class="px-6 py-4 text-center font-semibold">#</td>
-                        <td class="px-6 py-4 font-semibold">Total</td>
-                        <td class="px-6 py-4 text-right font-semibold">Rp <?= number_format(array_sum(array_column($accounts, 'saldo_awal')), 0, ',', '.') ?></td>
-                        <td class="px-6 py-4 text-right font-semibold text-green-600">Rp <?= number_format(array_sum(array_column($accounts, 'total_income')), 0, ',', '.') ?></td>
-                        <td class="px-6 py-4 text-right font-semibold text-red-600">Rp <?= number_format(array_sum(array_column($accounts, 'total_expense')), 0, ',', '.') ?></td>
-                        <td class="px-6 py-4 text-right font-semibold">Rp <?= number_format(array_sum(array_column($accounts, 'mutasi')), 0, ',', '.') ?></td>
-                        <td class="px-6 py-4 text-right font-semibold">Rp <?= number_format($totalBalance, 0, ',', '.') ?></td>
+                        <td class="py-2 px-2 text-sm font-semibold border-r border-gray-200 text-center">#</td>
+                        <td class="py-2 px-4 text-sm font-semibold border-r border-gray-200">Total</td>
+                        <td class="py-2 px-4 text-sm font-semibold border-r border-gray-200 text-right">Rp <?= number_format(array_sum(array_column($accounts, 'saldo_awal')), 0, ',', '.') ?></td>
+                        <td class="py-2 px-4 text-sm font-semibold border-r border-gray-200 text-right text-green-600">Rp <?= number_format(array_sum(array_column($accounts, 'total_income')), 0, ',', '.') ?></td>
+                        <td class="py-2 px-4 text-sm font-semibold border-r border-gray-200 text-right text-red-600">Rp <?= number_format(array_sum(array_column($accounts, 'total_expense')), 0, ',', '.') ?></td>
+                        <td class="py-2 px-4 text-sm font-semibold border-r border-gray-200 text-right">Rp <?= number_format(array_sum(array_column($accounts, 'mutasi')), 0, ',', '.') ?></td>
+                        <td class="py-2 px-4 text-sm font-semibold border-r border-gray-200 text-right">Rp <?= number_format($totalBalance, 0, ',', '.') ?></td>
                     </tr>
                 </tfoot>
             </table>
