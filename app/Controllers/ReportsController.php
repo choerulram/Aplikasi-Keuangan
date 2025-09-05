@@ -672,6 +672,54 @@ class ReportsController extends BaseController
         // Calculate date range
         $dateRange = $this->calculateDateRange($period);
         
+        // Get account balances
+        $accounts = $reportModel->getAccountBalances($dateRange);
+
+        return view('Reports/account', [
+            'accounts' => $accounts,
+            'period' => $period
+        ]);
+    }
+
+    public function exportAccountPDF()
+    {
+        $reportModel = new ReportModel();
+        
+        // Ambil periode dari form
+        $period = $this->request->getPost('period') ?? 'this_month';
+        
+        // Hitung range tanggal berdasarkan periode
+        $dateRange = $this->calculateDateRange($period);
+        
+        // Ambil data akun beserta saldo dan mutasinya
+        $accounts = $reportModel->getAccountBalances($dateRange);
+        
+        // Format periode untuk ditampilkan
+        $periode = $this->formatPeriode($period);
+        
+        // Persiapkan data untuk view
+        $data = [
+            'accounts' => $accounts,
+            'periode' => $periode
+        ];
+
+        // Load Dompdf
+        $options = new Options();
+        $options->setIsRemoteEnabled(true);
+        $dompdf = new Dompdf($options);
+
+        // Load view ke HTML
+        $html = view('Reports/pdf_account', $data);
+
+        // Convert ke PDF
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Download file
+        $filename = 'Laporan_Saldo_per_Akun_' . date('Y-m') . '.pdf';
+        return $dompdf->stream($filename, ['Attachment' => false]);
+    }
         // Get account balances and movements
         $accountData = $reportModel->getAccountBalances($dateRange);
         $totalBalance = array_sum(array_column($accountData, 'saldo_akhir'));
