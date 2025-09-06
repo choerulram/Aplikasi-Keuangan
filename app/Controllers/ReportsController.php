@@ -672,12 +672,14 @@ class ReportsController extends BaseController
         // Calculate date range
         $dateRange = $this->calculateDateRange($period);
         
-        // Get account balances
+        // Get account balances and movements
         $accounts = $reportModel->getAccountBalances($dateRange);
-
+        $totalBalance = array_sum(array_column($accounts, 'saldo_akhir'));
+        
         return view('Reports/account', [
+            'period' => $period,
             'accounts' => $accounts,
-            'period' => $period
+            'totalBalance' => $totalBalance
         ]);
     }
 
@@ -719,16 +721,6 @@ class ReportsController extends BaseController
         // Download file
         $filename = 'Laporan_Saldo_per_Akun_' . date('Y-m') . '.pdf';
         return $dompdf->stream($filename, ['Attachment' => false]);
-    }
-        // Get account balances and movements
-        $accountData = $reportModel->getAccountBalances($dateRange);
-        $totalBalance = array_sum(array_column($accountData, 'saldo_akhir'));
-        
-        return view('Reports/account', [
-            'period' => $period,
-            'accounts' => $accountData,
-            'totalBalance' => $totalBalance
-        ]);
     }
 
     public function exportCategoryExcel()
