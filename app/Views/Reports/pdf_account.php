@@ -52,23 +52,6 @@
         <p>Tanggal Cetak: <?= date('d/m/Y H:i:s') ?></p>
     </div>
 
-    <div class="summary-box">
-        <h3>Total Saldo Seluruh Akun</h3>
-        <table>
-            <tr>
-                <td>Total Saldo:</td>
-                <td class="text-right">Rp <?= number_format(array_sum(array_column($accounts, 'saldo_akhir')), 0, ',', '.') ?></td>
-            </tr>
-            <tr>
-                <td>Total Mutasi (30 hari):</td>
-                <?php $totalMutasi = array_sum(array_column($accounts, 'mutasi')); ?>
-                <td class="text-right <?= $totalMutasi >= 0 ? 'text-positive' : 'text-negative' ?>">
-                    <?= $totalMutasi >= 0 ? '+' : '' ?>Rp <?= number_format($totalMutasi, 0, ',', '.') ?>
-                </td>
-            </tr>
-        </table>
-    </div>
-
     <h3>Rincian Saldo per Akun</h3>
     <table>
         <thead>
