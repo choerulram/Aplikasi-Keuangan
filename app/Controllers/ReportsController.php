@@ -662,67 +662,6 @@ class ReportsController extends BaseController
         $dompdf->stream('kategori.pdf', ['Attachment' => 0]);
     }
 
-    public function account()
-    {
-        $reportModel = new ReportModel();
-        
-        // Get filter parameters
-        $period = $this->request->getGet('period') ?? 'this_month';
-        
-        // Calculate date range
-        $dateRange = $this->calculateDateRange($period);
-        
-        // Get account balances and movements
-        $accounts = $reportModel->getAccountBalances($dateRange);
-        $totalBalance = array_sum(array_column($accounts, 'saldo_akhir'));
-        
-        return view('Reports/account', [
-            'period' => $period,
-            'accounts' => $accounts,
-            'totalBalance' => $totalBalance
-        ]);
-    }
-
-    public function exportAccountPDF()
-    {
-        $reportModel = new ReportModel();
-        
-        // Ambil periode dari form
-        $period = $this->request->getPost('period') ?? 'this_month';
-        
-        // Hitung range tanggal berdasarkan periode
-        $dateRange = $this->calculateDateRange($period);
-        
-        // Ambil data akun beserta saldo dan mutasinya
-        $accounts = $reportModel->getAccountBalances($dateRange);
-        
-        // Format periode untuk ditampilkan
-        $periode = $this->formatPeriode($period);
-        
-        // Persiapkan data untuk view
-        $data = [
-            'accounts' => $accounts,
-            'periode' => $periode
-        ];
-
-        // Load Dompdf
-        $options = new Options();
-        $options->setIsRemoteEnabled(true);
-        $dompdf = new Dompdf($options);
-
-        // Load view ke HTML
-        $html = view('Reports/pdf_account', $data);
-
-        // Convert ke PDF
-        $dompdf->loadHtml($html);
-        $dompdf->setPaper('A4', 'portrait');
-        $dompdf->render();
-
-        // Download file
-        $filename = 'Laporan_Saldo_per_Akun_' . date('Y-m') . '.pdf';
-        return $dompdf->stream($filename, ['Attachment' => false]);
-    }
-
     public function exportCategoryExcel()
     {
         $reportModel = new ReportModel();
@@ -850,6 +789,208 @@ class ReportsController extends BaseController
 
         // Set nama file
         $filename = 'Laporan_Kategori_' . str_replace(' ', '_', $this->formatPeriode($period)) . '.xlsx';
+
+        // Set header untuk download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // Export ke Excel
+        $writer = new Xlsx($spreadsheet);
+        ob_end_clean();
+        $writer->save('php://output');
+        exit();
+    }
+    
+    /**************************************
+     * BAGIAN 4: LAPORAN SALDO PER AKUN
+     **************************************/
+    
+    public function account()
+    {
+        $reportModel = new ReportModel();
+        
+        // Get filter parameters
+        $period = $this->request->getGet('period') ?? 'this_month';
+        
+        // Calculate date range
+        $dateRange = $this->calculateDateRange($period);
+        
+        // Get account balances and movements
+        $accounts = $reportModel->getAccountBalances($dateRange);
+        $totalBalance = array_sum(array_column($accounts, 'saldo_akhir'));
+        
+        return view('Reports/account', [
+            'period' => $period,
+            'accounts' => $accounts,
+            'totalBalance' => $totalBalance
+        ]);
+    }
+
+    public function exportAccountPDF()
+    {
+        $reportModel = new ReportModel();
+        
+        // Ambil periode dari form
+        $period = $this->request->getPost('period') ?? 'this_month';
+        
+        // Hitung range tanggal berdasarkan periode
+        $dateRange = $this->calculateDateRange($period);
+        
+        // Ambil data akun beserta saldo dan mutasinya
+        $accounts = $reportModel->getAccountBalances($dateRange);
+        
+        // Format periode untuk ditampilkan
+        $periode = $this->formatPeriode($period);
+        
+        // Persiapkan data untuk view
+        $data = [
+            'accounts' => $accounts,
+            'periode' => $periode
+        ];
+
+        // Load Dompdf
+        $options = new Options();
+        $options->setIsRemoteEnabled(true);
+        $dompdf = new Dompdf($options);
+
+        // Load view ke HTML
+        $html = view('Reports/pdf_account', $data);
+
+        // Convert ke PDF
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Download file
+        $filename = 'Laporan_Saldo_per_Akun_' . date('Y-m') . '.pdf';
+        return $dompdf->stream($filename, ['Attachment' => false]);
+    }
+
+    public function exportAccountExcel()
+    {
+        $reportModel = new ReportModel();
+        
+        // Ambil periode dari form
+        $period = $this->request->getPost('period') ?? 'this_month';
+        
+        // Hitung range tanggal berdasarkan periode
+        $dateRange = $this->calculateDateRange($period);
+        
+        // Ambil data akun beserta saldo dan mutasinya
+        $accounts = $reportModel->getAccountBalances($dateRange);
+        
+        // Hitung total
+        $totalSaldoAwal = array_sum(array_column($accounts, 'saldo_awal'));
+        $totalIncome = array_sum(array_column($accounts, 'total_income'));
+        $totalExpense = array_sum(array_column($accounts, 'total_expense'));
+        $totalMutasi = array_sum(array_column($accounts, 'mutasi'));
+        $totalSaldoAkhir = array_sum(array_column($accounts, 'saldo_akhir'));
+        
+        // Buat spreadsheet baru
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Laporan Saldo per Akun');
+
+        // Set judul
+        $sheet->setCellValue('A1', 'LAPORAN SALDO PER AKUN');
+        $sheet->setCellValue('A2', 'Periode: ' . $this->formatPeriode($period));
+        $sheet->mergeCells('A1:G1');
+        $sheet->mergeCells('A2:G2');
+
+        // Style untuk judul
+        $titleStyle = [
+            'font' => [
+                'bold' => true,
+                'size' => 14
+            ],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E2E8F0']
+            ]
+        ];
+        $sheet->getStyle('A1:G2')->applyFromArray($titleStyle);
+
+        // Header tabel
+        $sheet->setCellValue('A4', 'No');
+        $sheet->setCellValue('B4', 'Nama Akun');
+        $sheet->setCellValue('C4', 'Saldo Awal');
+        $sheet->setCellValue('D4', 'Total Masuk');
+        $sheet->setCellValue('E4', 'Total Keluar');
+        $sheet->setCellValue('F4', 'Mutasi');
+        $sheet->setCellValue('G4', 'Saldo Akhir');
+
+        // Style untuk header tabel
+        $headerStyle = [
+            'font' => ['bold' => true],
+            'alignment' => [
+                'horizontal' => Alignment::HORIZONTAL_CENTER
+            ],
+            'fill' => [
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => 'E2E8F0']
+            ]
+        ];
+        $sheet->getStyle('A4:G4')->applyFromArray($headerStyle);
+
+        // Isi data akun
+        $row = 5;
+        $no = 1;
+        foreach ($accounts as $account) {
+            $sheet->setCellValue('A' . $row, $no++);
+            $sheet->setCellValue('B' . $row, $account['nama_akun']);
+            $sheet->setCellValue('C' . $row, $account['saldo_awal']);
+            $sheet->setCellValue('D' . $row, $account['total_income']);
+            $sheet->setCellValue('E' . $row, $account['total_expense']);
+            $sheet->setCellValue('F' . $row, $account['mutasi']);
+            $sheet->setCellValue('G' . $row, $account['saldo_akhir']);
+            
+            // Warna untuk mutasi
+            if ($account['mutasi'] >= 0) {
+                $sheet->getStyle('F' . $row)->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('28a745'));
+            } else {
+                $sheet->getStyle('F' . $row)->getFont()->setColor(new \PhpOffice\PhpSpreadsheet\Style\Color('dc3545'));
+            }
+            
+            $row++;
+        }
+
+        // Total row
+        $lastRow = $row - 1;
+        $totalRow = $row;
+        $sheet->setCellValue('A' . $totalRow, 'Total');
+        $sheet->mergeCells('A' . $totalRow . ':B' . $totalRow);
+        $sheet->setCellValue('C' . $totalRow, $totalSaldoAwal);
+        $sheet->setCellValue('D' . $totalRow, $totalIncome);
+        $sheet->setCellValue('E' . $totalRow, $totalExpense);
+        $sheet->setCellValue('F' . $totalRow, $totalMutasi);
+        $sheet->setCellValue('G' . $totalRow, $totalSaldoAkhir);
+
+        // Style untuk total
+        $sheet->getStyle('A' . $totalRow . ':G' . $totalRow)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $totalRow . ':G' . $totalRow)->getFill()
+            ->setFillType(Fill::FILL_SOLID)->getStartColor()->setRGB('F8F9FA');
+
+        // Format angka
+        $sheet->getStyle('C5:G' . $totalRow)->getNumberFormat()->setFormatCode('#,##0');
+
+        // Alignment
+        $sheet->getStyle('A5:A' . $totalRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('C5:G' . $totalRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        // Border untuk seluruh tabel
+        $sheet->getStyle('A4:G' . $totalRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+        // Set lebar kolom otomatis
+        foreach (range('A', 'G') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Set nama file
+        $filename = 'Laporan_Saldo_per_Akun_' . str_replace(' ', '_', $this->formatPeriode($period)) . '.xlsx';
 
         // Set header untuk download
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
