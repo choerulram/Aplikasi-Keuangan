@@ -61,6 +61,7 @@ $routes->post('reports/exportBudgetExcel', 'ReportsController::exportBudgetExcel
 $routes->post('reports/exportCategoryPDF', 'ReportsController::exportCategoryPDF');
 $routes->post('reports/exportCategoryExcel', 'ReportsController::exportCategoryExcel');
 $routes->get('reports/account', 'ReportsController::account');
+$routes->get('reports/trend', 'ReportsController::trend');
 $routes->post('reports/exportAccountPDF', 'ReportsController::exportAccountPDF');
 $routes->post('reports/exportAccountExcel', 'ReportsController::exportAccountExcel');
 

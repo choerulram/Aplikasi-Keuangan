@@ -1003,4 +1003,90 @@ class ReportsController extends BaseController
         $writer->save('php://output');
         exit();
     }
+
+    /**
+     * Method untuk menampilkan halaman tren bulanan
+     *
+     * @return view
+     */
+    public function trend()
+    {
+        $reportModel = new ReportModel();
+        
+        // Ambil parameter filter tahun
+        $year = $this->request->getGet('year') ?? date('Y');
+        
+        // Set rentang tanggal untuk Year-to-Date
+        $startDate = $year . '-01-01';
+        $endDate = $year . '-12-31';
+        
+        // Siapkan filter
+        $filters = [
+            'start_date' => $startDate,
+            'end_date' => $endDate
+        ];
+        
+        // Ambil data bulanan untuk grafik
+        $monthlyData = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $month = str_pad($i, 2, '0', STR_PAD_LEFT);
+            
+            // Filter untuk bulan ini
+            $monthFilters = [
+                'start_date' => "$year-$month-01",
+                'end_date' => date('Y-m-t', strtotime("$year-$month-01"))
+            ];
+            
+            $monthData = $reportModel->getSummary($monthFilters);
+            
+            $monthlyData[] = [
+                'month' => date('F', strtotime("$year-$month-01")),
+                'income' => $monthData['total_income'] ?? 0,
+                'expense' => $monthData['total_expense'] ?? 0
+            ];
+        }
+        
+        // Ambil data perbandingan bulanan
+        $currentYearData = [];
+        
+        for ($i = 1; $i <= 12; $i++) {
+            $month = str_pad($i, 2, '0', STR_PAD_LEFT);
+            
+            // Data tahun ini
+            $currentMonthFilters = [
+                'start_date' => "$year-$month-01",
+                'end_date' => date('Y-m-t', strtotime("$year-$month-01"))
+            ];
+            $currentMonthData = $reportModel->getSummary($currentMonthFilters);
+            
+            // Data tahun lalu
+            $prevYear = $year - 1;
+            $previousMonthFilters = [
+                'start_date' => "$prevYear-$month-01",
+                'end_date' => date('Y-m-t', strtotime("$prevYear-$month-01"))
+            ];
+            $previousMonthData = $reportModel->getSummary($previousMonthFilters);
+            
+            // Hitung pertumbuhan
+            $currentTotal = ($currentMonthData['total_income'] ?? 0) - ($currentMonthData['total_expense'] ?? 0);
+            $previousTotal = ($previousMonthData['total_income'] ?? 0) - ($previousMonthData['total_expense'] ?? 0);
+            
+            $yoyGrowth = $previousTotal != 0 ? (($currentTotal - $previousTotal) / abs($previousTotal)) * 100 : 0;
+            
+            $currentYearData[] = [
+                'bulan' => date('F', strtotime("$year-$month-01")),
+                'pemasukan' => $currentMonthData['total_income'] ?? 0,
+                'pengeluaran' => $currentMonthData['total_expense'] ?? 0,
+                'selisih' => $currentTotal,
+                'yoy_growth' => $yoyGrowth
+            ];
+        }
+
+        // Tampilkan view dengan data
+        return view('Reports/trend', [
+            'monthlyData' => $monthlyData,
+            'currentYearData' => $currentYearData,
+            'selectedYear' => $year
+        ]);
+    }
 }
