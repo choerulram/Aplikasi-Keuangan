@@ -87,6 +87,31 @@
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
+                <tfoot class="bg-gray-50">
+                    <tr>
+                        <th colspan="2" class="py-3 px-4 text-right text-xs font-bold uppercase border-t border-r border-gray-300">Total</th>
+                        <th class="py-3 px-4 text-right text-xs font-bold uppercase border-t border-r border-gray-300">
+                            <?php
+                            $totalIncome = array_sum(array_column($currentYearData, 'pemasukan'));
+                            echo 'Rp ' . number_format($totalIncome, 0, ',', '.');
+                            ?>
+                        </th>
+                        <th class="py-3 px-4 text-right text-xs font-bold uppercase border-t border-r border-gray-300">
+                            <?php
+                            $totalExpense = array_sum(array_column($currentYearData, 'pengeluaran'));
+                            echo 'Rp ' . number_format($totalExpense, 0, ',', '.');
+                            ?>
+                        </th>
+                        <th class="py-3 px-4 text-right text-xs font-bold uppercase border-t border-r border-gray-300">
+                            <?php
+                            $totalSelisih = $totalIncome - $totalExpense;
+                            $textColorClass = $totalSelisih >= 0 ? 'text-green-600' : 'text-red-600';
+                            echo "<span class='$textColorClass'>Rp " . number_format(abs($totalSelisih), 0, ',', '.') . "</span>";
+                            ?>
+                        </th>
+                        <th class="py-3 px-4 text-right text-xs font-bold uppercase border-t border-r border-gray-300">-</th>
+                    </tr>
+                </tfoot>
             </table>
         </div>
     </div>
@@ -99,8 +124,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Data untuk chart
     const monthlyData = <?= json_encode($monthlyData) ?>;
     const months = monthlyData.map(data => data.month);
-    const incomeData = monthlyData.map(data => data.income);
-    const expenseData = monthlyData.map(data => data.expense);
+    const incomeData = monthlyData.map(data => data.pemasukan);
+    const expenseData = monthlyData.map(data => data.pengeluaran);
 
     // Membuat line chart
     const ctx = document.getElementById('monthlyTrendChart').getContext('2d');

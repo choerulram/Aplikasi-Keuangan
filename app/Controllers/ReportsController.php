@@ -1039,8 +1039,8 @@ class ReportsController extends BaseController
             
             $monthlyData[] = [
                 'month' => date('F', strtotime("$year-$month-01")),
-                'income' => $monthData['total_income'] ?? 0,
-                'expense' => $monthData['total_expense'] ?? 0
+                'pemasukan' => $monthData['total_income'] ?? 0,
+                'pengeluaran' => $monthData['total_expense'] ?? 0
             ];
         }
         
