@@ -1004,11 +1004,9 @@ class ReportsController extends BaseController
         exit();
     }
 
-    /**
-     * Method untuk menampilkan halaman tren bulanan
-     *
-     * @return view
-     */
+    /**************************************
+     * BAGIAN 5: LAPORAN TREN BULANAN
+     **************************************/
     public function trend()
     {
         $reportModel = new ReportModel();
@@ -1089,4 +1087,59 @@ class ReportsController extends BaseController
             'selectedYear' => $year
         ]);
     }
+
+    public function exportTrendPDF()
+    {
+        // Ambil parameter filter
+        $year = $this->request->getPost('year') ?? date('Y');
+        
+        // Load model
+        $reportModel = new ReportModel();
+        
+        // Set rentang tanggal untuk data bulanan
+        $startDate = $year . '-01-01';
+        $endDate = $year . '-12-31';
+        
+        // Ambil data bulanan
+        $monthlyData = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $month = str_pad($i, 2, '0', STR_PAD_LEFT);
+            
+            // Filter untuk bulan ini
+            $monthFilters = [
+                'year' => $year,
+                'month' => $month
+            ];
+            
+            $monthData = $reportModel->getSummary($monthFilters);
+            
+            $monthlyData[] = [
+                'month' => "$year-$month",
+                'income' => $monthData['total_income'] ?? 0,
+                'expense' => $monthData['total_expense'] ?? 0
+            ];
+        }
+        
+        // Siapkan data untuk view PDF
+        $data = [
+            'selectedYear' => $year,
+            'monthlyData' => $monthlyData
+        ];
+        
+        // Load view ke HTML
+        $html = view('Reports/pdf_trend', $data);
+        
+        // Buat PDF
+        $options = new Options();
+        $options->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        
+        // Kirim file PDF ke browser
+        $dompdf->stream("laporan-tren-$year.pdf", ['Attachment' => false]);
+        exit();
+    }
+    
 }
