@@ -1142,4 +1142,148 @@ class ReportsController extends BaseController
         exit();
     }
     
+    public function exportTrendExcel()
+    {
+        // Ambil parameter filter
+        $year = $this->request->getPost('year') ?? date('Y');
+        
+        // Load model
+        $reportModel = new ReportModel();
+        
+        // Set rentang tanggal untuk data bulanan
+        $startDate = $year . '-01-01';
+        $endDate = $year . '-12-31';
+        
+        // Ambil data perbandingan bulanan
+        $currentYearData = [];
+        $totalIncome = 0;
+        $totalExpense = 0;
+        
+        for ($i = 1; $i <= 12; $i++) {
+            $month = str_pad($i, 2, '0', STR_PAD_LEFT);
+            
+            // Data tahun ini
+            $currentMonthFilters = [
+                'start_date' => "$year-$month-01",
+                'end_date' => date('Y-m-t', strtotime("$year-$month-01"))
+            ];
+            $currentMonthData = $reportModel->getSummary($currentMonthFilters);
+            
+            // Data tahun lalu untuk perbandingan
+            $prevYear = $year - 1;
+            $previousMonthFilters = [
+                'start_date' => "$prevYear-$month-01",
+                'end_date' => date('Y-m-t', strtotime("$prevYear-$month-01"))
+            ];
+            $previousMonthData = $reportModel->getSummary($previousMonthFilters);
+            
+            // Hitung pertumbuhan YoY
+            $currentTotal = ($currentMonthData['total_income'] ?? 0) - ($currentMonthData['total_expense'] ?? 0);
+            $previousTotal = ($previousMonthData['total_income'] ?? 0) - ($previousMonthData['total_expense'] ?? 0);
+            $yoyGrowth = $previousTotal != 0 ? (($currentTotal - $previousTotal) / abs($previousTotal)) * 100 : 0;
+            
+            $income = $currentMonthData['total_income'] ?? 0;
+            $expense = $currentMonthData['total_expense'] ?? 0;
+            
+            $totalIncome += $income;
+            $totalExpense += $expense;
+            
+            $currentYearData[] = [
+                'bulan' => date('F', strtotime("$year-$month-01")),
+                'pemasukan' => $income,
+                'pengeluaran' => $expense,
+                'selisih' => $currentTotal,
+                'yoy_growth' => $yoyGrowth
+            ];
+        }
+
+        // Buat spreadsheet baru
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Laporan Tren ' . $year);
+
+        // Set judul
+        $sheet->setCellValue('A1', 'LAPORAN TREN BULANAN');
+        $sheet->setCellValue('A2', 'Tahun: ' . $year);
+        $sheet->mergeCells('A1:F1');
+        $sheet->mergeCells('A2:F2');
+
+        // Style untuk judul
+        $sheet->getStyle('A1:A2')->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle('A1:A2')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Header tabel
+        $sheet->setCellValue('A4', 'No');
+        $sheet->setCellValue('B4', 'Bulan');
+        $sheet->setCellValue('C4', 'Pemasukan');
+        $sheet->setCellValue('D4', 'Pengeluaran');
+        $sheet->setCellValue('E4', 'Selisih');
+        $sheet->setCellValue('F4', 'YoY Growth');
+
+        // Style untuk header
+        $sheet->getStyle('A4:F4')->getFont()->setBold(true);
+        $sheet->getStyle('A4:F4')->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('E2E8F0');
+
+        // Isi data
+        $row = 5;
+        foreach ($currentYearData as $index => $data) {
+            $sheet->setCellValue('A' . $row, $index + 1);
+            $sheet->setCellValue('B' . $row, $data['bulan']);
+            $sheet->setCellValue('C' . $row, $data['pemasukan']);
+            $sheet->setCellValue('D' . $row, $data['pengeluaran']);
+            $sheet->setCellValue('E' . $row, $data['selisih']);
+            $sheet->setCellValue('F' . $row, $data['yoy_growth']);
+            $row++;
+        }
+
+        // Tambah row total
+        $lastRow = $row - 1;
+        $totalRow = $row;
+        
+        $sheet->setCellValue('A' . $totalRow, 'Total');
+        $sheet->mergeCells('A' . $totalRow . ':B' . $totalRow);
+        $sheet->setCellValue('C' . $totalRow, '=SUM(C5:C' . $lastRow . ')');
+        $sheet->setCellValue('D' . $totalRow, '=SUM(D5:D' . $lastRow . ')');
+        $sheet->setCellValue('E' . $totalRow, '=SUM(E5:E' . $lastRow . ')');
+        $sheet->setCellValue('F' . $totalRow, '-');
+
+        // Style untuk total
+        $sheet->getStyle('A' . $totalRow . ':F' . $totalRow)->getFont()->setBold(true);
+        $sheet->getStyle('A' . $totalRow . ':F' . $totalRow)->getFill()
+            ->setFillType(Fill::FILL_SOLID)
+            ->getStartColor()->setRGB('F3F4F6');
+
+        // Format angka
+        $sheet->getStyle('C5:E' . $totalRow)->getNumberFormat()->setFormatCode('#,##0');
+        $sheet->getStyle('F5:F' . $lastRow)->getNumberFormat()->setFormatCode('#,##0.0"%"');
+
+        // Alignment
+        $sheet->getStyle('A5:A' . $totalRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+        $sheet->getStyle('C5:F' . $totalRow)->getAlignment()->setHorizontal(Alignment::HORIZONTAL_RIGHT);
+
+        // Border untuk seluruh tabel
+        $sheet->getStyle('A4:F' . $totalRow)->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
+
+        // Set lebar kolom otomatis
+        foreach (range('A', 'F') as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
+
+        // Set nama file
+        $filename = 'Laporan_Tren_Bulanan_' . $year . '.xlsx';
+
+        // Set header untuk download
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // Export ke Excel
+        $writer = new Xlsx($spreadsheet);
+        ob_end_clean();
+        $writer->save('php://output');
+        exit();
+    }
+
 }
