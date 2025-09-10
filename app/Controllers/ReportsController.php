@@ -1021,30 +1021,24 @@ class ReportsController extends BaseController
         // Siapkan filter
         $filters = [
             'start_date' => $startDate,
-            'end_date' => $endDate
+            'end_date' => $endDate,
+            'year' => $year
         ];
         
-        // Ambil data bulanan untuk grafik
-        $monthlyData = [];
-        for ($i = 1; $i <= 12; $i++) {
-            $month = str_pad($i, 2, '0', STR_PAD_LEFT);
-            
-            // Filter untuk bulan ini
-            $monthFilters = [
-                'start_date' => "$year-$month-01",
-                'end_date' => date('Y-m-t', strtotime("$year-$month-01"))
-            ];
-            
-            $monthData = $reportModel->getSummary($monthFilters);
-            
-            $monthlyData[] = [
-                'month' => date('F', strtotime("$year-$month-01")),
-                'pemasukan' => $monthData['total_income'] ?? 0,
-                'pengeluaran' => $monthData['total_expense'] ?? 0
-            ];
-        }
+        // Ambil data tren bulanan untuk grafik
+        $monthlyData = $reportModel->db->table('transactions')
+            ->select([
+                "DATE_FORMAT(tanggal, '%Y-%m') as month",
+                "COALESCE(SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END), 0) as income",
+                "COALESCE(SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END), 0) as expense"
+            ])
+            ->where('YEAR(tanggal)', $year)
+            ->groupBy('month')
+            ->orderBy('month', 'ASC')
+            ->get()
+            ->getResultArray();
         
-        // Ambil data perbandingan bulanan
+        // Data akan digunakan untuk grafik dan tabel
         $currentYearData = [];
         
         for ($i = 1; $i <= 12; $i++) {
@@ -1055,17 +1049,36 @@ class ReportsController extends BaseController
                 'start_date' => "$year-$month-01",
                 'end_date' => date('Y-m-t', strtotime("$year-$month-01"))
             ];
-            $currentMonthData = $reportModel->getSummary($currentMonthFilters);
             
-            // Data tahun lalu
+            // Ubah query untuk mendapatkan total income dan expense
+            $builder = $reportModel->db->table('transactions')
+                ->select([
+                    "COALESCE(SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END), 0) as total_income",
+                    "COALESCE(SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END), 0) as total_expense"
+                ])
+                ->where('tanggal >=', $currentMonthFilters['start_date'])
+                ->where('tanggal <=', $currentMonthFilters['end_date']);
+            
+            $currentMonthData = $builder->get()->getRowArray();
+            
+            // Data tahun lalu untuk perbandingan
             $prevYear = $year - 1;
             $previousMonthFilters = [
                 'start_date' => "$prevYear-$month-01",
                 'end_date' => date('Y-m-t', strtotime("$prevYear-$month-01"))
             ];
-            $previousMonthData = $reportModel->getSummary($previousMonthFilters);
             
-            // Hitung pertumbuhan
+            $builder = $reportModel->db->table('transactions')
+                ->select([
+                    "COALESCE(SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END), 0) as total_income",
+                    "COALESCE(SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END), 0) as total_expense"
+                ])
+                ->where('tanggal >=', $previousMonthFilters['start_date'])
+                ->where('tanggal <=', $previousMonthFilters['end_date']);
+            
+            $previousMonthData = $builder->get()->getRowArray();
+            
+            // Hitung pertumbuhan YoY
             $currentTotal = ($currentMonthData['total_income'] ?? 0) - ($currentMonthData['total_expense'] ?? 0);
             $previousTotal = ($previousMonthData['total_income'] ?? 0) - ($previousMonthData['total_expense'] ?? 0);
             
@@ -1073,17 +1086,48 @@ class ReportsController extends BaseController
             
             $currentYearData[] = [
                 'bulan' => date('F', strtotime("$year-$month-01")),
-                'pemasukan' => $currentMonthData['total_income'] ?? 0,
-                'pengeluaran' => $currentMonthData['total_expense'] ?? 0,
+                'pemasukan' => (float)($currentMonthData['total_income'] ?? 0),
+                'pengeluaran' => (float)($currentMonthData['total_expense'] ?? 0),
                 'selisih' => $currentTotal,
                 'yoy_growth' => $yoyGrowth
             ];
         }
 
+        // Format data untuk grafik
+        $chartData = [];
+        $months = [
+            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
+            '04' => 'April', '05' => 'Mei', '06' => 'Juni',
+            '07' => 'Juli', '08' => 'Agustus', '09' => 'September',
+            '10' => 'Oktober', '11' => 'November', '12' => 'Desember'
+        ];
+
+        // Inisialisasi data untuk setiap bulan
+        foreach ($months as $monthNum => $monthName) {
+            $monthKey = $year . '-' . $monthNum;
+            $chartData[$monthKey] = [
+                'bulan' => $monthName,
+                'pemasukan' => 0,
+                'pengeluaran' => 0
+            ];
+        }
+
+        // Isi data aktual
+        foreach ($monthlyData as $data) {
+            if (isset($chartData[$data['month']])) {
+                $chartData[$data['month']]['pemasukan'] = (float)$data['income'];
+                $chartData[$data['month']]['pengeluaran'] = (float)$data['expense'];
+            }
+        }
+
+        // Sort by month and convert to indexed array
+        ksort($chartData);
+        $chartData = array_values($chartData);
+
         // Tampilkan view dengan data
         return view('Reports/trend', [
-            'monthlyData' => $monthlyData,
             'currentYearData' => $currentYearData,
+            'chartData' => $chartData,
             'selectedYear' => $year
         ]);
     }

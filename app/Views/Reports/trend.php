@@ -122,10 +122,10 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // Data untuk chart
-    const monthlyData = <?= json_encode($monthlyData) ?>;
-    const months = monthlyData.map(data => data.month);
-    const incomeData = monthlyData.map(data => data.pemasukan);
-    const expenseData = monthlyData.map(data => data.pengeluaran);
+    const chartData = <?= json_encode($chartData) ?>;
+    const months = chartData.map(data => data.bulan);
+    const incomeData = chartData.map(data => data.pemasukan);
+    const expenseData = chartData.map(data => data.pengeluaran);
 
     // Membuat line chart
     const ctx = document.getElementById('monthlyTrendChart').getContext('2d');
