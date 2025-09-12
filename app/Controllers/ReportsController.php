@@ -1025,15 +1025,16 @@ class ReportsController extends BaseController
             'year' => $year
         ];
         
-        // Ambil data tren bulanan untuk grafik
+        // Ambil data untuk tabel dan grafik sekaligus
         $monthlyData = $reportModel->db->table('transactions')
             ->select([
                 "DATE_FORMAT(tanggal, '%Y-%m') as month",
                 "COALESCE(SUM(CASE WHEN tipe = 'income' THEN jumlah ELSE 0 END), 0) as income",
-                "COALESCE(SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END), 0) as expense"
+                "COALESCE(SUM(CASE WHEN tipe = 'expense' THEN jumlah ELSE 0 END), 0) as expense",
+                "DATE_FORMAT(tanggal, '%m') as bulan_angka"
             ])
             ->where('YEAR(tanggal)', $year)
-            ->groupBy('month')
+            ->groupBy(['month', 'bulan_angka'])
             ->orderBy('month', 'ASC')
             ->get()
             ->getResultArray();
@@ -1093,7 +1094,7 @@ class ReportsController extends BaseController
             ];
         }
 
-        // Format data untuk grafik
+        // Format data untuk grafik dan tabel
         $chartData = [];
         $months = [
             '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
@@ -1108,15 +1109,19 @@ class ReportsController extends BaseController
             $chartData[$monthKey] = [
                 'bulan' => $monthName,
                 'pemasukan' => 0,
-                'pengeluaran' => 0
+                'pengeluaran' => 0,
+                'selisih' => 0
             ];
         }
 
         // Isi data aktual
         foreach ($monthlyData as $data) {
             if (isset($chartData[$data['month']])) {
-                $chartData[$data['month']]['pemasukan'] = (float)$data['income'];
-                $chartData[$data['month']]['pengeluaran'] = (float)$data['expense'];
+                $income = (float)$data['income'];
+                $expense = (float)$data['expense'];
+                $chartData[$data['month']]['pemasukan'] = $income;
+                $chartData[$data['month']]['pengeluaran'] = $expense;
+                $chartData[$data['month']]['selisih'] = $income - $expense;
             }
         }
 
