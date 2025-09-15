@@ -76,6 +76,13 @@ $routes->post('users/edit', 'UsersController::edit');
 $routes->post('users/delete', 'UsersController::delete');
 
 // =======================
+// Profile Routes
+// =======================
+$routes->get('profile', 'ProfileController::index');
+$routes->post('profile/update', 'ProfileController::update');
+$routes->post('profile/change-password', 'ProfileController::changePassword');
+
+// =======================
 // Settings Routes
 // =======================
 $routes->get('settings', 'SettingsController::index');
