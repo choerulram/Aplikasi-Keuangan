@@ -49,6 +49,41 @@ class ProfileController extends BaseController
         return view('Profile/index', $data);
     }
 
+    public function edit()
+    {
+        // Ambil ID dari session
+        $userId = session('user_id');
+        
+        // Jika tidak ada session, redirect ke login
+        if (!$userId) {
+            return redirect()->to('/login')->with('error', 'Silakan login terlebih dahulu');
+        }
+
+        // Ambil data user
+        $user = $this->userModel->find($userId);
+        
+        // Jika user tidak ditemukan
+        if (!$user) {
+            return redirect()->to('/')->with('error', 'Data profil tidak ditemukan');
+        }
+
+        // Siapkan data untuk view
+        $data = [
+            'title' => 'Edit Profil',
+            'user' => [
+                'id' => $user['id'],
+                'username' => $user['username'],
+                'nama' => $user['nama'] ?? session('nama'),
+                'email' => $user['email'],
+                'role' => $user['role'] ?? session('role')
+            ],
+            'pageTitle' => 'Edit Profil'
+        ];
+
+        // Tampilkan view
+        return view('Profile/edit', $data);
+    }
+
     public function update()
     {
         $userId = session('user_id');
