@@ -1,8 +1,9 @@
 <?= $this->extend('layouts/app') ?>
 
 <?= $this->section('content') ?>
-<div class="p-8">
-    <div class="max-w-4xl mx-auto">
+<div class="container px-6 mx-auto mt-6">
+    <h1 class="text-3xl font-bold text-main mb-6">Profil Pengguna</h1>
+    <div class="w-full">
         <!-- Flash Messages -->
         <?php if (session()->has('success')) : ?>
             <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
