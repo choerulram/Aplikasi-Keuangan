@@ -59,9 +59,11 @@
 
                 <!-- Action Buttons -->
                 <div class="flex gap-4">
-                    <a href="/profile/edit" class="flex-1 bg-main text-white py-2 px-4 rounded-lg hover:bg-main/90 transition duration-200 font-semibold text-center">
+                    <button type="button"
+                            onclick="document.getElementById('editProfileModal').classList.remove('hidden')"
+                            class="flex-1 bg-main text-white py-2 px-4 rounded-lg hover:bg-main/90 transition duration-200 font-semibold">
                         Edit Profil
-                    </a>
+                    </button>
                     <button type="button" 
                             onclick="document.getElementById('changePasswordModal').classList.remove('hidden')"
                             class="flex-1 bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200 font-semibold">
@@ -126,4 +128,5 @@
         </div>
     </div>
 </div>
+<?= $this->include('Profile/_editModal') ?>
 <?= $this->endSection() ?>

@@ -922,10 +922,6 @@ video {
   min-width: 100%;
 }
 
-.max-w-4xl {
-  max-width: 56rem;
-}
-
 .max-w-md {
   max-width: 28rem;
 }
@@ -1992,6 +1988,11 @@ video {
 .hover\:text-white:hover {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.hover\:text-gray-500:hover {
+  --tw-text-opacity: 1;
+  color: rgb(107 114 128 / var(--tw-text-opacity));
 }
 
 .hover\:underline:hover {
