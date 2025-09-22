@@ -15,6 +15,35 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="20" height="14" rx="3"/><path d="M16 3v4"/><path d="M8 3v4"/><path d="M2 11h20"/></svg>
             Akun
         </a></li>
+        <li x-data="{ openBudget: <?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'true' : 'false' ?> }" class="relative">
+            <button
+                @click="!('<?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'true' : 'false' ?>' === 'true') ? (openBudget = !openBudget) : null"
+                :disabled="<?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'true' : 'false' ?>"
+                type="button"
+                class="flex items-start gap-2 w-full py-2 px-3 rounded transition font-semibold text-left <?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'hover:bg-highlight text-dark hover:text-main' : (url_is('budgets*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main') ?> <?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'cursor-default' : '' ?>">
+                <svg class="w-5 h-5 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span class="flex-grow text-left">Manajemen Anggaran</span>
+                <svg class="w-4 h-4 ml-auto transition-transform" :class="{'rotate-180': openBudget}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
+                </svg>
+            </button>
+            <ul x-show="openBudget" @click.away="<?= url_is('budgets/income*') || url_is('budgets/expense*') ? '' : 'openBudget = false' ?>" class="pl-4 py-1 space-y-1 static left-0 w-full z-20 mb-2">
+                <li>
+                    <a href="/budgets/income"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('budgets/income*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Perencanaan Pendapatan
+                    </a>
+                </li>
+                <li>
+                    <a href="/budgets/expense"
+                        class="block py-2 px-3 rounded transition font-normal <?= url_is('budgets/expense*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
+                        Pelacakan Pengeluaran
+                    </a>
+                </li>
+            </ul>
+        </li>
         <li x-data="{ open: <?= url_is('categories/income*') || url_is('categories/expense*') ? 'true' : 'false' ?> }" class="relative">
             <button
                 @click="!('<?= url_is('categories/income*') || url_is('categories/expense*') ? 'true' : 'false' ?>' === 'true') ? (open = !open) : null"
@@ -68,35 +97,6 @@
                     <a href="/transactions/expense"
                         class="block py-2 px-3 rounded transition font-normal <?= url_is('transactions/expense*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
                         Pengeluaran
-                    </a>
-                </li>
-            </ul>
-        </li>
-        <li x-data="{ openBudget: <?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'true' : 'false' ?> }" class="relative">
-            <button
-                @click="!('<?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'true' : 'false' ?>' === 'true') ? (openBudget = !openBudget) : null"
-                :disabled="<?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'true' : 'false' ?>"
-                type="button"
-                class="flex items-start gap-2 w-full py-2 px-3 rounded transition font-semibold text-left <?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'hover:bg-highlight text-dark hover:text-main' : (url_is('budgets*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main') ?> <?= url_is('budgets/income*') || url_is('budgets/expense*') ? 'cursor-default' : '' ?>">
-                <svg class="w-5 h-5 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span class="flex-grow text-left">Manajemen Anggaran</span>
-                <svg class="w-4 h-4 ml-auto transition-transform" :class="{'rotate-180': openBudget}" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/>
-                </svg>
-            </button>
-            <ul x-show="openBudget" @click.away="<?= url_is('budgets/income*') || url_is('budgets/expense*') ? '' : 'openBudget = false' ?>" class="pl-4 py-1 space-y-1 static left-0 w-full z-20 mb-2">
-                <li>
-                    <a href="/budgets/income"
-                        class="block py-2 px-3 rounded transition font-normal <?= url_is('budgets/income*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-                        Perencanaan Pendapatan
-                    </a>
-                </li>
-                <li>
-                    <a href="/budgets/expense"
-                        class="block py-2 px-3 rounded transition font-normal <?= url_is('budgets/expense*') ? 'bg-highlight text-main' : 'hover:bg-highlight text-dark hover:text-main' ?>">
-                        Pelacakan Pengeluaran
                     </a>
                 </li>
             </ul>
