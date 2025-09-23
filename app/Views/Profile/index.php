@@ -35,40 +35,31 @@
 
             <!-- Profile Information -->
             <div class="p-6">
-                <div class="mb-8">
-                    <h2 class="text-xl font-bold text-gray-800 mb-4">Informasi Profil</h2>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Username</label>
-                            <p class="text-gray-800"><?= esc($user['username']) ?></p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Nama Lengkap</label>
-                            <p class="text-gray-800"><?= esc($user['nama']) ?></p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
-                            <p class="text-gray-800"><?= esc($user['email']) ?></p>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-500 mb-1">Role</label>
-                            <p class="text-gray-800"><?= ucfirst($user['role']) ?></p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex gap-4">
+                <div class="flex justify-between items-start mb-8">
+                    <h2 class="text-xl font-bold text-gray-800">Informasi Profil</h2>
                     <button type="button"
                             onclick="document.getElementById('editProfileModal').classList.remove('hidden')"
-                            class="flex-1 bg-main text-white py-2 px-4 rounded-lg hover:bg-main/90 transition duration-200 font-semibold">
+                            class="bg-main text-white py-2 px-4 rounded-lg hover:bg-main/90 transition duration-200 font-semibold">
                         Edit Profil
                     </button>
-                    <button type="button" 
-                            onclick="document.getElementById('changePasswordModal').classList.remove('hidden')"
-                            class="flex-1 bg-gray-800 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition duration-200 font-semibold">
-                        Ubah Password
-                    </button>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Username</label>
+                        <p class="text-gray-800"><?= esc($user['username']) ?></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Nama Lengkap</label>
+                        <p class="text-gray-800"><?= esc($user['nama']) ?></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Email</label>
+                        <p class="text-gray-800"><?= esc($user['email']) ?></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Role</label>
+                        <p class="text-gray-800"><?= ucfirst($user['role']) ?></p>
+                    </div>
                 </div>
             </div>
         </div>
