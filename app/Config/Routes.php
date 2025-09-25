@@ -86,6 +86,7 @@ $routes->post('profile/change-password', 'ProfileController::changePassword');
 // Settings Routes
 // =======================
 $routes->get('settings', 'SettingsController::index');
+$routes->post('settings/update', 'SettingsController::update');
 
 // =======================
 // Auth Routes
