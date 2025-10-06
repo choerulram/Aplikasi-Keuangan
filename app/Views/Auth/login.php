@@ -1,26 +1,26 @@
 <?= $this->extend('layouts/auth') ?>
 <?= $this->section('content') ?>
 <div class="hidden bg-main border-main text-dark"></div>
-<div class="min-h-screen flex items-center justify-center">
-  <div class="w-full max-w-md rounded-lg shadow-lg p-8 border-t-8 border-main bg-white flex flex-col items-center">
-    <h2 class="text-3xl font-bold text-main mb-6 w-full text-center">Login</h2>
+<div class="min-h-screen flex items-center justify-center p-6 bg-gray-50">
+  <div class="w-full max-w-md sm:max-w-md md:max-w-lg lg:max-w-xl rounded-lg shadow-lg p-6 sm:p-8 border-t-8 border-main bg-white flex flex-col items-center">
+    <h2 class="text-2xl sm:text-3xl font-bold text-main mb-6 w-full text-center">Login</h2>
     <?php if (session()->getFlashdata('error')): ?>
       <div class="text-red-600 bg-red-100 border border-red-300 rounded px-4 py-2 mb-4 w-full">
         <?= esc(session()->getFlashdata('error')) ?>
       </div>
     <?php endif; ?>
-    <form method="POST" class="space-y-5 w-full flex flex-col items-center">
+    <form method="POST" class="space-y-5 w-full flex flex-col">
       <?= csrf_field() ?>
       <div class="w-full">
-        <label class="block text-dark font-semibold mb-1 w-full text-left">Email</label>
-        <input type="email" name="email" placeholder="Masukkan email Anda" class="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-main" required />
+        <label class="block text-dark font-semibold mb-1 w-full text-left text-sm sm:text-base">Email</label>
+        <input type="email" name="email" placeholder="Masukkan email Anda" autocomplete="email" class="border border-gray-300 rounded px-3 py-3 sm:py-2 w-full text-base focus:outline-none focus:ring-2 focus:ring-main" required />
       </div>
       <div class="w-full">
-        <label class="block text-dark font-semibold mb-1 w-full text-left">Password</label>
-        <input type="password" name="password" id="password-input" placeholder="Masukkan password Anda" class="border border-gray-300 rounded px-3 py-2 w-full focus:outline-none focus:ring-2 focus:ring-main" required />
+        <label class="block text-dark font-semibold mb-1 w-full text-left text-sm sm:text-base">Password</label>
+        <input type="password" name="password" id="password-input" placeholder="Masukkan password Anda" autocomplete="current-password" class="border border-gray-300 rounded px-3 py-3 sm:py-2 w-full text-base focus:outline-none focus:ring-2 focus:ring-main" required />
         <div id="password-error" class="text-red-600 text-sm mt-1 font-semibold italic" style="display:none"></div>
       </div>
-      <button type="submit" class="w-full bg-main hover:bg-highlight text-white font-bold py-2 rounded transition-colors duration-200">Login</button>
+      <button type="submit" class="w-full bg-main hover:bg-highlight text-white font-bold py-3 sm:py-2 rounded-md transition-colors duration-200 text-base">Login</button>
     </form>
     <div class="mt-6 w-full text-center">
       <span class="text-dark">Belum punya akun?</span>
