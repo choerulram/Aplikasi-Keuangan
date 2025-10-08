@@ -1,11 +1,21 @@
-<aside class="bg-light border-r border-gray-200 shadow-md min-h-screen w-60 fixed top-0 left-0 pt-20 px-4 z-10">
+<!-- Sidebar: mobile hidden by default, slides in; overlay handled separately -->
+<aside id="sidebar" class="bg-light border-r border-gray-200 shadow-md h-full w-60 fixed top-0 left-0 pt-20 px-4 z-40 transform -translate-x-full transition-transform duration-300 md:translate-x-0 md:static md:pt-20 md:transform-none md:w-60">
+    <!-- Mobile close button (visible on small screens) -->
+    <div class="flex items-center justify-between mb-0 px-0 py-4 md:hidden">
+        <span class="font-bold text-main text-base truncate block px-2"><?= esc(session('nama')) ?></span>
+        <button id="sidebarCloseBtn" class="p-2 rounded hover:bg-gray-100 focus:outline-none" aria-label="Tutup menu">
+            <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
     <!-- User Name Display Simple, no icon, no border, only underline -->
-    <div class="mb-0 px-0 py-6">
+    <div class="hidden md:block mb-0 px-0 py-6">
         <span class="font-bold text-main text-base truncate block px-4">
             <?= esc(session('nama')) ?>
         </span>
         <hr class="mt-4 border-b border-gray-300 w-full">
     </div>
+    <!-- On mobile, show a divider after the top area -->
+    <div class="md:hidden border-b border-gray-200 mb-2 w-full"></div>
     <ul class="space-y-2">
         <li><a href="/" class="flex items-center gap-2 block py-2 px-3 rounded transition font-semibold <?= url_is('/') ? 'bg-highlight text-main' : 'hover:bg-highlight text-main' ?>">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 9.75L12 4l9 5.75V19a2 2 0 01-2 2H5a2 2 0 01-2-2V9.75z"/><path stroke-linecap="round" stroke-linejoin="round" d="M9 22V12h6v10"/></svg>
