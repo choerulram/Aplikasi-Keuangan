@@ -1,5 +1,11 @@
 <header class="bg-light shadow-md px-6 py-4 flex items-center justify-between border-b border-gray-200 fixed top-0 left-0 right-0 z-30">
     <div class="flex items-center gap-6">
+    <!-- Mobile: Hamburger button to toggle sidebar -->
+    <button id="mobileSidebarBtn" aria-label="Toggle sidebar" class="mr-2 inline-flex items-center justify-center p-2 rounded-md text-main hover:bg-gray-100 transition md:hidden">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
         <h2 class="text-3xl font-extrabold tracking-wide text-main bg-gradient-to-r from-main via-[#A7F3D0] to-main bg-clip-text text-transparent animate-shimmer drop-shadow-lg shimmer-title">
             Aplikasi Keuangan
         </h2>
@@ -63,6 +69,12 @@
   </div>
     </div>
 </header>
+<!-- Mobile Menu Panel (appears under header on small screens) -->
+<div id="mobileMenuPanel" class="md:hidden fixed top-16 left-0 right-0 bg-light border-b border-gray-200 z-40 hidden">
+  <div class="p-4">
+    <?= $this->include('layouts/menu') ?>
+  </div>
+</div>
 <style>
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(30px); }
@@ -103,3 +115,101 @@
     });
   }
 </script>
+<script>
+  // Mobile sidebar toggle (wait for DOM so sidebar/backdrop exist even if header is rendered first)
+  document.addEventListener('DOMContentLoaded', function() {
+  const btn = document.getElementById('mobileSidebarBtn');
+  const sidebar = document.getElementById('mainSidebar');
+  const backdrop = document.getElementById('sidebarBackdrop');
+  const mobilePanel = document.getElementById('mobileMenuPanel');
+    if (!btn || !sidebar || !backdrop) return;
+
+    // ensure initial inline state for mobile
+    function setInitialState() {
+      if (window.innerWidth < 768) {
+        // hide sidebar off-canvas and mobile panel hidden
+        sidebar.style.transform = 'translateX(-100%)';
+        sidebar.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('aria-expanded', 'false');
+        if (mobilePanel) mobilePanel.classList.add('hidden');
+      } else {
+        sidebar.style.transform = '';
+        backdrop.classList.add('hidden');
+        document.documentElement.classList.remove('overflow-hidden');
+        sidebar.setAttribute('aria-hidden', 'false');
+        btn.setAttribute('aria-expanded', 'false');
+        if (mobilePanel) mobilePanel.classList.add('hidden');
+      }
+    }
+
+    function openSidebar() {
+      sidebar.style.transform = 'translateX(0)';
+      backdrop.classList.remove('hidden');
+      btn.setAttribute('aria-expanded', 'true');
+      sidebar.setAttribute('aria-hidden', 'false');
+      document.documentElement.classList.add('overflow-hidden');
+    }
+
+    function closeSidebar() {
+      sidebar.style.transform = 'translateX(-100%)';
+      backdrop.classList.add('hidden');
+      btn.setAttribute('aria-expanded', 'false');
+      sidebar.setAttribute('aria-hidden', 'true');
+      document.documentElement.classList.remove('overflow-hidden');
+    }
+
+    // attach handlers
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      if (window.innerWidth < 768) {
+        // toggle mobile panel under header
+        if (!mobilePanel) return;
+        if (mobilePanel.classList.contains('hidden')) {
+          mobilePanel.classList.remove('hidden');
+          btn.setAttribute('aria-expanded', 'true');
+          document.documentElement.classList.add('overflow-hidden');
+        } else {
+          mobilePanel.classList.add('hidden');
+          btn.setAttribute('aria-expanded', 'false');
+          document.documentElement.classList.remove('overflow-hidden');
+        }
+      } else {
+        if (sidebar.style.transform === 'translateX(0)') closeSidebar(); else openSidebar();
+      }
+    });
+
+    backdrop.addEventListener('click', function() { closeSidebar(); });
+    // hide mobile panel when clicking outside (optional)
+    document.addEventListener('click', function(e) {
+      if (!mobilePanel || window.innerWidth >= 768) return;
+      const withinHeader = e.target.closest('header');
+      const withinPanel = e.target.closest('#mobileMenuPanel');
+      const isBtn = e.target.closest('#mobileSidebarBtn');
+      if (!withinHeader && !withinPanel && !isBtn) {
+        mobilePanel.classList.add('hidden');
+        document.documentElement.classList.remove('overflow-hidden');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSidebar(); });
+
+    sidebar.addEventListener('click', function(e) {
+      const target = e.target.closest('a');
+      if (!target) return;
+      if (window.innerWidth < 768) closeSidebar();
+    });
+
+    // close button inside sidebar (mobile)
+    const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+    if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', function(e) { e.preventDefault(); closeSidebar(); });
+
+    window.addEventListener('resize', setInitialState);
+
+    setInitialState();
+  });
+</script>
+<style>
+  /* prevent double scroll when sidebar open on mobile */
+  html.overflow-hidden, body.overflow-hidden { overflow: hidden; }
+</style>
