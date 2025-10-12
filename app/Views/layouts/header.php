@@ -123,35 +123,44 @@
   const backdrop = document.getElementById('sidebarBackdrop');
   const mobilePanel = document.getElementById('mobileMenuPanel');
     if (!btn || !sidebar || !backdrop) return;
+    // Use matchMedia to reliably detect md breakpoint and avoid setting inline styles
+    const mdQuery = window.matchMedia('(min-width: 768px)');
 
-    // ensure initial inline state for mobile
+    function isMobile() { return !mdQuery.matches; }
+
+    // Keep visual state driven by classes instead of inline style.transform so Tailwind's
+    // responsive utilities can work correctly on desktop
     function setInitialState() {
-      if (window.innerWidth < 768) {
-        // hide sidebar off-canvas and mobile panel hidden
-        sidebar.style.transform = 'translateX(-100%)';
+      if (isMobile()) {
+        // Ensure sidebar is hidden off-canvas on mobile
+        sidebar.classList.add('-translate-x-full');
         sidebar.setAttribute('aria-hidden', 'true');
         btn.setAttribute('aria-expanded', 'false');
         if (mobilePanel) mobilePanel.classList.add('hidden');
-      } else {
-        sidebar.style.transform = '';
         backdrop.classList.add('hidden');
         document.documentElement.classList.remove('overflow-hidden');
+      } else {
+        // On desktop let Tailwind classes determine position. Make sure the -translate-x-full
+        // class is removed so the sidebar shows normally and backdrop/overflow are cleared.
+        sidebar.classList.remove('-translate-x-full');
         sidebar.setAttribute('aria-hidden', 'false');
         btn.setAttribute('aria-expanded', 'false');
         if (mobilePanel) mobilePanel.classList.add('hidden');
+        backdrop.classList.add('hidden');
+        document.documentElement.classList.remove('overflow-hidden');
       }
     }
 
-    function openSidebar() {
-      sidebar.style.transform = 'translateX(0)';
+    function openMobileSidebar() {
+      sidebar.classList.remove('-translate-x-full');
       backdrop.classList.remove('hidden');
       btn.setAttribute('aria-expanded', 'true');
       sidebar.setAttribute('aria-hidden', 'false');
       document.documentElement.classList.add('overflow-hidden');
     }
 
-    function closeSidebar() {
-      sidebar.style.transform = 'translateX(-100%)';
+    function closeMobileSidebar() {
+      sidebar.classList.add('-translate-x-full');
       backdrop.classList.add('hidden');
       btn.setAttribute('aria-expanded', 'false');
       sidebar.setAttribute('aria-hidden', 'true');
@@ -161,7 +170,7 @@
     // attach handlers
     btn.addEventListener('click', function(e) {
       e.preventDefault();
-      if (window.innerWidth < 768) {
+      if (isMobile()) {
         // toggle mobile panel under header
         if (!mobilePanel) return;
         if (mobilePanel.classList.contains('hidden')) {
@@ -174,14 +183,25 @@
           document.documentElement.classList.remove('overflow-hidden');
         }
       } else {
-        if (sidebar.style.transform === 'translateX(0)') closeSidebar(); else openSidebar();
+        // Desktop: toggle a visible/hidden state by adding/removing the -translate-x-full utility
+        // This avoids manipulating inline styles which conflict with responsive Tailwind classes.
+        if (sidebar.classList.contains('-translate-x-full')) {
+          sidebar.classList.remove('-translate-x-full');
+          sidebar.setAttribute('aria-hidden', 'false');
+          btn.setAttribute('aria-expanded', 'true');
+        } else {
+          sidebar.classList.add('-translate-x-full');
+          sidebar.setAttribute('aria-hidden', 'true');
+          btn.setAttribute('aria-expanded', 'false');
+        }
       }
     });
 
-    backdrop.addEventListener('click', function() { closeSidebar(); });
+    backdrop.addEventListener('click', function() { closeMobileSidebar(); });
+
     // hide mobile panel when clicking outside (optional)
     document.addEventListener('click', function(e) {
-      if (!mobilePanel || window.innerWidth >= 768) return;
+      if (!mobilePanel || !isMobile()) return;
       const withinHeader = e.target.closest('header');
       const withinPanel = e.target.closest('#mobileMenuPanel');
       const isBtn = e.target.closest('#mobileSidebarBtn');
@@ -192,17 +212,20 @@
       }
     });
 
-    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeSidebar(); });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeMobileSidebar(); });
 
     sidebar.addEventListener('click', function(e) {
       const target = e.target.closest('a');
       if (!target) return;
-      if (window.innerWidth < 768) closeSidebar();
+      if (isMobile()) closeMobileSidebar();
     });
 
     // close button inside sidebar (mobile)
     const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
-    if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', function(e) { e.preventDefault(); closeSidebar(); });
+    if (sidebarCloseBtn) sidebarCloseBtn.addEventListener('click', function(e) { e.preventDefault(); closeMobileSidebar(); });
+
+    // React to breakpoint changes
+    if (mdQuery.addEventListener) mdQuery.addEventListener('change', setInitialState); else mdQuery.addListener(setInitialState);
 
     window.addEventListener('resize', setInitialState);
 

@@ -2,7 +2,7 @@
 <div id="sidebarBackdrop" class="fixed inset-0 bg-black bg-opacity-40 z-30 hidden md:hidden"></div>
 
 <!-- Sidebar: off-canvas on mobile, static on md+ -->
-<aside id="mainSidebar" class="bg-light border-r border-gray-200 shadow-md min-h-screen w-60 fixed top-0 left-0 pt-20 px-4 z-40 transform -translate-x-full transition-transform duration-200 md:translate-x-0 md:static md:shadow-none md:w-60 md:z-10">
+<aside id="mainSidebar" class="bg-light border-r border-gray-200 shadow-md min-h-screen w-60 fixed top-0 left-0 pt-20 px-4 z-40 transform -translate-x-full transition-transform duration-200 md:translate-x-0 md:fixed md:shadow-none md:w-60 md:z-10">
     <!-- User Name Display Simple, no icon, no border, only underline -->
     <!-- Mobile close button -->
     <div class="absolute top-3 right-3 md:hidden">
