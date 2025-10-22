@@ -3,7 +3,7 @@
 <?php $errorMsg = isset($errorMsg) ? $errorMsg : session()->getFlashdata('error'); ?>
 <div class="hidden bg-main border-main text-dark"></div>
 <div class="min-h-screen flex items-center justify-center p-6 bg-gray-50">
-  <div class="w-full max-w-md sm:max-w-md md:max-w-lg lg:max-w-xl rounded-lg shadow-lg p-6 sm:p-8 border-t-8 border-main bg-white flex flex-col items-center">
+  <div class="w-full max-w-md sm:max-w-md md:max-w-md lg:max-w-md xl:max-w-md rounded-lg shadow-lg p-6 sm:p-8 border-t-8 border-main bg-white flex flex-col items-center">
     <h2 class="text-2xl sm:text-3xl font-bold text-main mb-6 w-full text-center">Register</h2>
     <?php if (session()->getFlashdata('success')): ?>
       <div class="text-green-700 bg-green-100 border border-green-300 rounded px-4 py-2 mb-4 w-full text-center">
