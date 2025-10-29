@@ -91,21 +91,7 @@
     </div>
 </div>
 
-<!-- Desktop Action Buttons -->
-<div class="hidden md:flex justify-end gap-4 mb-6">
-    <a href="/transactions/income" class="inline-flex items-center gap-2 px-6 py-2.5 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors shadow-sm hover:shadow">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
-        </svg>
-        Tambah Pemasukan
-    </a>
-    <a href="/transactions/expense" class="inline-flex items-center gap-2 px-6 py-2.5 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors shadow-sm hover:shadow">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-        </svg>
-        Tambah Pengeluaran
-    </a>
-</div>
+<!-- Desktop: primary action buttons are using fixed Quick Actions at bottom-right. Removed duplicate inline desktop buttons. -->
 
 <!-- Main Content Grid -->
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">

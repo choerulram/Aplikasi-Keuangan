@@ -236,3 +236,38 @@
   /* prevent double scroll when sidebar open on mobile */
   html.overflow-hidden, body.overflow-hidden { overflow: hidden; }
 </style>
+
+<!-- Mobile-only UI tweaks: font sizes, paddings, and button sizes -->
+<style>
+@media (max-width: 767px) {
+  /* Slightly smaller base font on mobile for better fit */
+  html, body { font-size: 14px; }
+
+  /* Header title compact */
+  header h2 { font-size: 1.125rem; /* ~18px */ line-height: 1.05; }
+
+  /* Main page title (dashboard) */
+  main h1.text-2xl { font-size: 1.125rem; }
+
+  /* Reduce paddings on common card containers to make content denser */
+  main .p-6 { padding: 0.75rem !important; }
+
+  /* Make buttons and action links more compact */
+  .fixed.bottom-8.right-8 { bottom: 1.25rem; right: 0.75rem; }
+  .fixed.bottom-8.right-8 .flex a { padding: 0.5rem 0.75rem; font-size: 0.875rem; }
+
+  /* FAB slightly smaller */
+  .w-14.h-14 { width: 48px !important; height: 48px !important; }
+
+  /* Mobile action dropdown (under FAB) spacing */
+  .absolute.bottom-16.right-0 { bottom: 12rem; }
+
+  /* Reduce space inside summary cards' icons */
+  .w-12.h-12 { width: 2.25rem !important; height: 2.25rem !important; }
+  .w-10.h-10 { width: 2.25rem !important; height: 2.25rem !important; }
+
+  /* Make sidebar close button and header controls a bit smaller (we already applied responsive classes, this ensures consistency) */
+  #mobileSidebarBtn { padding: 0.25rem !important; }
+  #mobileSidebarBtn svg { width: 20px !important; height: 20px !important; }
+}
+</style>
