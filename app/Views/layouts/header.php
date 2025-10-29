@@ -1,12 +1,12 @@
 <header class="bg-light shadow-md px-6 py-4 flex items-center justify-between border-b border-gray-200 fixed top-0 left-0 right-0 z-30">
     <div class="flex items-center gap-6">
     <!-- Mobile: Hamburger button to toggle sidebar -->
-    <button id="mobileSidebarBtn" aria-label="Toggle sidebar" class="mr-2 inline-flex items-center justify-center p-2 rounded-md text-main hover:bg-gray-100 transition md:hidden">
-      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <button id="mobileSidebarBtn" aria-label="Toggle sidebar" class="mr-2 inline-flex items-center justify-center p-1 md:p-2 rounded-md text-main hover:bg-gray-100 transition md:hidden">
+      <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
       </svg>
     </button>
-        <h2 class="text-3xl font-extrabold tracking-wide text-main bg-gradient-to-r from-main via-[#A7F3D0] to-main bg-clip-text text-transparent animate-shimmer drop-shadow-lg shimmer-title">
+    <h2 class="text-2xl md:text-3xl font-extrabold tracking-wide text-main bg-gradient-to-r from-main via-[#A7F3D0] to-main bg-clip-text text-transparent animate-shimmer drop-shadow-lg shimmer-title leading-tight md:leading-normal">
             Aplikasi Keuangan
         </h2>
         <span class="text-lg font-semibold text-main hidden sm:inline-block">|</span>
@@ -15,15 +15,15 @@
     <div class="flex items-center">
         <!-- Profile Dropdown -->
         <div x-data="{ open: false }" class="relative">
-            <button @click="open = !open" type="button" class="flex items-center gap-3 py-2 px-3 rounded-lg hover:bg-gray-100 transition focus:outline-none">
-                <div class="w-8 h-8 rounded-full bg-main text-white flex items-center justify-center font-bold">
-                    <?= strtoupper(substr(session('nama'), 0, 1)) ?>
-                </div>
-                <div class="hidden sm:block text-left">
+      <button @click="open = !open" type="button" class="flex items-center gap-2 md:gap-3 py-1 md:py-2 px-2 md:px-3 rounded-lg hover:bg-gray-100 transition focus:outline-none">
+        <div class="w-6 h-6 md:w-8 md:h-8 rounded-full bg-main text-white flex items-center justify-center font-bold text-sm md:text-base">
+          <?= strtoupper(substr(session('nama'), 0, 1)) ?>
+        </div>
+        <div class="hidden sm:block text-left">
                     <div class="font-semibold text-gray-800"><?= esc(session('nama')) ?></div>
                     <div class="text-sm text-gray-500"><?= ucfirst(session('role')) ?></div>
                 </div>
-                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-4 h-4 md:w-5 md:h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
                 </svg>
             </button>
