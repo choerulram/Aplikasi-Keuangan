@@ -8,7 +8,8 @@
 <body class="bg-light">
     <?= view('layouts/header') ?>
     <?= view('layouts/sidebar') ?>
-    <main class="ml-60 pt-24 px-8 min-h-screen">
+    <!-- Use md:ml-60 so mobile doesn't keep left margin when sidebar is off-canvas -->
+    <main class="md:ml-60 pt-24 px-4 md:px-8 min-h-screen">
         <?= $this->renderSection('content') ?>
     </main>
     <?= view('layouts/footer') ?>
