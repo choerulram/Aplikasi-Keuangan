@@ -644,6 +644,10 @@ video {
   top: 0.75rem;
 }
 
+.right-2 {
+  right: 0.5rem;
+}
+
 .z-20 {
   z-index: 20;
 }
@@ -2184,6 +2188,14 @@ video {
 @media (min-width: 768px) {
   .md\:fixed {
     position: fixed;
+  }
+
+  .md\:right-3 {
+    right: 0.75rem;
+  }
+
+  .md\:top-3 {
+    top: 0.75rem;
   }
 
   .md\:z-10 {
