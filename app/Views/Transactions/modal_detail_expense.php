@@ -76,12 +76,14 @@ function toggleDetailExpenseTransactionModal(show, data = null) {
       let badgeColor = tipe.toLowerCase() === 'income' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800';
       document.getElementById('detail_expense_tipe_badge').innerHTML = `<span class='inline-block px-2 py-0.5 rounded text-xs font-semibold ${badgeColor}'>${tipe}</span>`;
       // User (hanya admin)
-      if (data.username !== undefined && data.username !== null && data.username !== '') {
-        document.getElementById('detail_expense_user_row').style.display = '';
-        document.getElementById('detail_expense_username').textContent = data.username;
-      } else {
-        document.getElementById('detail_expense_user_row').style.display = 'none';
-        document.getElementById('detail_expense_username').textContent = '';
+      const userRow = document.getElementById('detail_expense_user_row');
+      const usernameSpan = document.getElementById('detail_expense_username');
+      if (userRow && usernameSpan && data.username !== undefined && data.username !== null && data.username !== '') {
+        userRow.style.display = '';
+        usernameSpan.textContent = data.username;
+      } else if (userRow && usernameSpan) {
+        userRow.style.display = 'none';
+        usernameSpan.textContent = '';
       }
     }
     modal.classList.remove('hidden');
