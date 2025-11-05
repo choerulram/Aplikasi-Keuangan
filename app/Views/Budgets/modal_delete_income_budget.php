@@ -2,24 +2,24 @@
 // Modal Hapus Anggaran Pendapatan
 ?>
 <div id="modalDeleteIncomeBudget" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden transition-opacity duration-200">
-  <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-7 relative border-t-4 border-red-500 animate-fadeIn">
+  <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-4 md:p-7 relative border-t-4 border-red-500 animate-fadeIn">
     <button onclick="toggleDeleteIncomeBudgetModal(false)" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 focus:outline-none">
-      <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+      <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
     </button>
     <div class="flex flex-col items-center text-center">
-      <span class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 text-red-600 mb-4">
-        <svg class="w-10 h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <span class="inline-flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-red-100 text-red-600 mb-4">
+        <svg class="w-8 h-8 md:w-10 md:h-10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0 1 16.138 21H7.862a2 2 0 0 1-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M8 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
         </svg>
       </span>
-      <h2 class="text-xl font-bold text-red-600 mb-2">Hapus Target Pendapatan?</h2>
-      <p class="text-gray-700 mb-4">Anda yakin ingin menghapus target pendapatan untuk kategori <span id="delete_income_kategori" class="font-semibold text-main"></span>? Tindakan ini tidak dapat dibatalkan.</p>
+      <h2 class="text-lg md:text-xl font-bold text-red-600 mb-2">Hapus Target Pendapatan?</h2>
+      <p class="text-sm md:text-base text-gray-700 mb-4">Anda yakin ingin menghapus target pendapatan untuk kategori <span id="delete_income_kategori" class="font-semibold text-main"></span>? Tindakan ini tidak dapat dibatalkan.</p>
       <form id="formDeleteIncomeBudget" method="post" action="">
         <input type="hidden" name="_method" value="DELETE">
         <?= csrf_field() ?>
-        <div class="flex gap-3 justify-center mt-2">
-          <button type="button" onclick="toggleDeleteIncomeBudgetModal(false)" class="px-4 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition">Batal</button>
-          <button type="submit" class="px-4 py-2 rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition">Hapus</button>
+        <div class="flex gap-3 justify-center mt-2 w-full">
+          <button type="button" onclick="toggleDeleteIncomeBudgetModal(false)" class="px-4 py-3 flex-1 md:w-auto rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition text-base md:text-sm">Batal</button>
+          <button type="submit" class="px-4 py-3 flex-1 md:w-auto rounded-lg bg-red-600 text-white font-semibold hover:bg-red-700 transition text-base md:text-sm">Hapus</button>
         </div>
       </form>
     </div>
