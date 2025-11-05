@@ -153,7 +153,12 @@
     <?php if (isset($pager) && isset($total_budgets) && $total_budgets > $perPage): ?>
     <div class="mt-4 flex justify-center">
         <nav class="inline-flex rounded-md shadow-sm" aria-label="Pagination">
-            <?= $pager->makeLinks($pager->getCurrentPage(), $perPage, $total_budgets, 'default_full') ?>
+            <?= view('Budgets/pagination', [
+                'pager' => $pager,
+                'group' => 'budgets',
+                'perPage' => $perPage,
+                'total_budgets' => $total_budgets
+            ]) ?>
         </nav>
     </div>
     <?php endif; ?>
