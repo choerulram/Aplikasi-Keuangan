@@ -76,12 +76,16 @@ function toggleDetailIncomeTransactionModal(show, data = null) {
       let badgeColor = tipe.toLowerCase() === 'income' ? 'bg-green-200 text-green-800' : 'bg-red-200 text-red-800';
       document.getElementById('detail_income_tipe_badge').innerHTML = `<span class='inline-block px-2 py-0.5 rounded text-xs font-semibold ${badgeColor}'>${tipe}</span>`;
       // User (hanya admin)
-      if (data.username !== undefined && data.username !== null && data.username !== '') {
-        document.getElementById('detail_income_user_row').style.display = '';
-        document.getElementById('detail_income_username').textContent = data.username;
-      } else {
-        document.getElementById('detail_income_user_row').style.display = 'none';
-        document.getElementById('detail_income_username').textContent = '';
+      var userRow = document.getElementById('detail_income_user_row');
+      var usernameSpan = document.getElementById('detail_income_username');
+      if (userRow && usernameSpan) {
+        if (data.username !== undefined && data.username !== null && data.username !== '') {
+          userRow.style.display = '';
+          usernameSpan.textContent = data.username;
+        } else {
+          userRow.style.display = 'none';
+          usernameSpan.textContent = '';
+        }
       }
     }
     modal.classList.remove('hidden');
