@@ -1,16 +1,17 @@
 <?= $this->extend('layouts/app') ?>
 
 <?= $this->section('content') ?>
-<div class="container px-6 mx-auto grid">
-    <h1 class="text-3xl font-bold text-main mb-4">Laporan per Kategori</h1>
+
+<div class="container px-2 md:px-6 mx-auto grid">
+    <h1 class="text-2xl md:text-3xl font-bold text-main mb-4 leading-tight">Laporan per Kategori</h1>
 
     <!-- Filter & Export Row -->
-    <div class="flex flex-wrap items-end gap-2 mb-6">
-        <form id="filterForm" method="get" action="" class="flex flex-wrap gap-2 items-end flex-1">
+    <div class="flex flex-col md:flex-row md:flex-wrap md:items-end gap-2 mb-6">
+        <form id="filterForm" method="get" action="" class="flex flex-col gap-2 md:flex-row md:flex-wrap md:gap-2 md:items-end flex-1 w-full">
             <!-- Filter Periode -->
-            <div>
+            <div class="w-full md:w-auto">
                 <label for="period" class="block text-xs font-semibold text-gray-600 mb-1">Periode</label>
-                <select name="period" id="period" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                <select name="period" id="period" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-40 text-xs md:text-sm">
                     <option value="this_month" <?= ($period ?? '') === 'this_month' ? 'selected' : '' ?>>Bulan Ini</option>
                     <option value="last_month" <?= ($period ?? '') === 'last_month' ? 'selected' : '' ?>>Bulan Lalu</option>
                     <option value="last_3_months" <?= ($period ?? '') === 'last_3_months' ? 'selected' : '' ?>>3 Bulan Terakhir</option>
@@ -18,41 +19,32 @@
                     <option value="custom" <?= ($period ?? '') === 'custom' ? 'selected' : '' ?>>Kustom</option>
                 </select>
             </div>
-
             <!-- Filter Tipe Transaksi -->
-            <div>
+            <div class="w-full md:w-auto">
                 <label for="type" class="block text-xs font-semibold text-gray-600 mb-1">Tipe Transaksi</label>
-                <select name="type" id="type" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                <select name="type" id="type" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-40 text-xs md:text-sm">
                     <option value="all" <?= ($type ?? '') === 'all' ? 'selected' : '' ?>>Semua</option>
                     <option value="income" <?= ($type ?? '') === 'income' ? 'selected' : '' ?>>Pemasukan</option>
                     <option value="expense" <?= ($type ?? '') === 'expense' ? 'selected' : '' ?>>Pengeluaran</option>
                 </select>
             </div>
-
-            <div class="flex gap-2 items-end">
-                <button type="submit" class="px-4 py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition">
-                    Terapkan
-                </button>
+            <div class="flex gap-2 items-end w-full md:w-auto mt-2 md:mt-0">
+                <button type="submit" class="inline-flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition h-9 md:h-11 text-sm md:text-sm">Terapkan</button>
                 <?php if (!empty($_GET)): ?>
-                    <a href="/reports/category" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">Reset</a>
+                    <a href="/reports/category" class="px-3 py-1.5 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition text-xs md:text-sm">Reset</a>
                 <?php endif; ?>
             </div>
         </form>
-
         <div class="flex gap-2 mt-4 md:mt-0">
             <form method="post" action="/reports/exportCategoryPDF" target="_blank">
                 <input type="hidden" name="period" value="<?= $period ?? 'this_month' ?>">
                 <input type="hidden" name="type" value="<?= $type ?? 'all' ?>">
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition">
-                    Ekspor PDF
-                </button>
+                <button type="submit" class="px-3 py-2 md:px-4 md:py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition h-9 md:h-11 text-sm md:text-sm">Ekspor PDF</button>
             </form>
             <form method="post" action="/reports/exportCategoryExcel" target="_blank">
                 <input type="hidden" name="period" value="<?= $period ?? 'this_month' ?>">
                 <input type="hidden" name="type" value="<?= $type ?? 'all' ?>">
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition">
-                    Ekspor Excel
-                </button>
+                <button type="submit" class="px-3 py-2 md:px-4 md:py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition h-9 md:h-11 text-sm md:text-sm">Ekspor Excel</button>
             </form>
         </div>
     </div>
@@ -60,25 +52,24 @@
     <!-- Charts -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
         <!-- Pie Chart -->
-        <div class="bg-white rounded-xl shadow-md p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Distribusi per Kategori</h2>
-            <div class="h-[400px]" id="categoryPieChart"></div>
+        <div class="bg-white rounded-xl shadow-md p-4 md:p-6">
+            <h2 class="text-base md:text-lg font-semibold text-gray-800 mb-4">Distribusi per Kategori</h2>
+            <div class="h-[220px] md:h-[400px]" id="categoryPieChart"></div>
         </div>
-        
         <!-- Bar Chart -->
-        <div class="bg-white rounded-xl shadow-md p-6">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4">Perbandingan antar Kategori</h2>
-            <div class="h-[400px]" id="categoryBarChart"></div>
+        <div class="bg-white rounded-xl shadow-md p-4 md:p-6">
+            <h2 class="text-base md:text-lg font-semibold text-gray-800 mb-4">Perbandingan antar Kategori</h2>
+            <div class="h-[220px] md:h-[400px]" id="categoryBarChart"></div>
         </div>
     </div>
 
     <!-- Summary Table -->
     <div class="bg-white rounded-lg shadow border border-gray-200">
-        <div class="p-4 border-b border-gray-200">
-            <h3 class="text-gray-600 text-lg font-semibold">Ringkasan per Kategori</h3>
+        <div class="p-3 md:p-4 border-b border-gray-200">
+            <h3 class="text-xs md:text-lg font-semibold text-gray-600">Ringkasan per Kategori</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full border border-gray-300">
+            <table class="min-w-full border border-gray-300 text-xs md:text-sm">
                 <thead class="bg-main/90">
                     <tr>
                         <th style="width: 5%;" class="px-2 py-3 text-center text-xs font-medium text-white uppercase tracking-wider border-r border-white/10">No</th>
@@ -93,24 +84,24 @@
                     <?php $no = 1; $totalAmount = array_sum(array_column($categories, 'total')); ?>
                     <?php foreach ($categories as $category): ?>
                     <tr class="border-b border-gray-200 hover:bg-gray-50">
-                        <td class="px-2 py-2 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200"><?= $no++ ?></td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 border-r border-gray-200"><?= esc($category['nama_kategori']) ?></td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200">
+                        <td class="px-2 py-2 whitespace-nowrap text-xs md:text-sm text-gray-600 text-center border-r border-gray-200"><?= $no++ ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-xs md:text-sm text-gray-600 border-r border-gray-200"><?= esc($category['nama_kategori']) ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-xs md:text-sm text-gray-600 text-center border-r border-gray-200">
                             <span class="px-2 py-1 text-xs rounded-full <?= $category['tipe'] === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
                                 <?= $category['tipe'] === 'income' ? 'Pemasukan' : 'Pengeluaran' ?>
                             </span>
                         </td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 text-center border-r border-gray-200"><?= $category['jumlah_transaksi'] ?></td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 text-right border-r border-gray-200">Rp <?= number_format($category['total'], 0, ',', '.') ?></td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-600 text-center"><?= number_format(($category['total'] / $totalAmount) * 100, 1) ?>%</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-xs md:text-sm text-gray-600 text-center border-r border-gray-200"><?= $category['jumlah_transaksi'] ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-xs md:text-sm text-gray-600 text-right border-r border-gray-200">Rp <?= number_format($category['total'], 0, ',', '.') ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-xs md:text-sm text-gray-600 text-center"><?= number_format(($category['total'] / $totalAmount) * 100, 1) ?>%</td>
                     </tr>
                     <?php endforeach; ?>
                 </tbody>
                 <tfoot class="bg-main/90">
                     <tr>
-                        <td colspan="4" class="px-4 py-2 whitespace-nowrap text-sm font-medium text-white text-right border-r border-white/10">Total</td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-white text-right border-r border-white/10">Rp <?= number_format($totalAmount, 0, ',', '.') ?></td>
-                        <td class="px-4 py-2 whitespace-nowrap text-sm font-medium text-white text-center">100%</td>
+                        <td colspan="4" class="px-4 py-2 whitespace-nowrap text-xs md:text-sm font-medium text-white text-right border-r border-white/10">Total</td>
+                        <td class="px-4 py-2 whitespace-nowrap text-xs md:text-sm font-medium text-white text-right border-r border-white/10">Rp <?= number_format($totalAmount, 0, ',', '.') ?></td>
+                        <td class="px-4 py-2 whitespace-nowrap text-xs md:text-sm font-medium text-white text-center">100%</td>
                     </tr>
                 </tfoot>
             </table>
