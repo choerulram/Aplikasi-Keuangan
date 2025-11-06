@@ -1,6 +1,8 @@
 <?= $this->extend('layouts/app') ?>
 <?= $this->section('content') ?>
-<h1 class="text-3xl font-bold text-main mb-4">Manajemen User</h1>
+<div class="mb-2">
+    <h1 class="text-2xl md:text-3xl font-bold text-main tracking-tight drop-shadow-sm mb-4">Manajemen User</h1>
+</div>
 
 <?php if (session('role') !== 'admin'): ?>
     <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-4" role="alert">
@@ -70,24 +72,24 @@
         <form method="get" action="" class="flex flex-wrap gap-2 items-end flex-1">
             <div>
                 <label for="search" class="block text-xs font-semibold text-gray-600 mb-1">Cari Username/Nama</label>
-                <input type="text" name="search" id="search" value="<?= esc($search ?? '') ?>" placeholder="Cari username atau nama..." class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-64 md:w-80" />
+                <input type="text" name="search" id="search" value="<?= esc($search ?? '') ?>" placeholder="Cari username atau nama..." class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-80 text-xs md:text-sm" />
             </div>
             <div>
                 <label for="role" class="block text-xs font-semibold text-gray-600 mb-1">Role</label>
-                <select name="role" id="role" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                <select name="role" id="role" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-40 text-xs md:text-sm">
                     <option value="">Semua Role</option>
                     <option value="admin" <?= (isset($role) && $role === 'admin') ? 'selected' : '' ?>>Admin</option>
                     <option value="user" <?= (isset($role) && $role === 'user') ? 'selected' : '' ?>>User</option>
                 </select>
             </div>
             <div class="flex gap-2 items-end">
-                <button type="submit" class="px-4 py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition">Terapkan</button>
+                <button type="submit" class="inline-flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition h-9 md:h-11 text-sm md:text-sm">Terapkan</button>
                 <?php if (!empty($search) || !empty($role)): ?>
-                    <a href="<?= site_url('users') ?>" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">Reset</a>
+                    <a href="<?= site_url('users') ?>" class="px-3 py-1.5 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition text-xs md:text-sm">Reset</a>
                 <?php endif; ?>
             </div>
         </form>
-        <button id="btnShowAddUserModal" type="button" class="inline-flex items-center gap-2 px-4 py-2 bg-main text-white rounded-lg shadow hover:bg-highlight transition h-11">
+        <button id="btnShowAddUserModal" type="button" class="inline-flex items-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-main text-white rounded-lg shadow hover:bg-highlight transition h-9 md:h-11 text-sm md:text-base">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
             Tambah
         </button>
@@ -97,7 +99,7 @@
         <?= view('Users/modal_delete_user') ?>
     </div>
     <div class="overflow-x-auto rounded-lg shadow border border-gray-200 bg-white mt-6">
-        <table class="min-w-full border border-gray-300">
+        <table class="min-w-full border border-gray-300 text-xs md:text-sm">
             <thead class="bg-main/90">
                 <tr>
                     <th class="py-3 px-2 w-12 text-center text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">No.</th>
@@ -117,20 +119,20 @@
                         $no = 1 + ($pager ? $pager->getCurrentPage('users') - 1 : 0) * $perPage;
                         foreach ($users as $user): ?>
                         <tr class="hover:bg-gray-50 transition">
-                            <td class="py-2 px-2 w-12 text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
-                            <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($user['username']) ?></td>
-                            <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($user['email']) ?></td>
-                            <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($user['nama']) ?></td>
-                            <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($user['created_at']) ?></td>
-                            <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200">
+                            <td class="py-2 px-2 md:px-4 w-12 text-xs md:text-sm text-gray-700 font-medium border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
+                            <td class="py-2 px-2 md:px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($user['username']) ?></td>
+                            <td class="py-2 px-2 md:px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($user['email']) ?></td>
+                            <td class="py-2 px-2 md:px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($user['nama']) ?></td>
+                            <td class="py-2 px-2 md:px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($user['created_at']) ?></td>
+                            <td class="py-2 px-2 md:px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200">
                                 <span class="inline-block px-2 py-1 rounded text-xs font-semibold <?= esc($user['role']) === 'admin' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700' ?>">
                                     <?= ucfirst(esc($user['role'])) ?>
                                 </span>
                             </td>
-                            <td class="py-2 px-2 w-40 text-center border-b border-r border-gray-200">
-                                <div class="flex justify-center gap-1">
+                            <td class="py-2 px-2 md:px-4 w-40 text-center border-b border-r border-gray-200">
+                                <div class="flex flex-col md:flex-row items-center md:justify-center gap-1">
                                     <button type="button"
-                                        class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
+                                        class="flex items-center justify-center w-full md:inline-flex md:w-auto px-2 py-1 text-xs font-semibold text-white bg-blue-500 rounded hover:bg-blue-600"
                                         title="Detail"
                                         onclick='toggleDetailUserModal(true, <?= json_encode($user, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -140,7 +142,7 @@
                                         Detail
                                     </button>
                                     <button type="button"
-                                        class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600"
+                                        class="flex items-center justify-center w-full md:inline-flex md:w-auto px-2 py-1 text-xs font-semibold text-white bg-yellow-500 rounded hover:bg-yellow-600"
                                         title="Ubah"
                                         onclick='toggleEditUserModal(true, <?= json_encode($user, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -150,7 +152,7 @@
                                         Ubah
                                     </button>
                                     <button type="button"
-                                        class="inline-flex items-center px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded hover:bg-red-600"
+                                        class="flex items-center justify-center w-full md:inline-flex md:w-auto px-2 py-1 text-xs font-semibold text-white bg-red-500 rounded hover:bg-red-600"
                                         title="Hapus"
                                         onclick='toggleDeleteUserModal(true, <?= json_encode($user, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP) ?>)'>
                                         <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
