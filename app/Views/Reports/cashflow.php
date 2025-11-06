@@ -1,25 +1,25 @@
 <?= $this->extend('layouts/app') ?>
 
 <?= $this->section('content') ?>
-<div class="container px-6 mx-auto grid">
-    <h1 class="text-3xl font-bold text-main mb-4">Laporan Arus Kas</h1>
+
+<div class="container px-2 md:px-6 mx-auto grid">
+    <h1 class="text-2xl md:text-3xl font-bold text-main mb-4 leading-tight">Laporan Arus Kas</h1>
 
     <!-- Filter & Export Row -->
-    <div class="flex flex-wrap items-end gap-2 mb-6">
-        <form id="filterForm" method="get" action="" class="flex flex-wrap gap-2 items-end flex-1">
-            <div>
+    <div class="flex flex-col md:flex-row md:flex-wrap md:items-end gap-2 mb-6">
+        <form id="filterForm" method="get" action="" class="flex flex-col gap-2 md:flex-row md:flex-wrap md:gap-2 md:items-end flex-1 w-full">
+            <div class="w-full md:w-auto">
                 <label for="view_type" class="block text-xs font-semibold text-gray-600 mb-1">Tampilan</label>
-                <select id="view_type" name="view_type" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                <select id="view_type" name="view_type" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-40 text-xs md:text-sm">
                     <option value="monthly" <?= ($view_type ?? 'monthly') === 'monthly' ? 'selected' : '' ?>>Per Bulan</option>
                     <option value="yearly" <?= ($view_type ?? '') === 'yearly' ? 'selected' : '' ?>>Per Tahun</option>
                 </select>
             </div>
-            
             <!-- Filter untuk tampilan bulanan -->
-            <div id="monthlyFilter" class="<?= ($view_type ?? 'monthly') === 'monthly' ? 'flex' : 'hidden' ?> gap-2">
-                <div>
+            <div id="monthlyFilter" class="<?= ($view_type ?? 'monthly') === 'monthly' ? 'flex' : 'hidden' ?> gap-2 w-full md:w-auto">
+                <div class="w-full md:w-auto">
                     <label for="month" class="block text-xs font-semibold text-gray-600 mb-1">Bulan</label>
-                    <select id="month" name="month" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                    <select id="month" name="month" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-40 text-xs md:text-sm">
                         <?php 
                         $months = [
                             '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
@@ -34,9 +34,9 @@
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <div>
+                <div class="w-full md:w-auto">
                     <label for="year" class="block text-xs font-semibold text-gray-600 mb-1">Tahun</label>
-                    <select id="year" name="year" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-32">
+                    <select id="year" name="year" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-32 text-xs md:text-sm">
                         <?php 
                         $currentYear = date('Y');
                         for($y = $currentYear; $y >= $currentYear - 5; $y--): 
@@ -47,12 +47,11 @@
                     </select>
                 </div>
             </div>
-
             <!-- Filter untuk tampilan tahunan -->
-            <div id="yearlyFilter" class="<?= ($view_type ?? '') === 'yearly' ? 'flex' : 'hidden' ?> gap-2">
-                <div>
+            <div id="yearlyFilter" class="<?= ($view_type ?? '') === 'yearly' ? 'flex' : 'hidden' ?> gap-2 w-full md:w-auto">
+                <div class="w-full md:w-auto">
                     <label for="year_filter" class="block text-xs font-semibold text-gray-600 mb-1">Tahun</label>
-                    <select id="year_filter" name="year_filter" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40">
+                    <select id="year_filter" name="year_filter" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-40 text-xs md:text-sm">
                         <?php 
                         $currentYear = date('Y');
                         for($y = $currentYear; $y >= $currentYear - 5; $y--): 
@@ -63,92 +62,87 @@
                     </select>
                 </div>
             </div>
-
-            <div class="flex gap-2 items-end">
-                <button type="submit" class="px-4 py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition">Terapkan</button>
+            <div class="flex gap-2 items-end w-full md:w-auto mt-2 md:mt-0">
+                <button type="submit" class="inline-flex items-center justify-center gap-2 px-3 py-2 md:px-4 md:py-2 bg-main text-white rounded-lg font-semibold shadow hover:bg-highlight transition h-9 md:h-11 text-sm md:text-sm">Terapkan</button>
                 <?php if (!empty($_GET)): ?>
-                    <a href="/reports/cashflow" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition">Reset</a>
+                    <a href="/reports/cashflow" class="px-3 py-1.5 md:px-4 md:py-2 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition text-xs md:text-sm">Reset</a>
                 <?php endif; ?>
             </div>
-
-            <div id="dateRange" class="<?= ($period ?? '') === 'custom' ? 'flex' : 'hidden' ?> gap-4">
-                <div>
+            <div id="dateRange" class="<?= ($period ?? '') === 'custom' ? 'flex' : 'hidden' ?> gap-4 w-full md:w-auto">
+                <div class="w-full md:w-auto">
                     <label for="start_date" class="block text-xs font-semibold text-gray-600 mb-1">Dari Tanggal</label>
-                    <input type="date" name="start_date" id="start_date" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" value="<?= $filters['start_date'] ?? '' ?>">
+                    <input type="date" name="start_date" id="start_date" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-40 text-xs md:text-sm" value="<?= $filters['start_date'] ?? '' ?>">
                 </div>
-                <div>
+                <div class="w-full md:w-auto">
                     <label for="end_date" class="block text-xs font-semibold text-gray-600 mb-1">Sampai Tanggal</label>
-                    <input type="date" name="end_date" id="end_date" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-40" value="<?= $filters['end_date'] ?? '' ?>">
+                    <input type="date" name="end_date" id="end_date" class="px-3 py-2 border rounded-lg focus:outline-none focus:ring w-full md:w-40 text-xs md:text-sm" value="<?= $filters['end_date'] ?? '' ?>">
                 </div>
             </div>
         </form>
-
         <div class="flex gap-2 mt-4 md:mt-0">
             <form method="post" action="/reports/exportPDF" target="_blank">
-                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition">Ekspor PDF</button>
+                <button type="submit" class="px-3 py-2 md:px-4 md:py-2 bg-red-600 text-white rounded-lg font-semibold shadow hover:bg-red-700 transition h-9 md:h-11 text-sm md:text-sm">Ekspor PDF</button>
             </form>
             <form method="post" action="/reports/exportExcel" target="_blank">
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition">Ekspor Excel</button>
+                <button type="submit" class="px-3 py-2 md:px-4 md:py-2 bg-green-600 text-white rounded-lg font-semibold shadow hover:bg-green-700 transition h-9 md:h-11 text-sm md:text-sm">Ekspor Excel</button>
             </form>
         </div>
     </div>
 
     <!-- Summary Cards -->
     <div class="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="flex items-center p-6 bg-green-50 border-2 border-green-300 rounded-2xl shadow-lg min-h-[120px] h-[140px]">
-            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-green-200 mr-5">
-                <svg class="w-10 h-10 text-green-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <div class="flex items-center p-4 md:p-6 bg-green-50 border-2 border-green-300 rounded-2xl shadow-lg min-h-[100px] md:min-h-[120px] h-[120px] md:h-[140px]">
+            <div class="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-green-200 mr-3 md:mr-5">
+                <svg class="w-8 h-8 md:w-10 md:h-10 text-green-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 17l6-6 4 4 8-8" />
                 </svg>
             </div>
             <div>
-                <div class="text-base font-bold text-green-800 mb-1 tracking-wide">Total Pemasukan</div>
-                <div class="text-3xl font-extrabold text-green-700">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></div>
+                <div class="text-xs md:text-base font-bold text-green-800 mb-1 tracking-wide">Total Pemasukan</div>
+                <div class="text-xl md:text-3xl font-extrabold text-green-700">Rp <?= number_format($summary['total_income'] ?? 0, 0, ',', '.') ?></div>
             </div>
         </div>
-
-        <div class="flex items-center p-6 bg-red-50 border-2 border-red-300 rounded-2xl shadow-lg min-h-[120px] h-[140px]">
-            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-red-200 mr-5">
-                <svg class="w-10 h-10 text-red-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <div class="flex items-center p-4 md:p-6 bg-red-50 border-2 border-red-300 rounded-2xl shadow-lg min-h-[100px] md:min-h-[120px] h-[120px] md:h-[140px]">
+            <div class="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-red-200 mr-3 md:mr-5">
+                <svg class="w-8 h-8 md:w-10 md:h-10 text-red-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3 7l6 6 4-4 8 8" />
                 </svg>
             </div>
             <div>
-                <div class="text-base font-bold text-red-800 mb-1 tracking-wide">Total Pengeluaran</div>
-                <div class="text-3xl font-extrabold text-red-700">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></div>
+                <div class="text-xs md:text-base font-bold text-red-800 mb-1 tracking-wide">Total Pengeluaran</div>
+                <div class="text-xl md:text-3xl font-extrabold text-red-700">Rp <?= number_format($summary['total_expense'] ?? 0, 0, ',', '.') ?></div>
             </div>
         </div>
-
-        <div class="flex items-center p-6 bg-blue-50 border-2 border-blue-300 rounded-2xl shadow-lg min-h-[120px] h-[140px]">
-            <div class="flex items-center justify-center w-16 h-16 rounded-full bg-blue-200 mr-5">
-                <svg class="w-10 h-10 text-blue-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+        <div class="flex items-center p-4 md:p-6 bg-blue-50 border-2 border-blue-300 rounded-2xl shadow-lg min-h-[100px] md:min-h-[120px] h-[120px] md:h-[140px]">
+            <div class="flex items-center justify-center w-12 h-12 md:w-16 md:h-16 rounded-full bg-blue-200 mr-3 md:mr-5">
+                <svg class="w-8 h-8 md:w-10 md:h-10 text-blue-700" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
                     <path d="M2 7a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V7z" stroke="currentColor" stroke-width="2.5" fill="#e0e7ff"/>
                     <path d="M22 9H18a2 2 0 0 0-2 2v2a2 2 0 0 0 2 2h4" stroke="currentColor" stroke-width="2.5"/>
                     <circle cx="18.5" cy="12" r="1" fill="currentColor"/>
                 </svg>
             </div>
             <div>
-                <div class="text-base font-bold text-blue-800 mb-1 tracking-wide">Arus Kas Bersih</div>
-                <div class="text-3xl font-extrabold text-blue-700">Rp <?= number_format(($summary['total_income'] ?? 0) - ($summary['total_expense'] ?? 0), 0, ',', '.') ?></div>
+                <div class="text-xs md:text-base font-bold text-blue-800 mb-1 tracking-wide">Arus Kas Bersih</div>
+                <div class="text-xl md:text-3xl font-extrabold text-blue-700">Rp <?= number_format(($summary['total_income'] ?? 0) - ($summary['total_expense'] ?? 0), 0, ',', '.') ?></div>
             </div>
         </div>
     </div>
 
     <!-- Chart -->
-    <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-        <h2 class="text-lg font-semibold text-gray-800 mb-4">Tren Arus Kas</h2>
-        <div class="h-[400px]" id="cashFlowChart">
+    <div class="bg-white rounded-xl shadow-md p-4 md:p-6 mb-8">
+        <h2 class="text-base md:text-lg font-semibold text-gray-800 mb-4">Tren Arus Kas</h2>
+        <div class="h-[220px] md:h-[400px]" id="cashFlowChart">
             <!-- Chart will be rendered here -->
         </div>
     </div>
 
     <!-- Table -->
     <div class="bg-white rounded-lg shadow border border-gray-200">
-        <div class="p-4 border-b border-gray-200">
-            <h3 class="text-gray-600 text-lg font-semibold">Detail Transaksi</h3>
+        <div class="p-3 md:p-4 border-b border-gray-200">
+            <h3 class="text-xs md:text-lg font-semibold text-gray-600">Detail Transaksi</h3>
         </div>
         <div class="overflow-x-auto">
-            <table class="min-w-full border border-gray-300">
+            <table class="min-w-full border border-gray-300 text-xs md:text-sm">
                 <thead class="bg-main/90">
                     <tr>
                         <th class="py-3 px-2 w-12 text-center text-xs font-bold text-white uppercase tracking-wider border-b border-r border-gray-300">No</th>
@@ -169,24 +163,24 @@
                         ?>
                         <?php foreach ($transactions as $trx): ?>
                             <tr class="hover:bg-gray-50 transition">
-                                <td class="py-2 px-2 text-sm text-gray-600 border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
-                                <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= date('d/m/Y', strtotime($trx['tanggal'])) ?></td>
-                                <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['deskripsi']) ?></td>
-                                <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['category_name']) ?></td>
-                                <td class="py-2 px-4 text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['account_name']) ?></td>
-                                <td class="py-2 px-4 text-sm border-b border-r border-gray-200">
+                                <td class="py-2 px-2 text-xs md:text-sm text-gray-600 border-b border-r border-gray-200 text-center"><?= $no++ ?></td>
+                                <td class="py-2 px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200"><?= date('d/m/Y', strtotime($trx['tanggal'])) ?></td>
+                                <td class="py-2 px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['deskripsi']) ?></td>
+                                <td class="py-2 px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['category_name']) ?></td>
+                                <td class="py-2 px-4 text-xs md:text-sm text-gray-700 border-b border-r border-gray-200"><?= esc($trx['account_name']) ?></td>
+                                <td class="py-2 px-4 text-xs md:text-sm border-b border-r border-gray-200">
                                     <span class="px-2 py-1 text-xs font-medium rounded-full <?= $trx['tipe'] === 'income' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' ?>">
                                         <?= $trx['tipe'] === 'income' ? 'Pemasukan' : 'Pengeluaran' ?>
                                     </span>
                                 </td>
-                                <td class="py-2 px-4 text-sm font-medium border-b border-r border-gray-200 text-right <?= $trx['tipe'] === 'income' ? 'text-green-600' : 'text-red-600' ?>">
+                                <td class="py-2 px-4 text-xs md:text-sm font-medium border-b border-r border-gray-200 text-right <?= $trx['tipe'] === 'income' ? 'text-green-600' : 'text-red-600' ?>">
                                     Rp <?= number_format($trx['jumlah'], 0, ',', '.') ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="6" class="px-4 py-3 text-sm text-center text-gray-500">Tidak ada transaksi untuk ditampilkan</td>
+                            <td colspan="6" class="px-4 py-3 text-xs md:text-sm text-center text-gray-500">Tidak ada transaksi untuk ditampilkan</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>

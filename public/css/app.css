@@ -612,6 +612,10 @@ video {
   right: 0px;
 }
 
+.right-2 {
+  right: 0.5rem;
+}
+
 .right-3 {
   right: 0.75rem;
 }
@@ -644,10 +648,6 @@ video {
   top: 0.75rem;
 }
 
-.right-2 {
-  right: 0.5rem;
-}
-
 .z-20 {
   z-index: 20;
 }
@@ -662,10 +662,6 @@ video {
 
 .z-50 {
   z-index: 50;
-}
-
-.col-span-1 {
-  grid-column: span 1 / span 1;
 }
 
 .mx-auto {
@@ -878,12 +874,24 @@ video {
   height: 100%;
 }
 
+.h-\[120px\] {
+  height: 120px;
+}
+
+.h-\[220px\] {
+  height: 220px;
+}
+
 .min-h-\[120px\] {
   min-height: 120px;
 }
 
 .min-h-screen {
   min-height: 100vh;
+}
+
+.min-h-\[100px\] {
+  min-height: 100px;
 }
 
 .w-10 {
@@ -2104,10 +2112,6 @@ video {
 }
 
 @media (min-width: 640px) {
-  .sm\:col-span-2 {
-    grid-column: span 2 / span 2;
-  }
-
   .sm\:my-8 {
     margin-top: 2rem;
     margin-bottom: 2rem;
@@ -2133,20 +2137,12 @@ video {
     width: 100%;
   }
 
-  .sm\:w-auto {
-    width: auto;
-  }
-
   .sm\:max-w-lg {
     max-width: 32rem;
   }
 
   .sm\:max-w-md {
     max-width: 28rem;
-  }
-
-  .sm\:grid-cols-2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sm\:items-start {
@@ -2210,16 +2206,12 @@ video {
     margin-top: 0px;
   }
 
-  .md\:mb-0 {
-    margin-bottom: 0px;
+  .md\:mr-5 {
+    margin-right: 1.25rem;
   }
 
   .md\:inline-block {
     display: inline-block;
-  }
-
-  .md\:flex {
-    display: flex;
   }
 
   .md\:inline-flex {
@@ -2258,8 +2250,16 @@ video {
     height: 2rem;
   }
 
-  .md\:h-4 {
-    height: 1rem;
+  .md\:h-\[140px\] {
+    height: 140px;
+  }
+
+  .md\:h-\[400px\] {
+    height: 400px;
+  }
+
+  .md\:min-h-\[120px\] {
+    min-height: 120px;
   }
 
   .md\:w-10 {
@@ -2306,16 +2306,8 @@ video {
     width: auto;
   }
 
-  .md\:w-12 {
-    width: 3rem;
-  }
-
-  .md\:w-4 {
-    width: 1rem;
-  }
-
-  .md\:w-64 {
-    width: 16rem;
+  .md\:w-32 {
+    width: 8rem;
   }
 
   .md\:max-w-md {
@@ -2355,16 +2347,12 @@ video {
     justify-content: center;
   }
 
-  .md\:gap-3 {
-    gap: 0.75rem;
-  }
-
-  .md\:gap-1 {
-    gap: 0.25rem;
-  }
-
   .md\:gap-2 {
     gap: 0.5rem;
+  }
+
+  .md\:gap-3 {
+    gap: 0.75rem;
   }
 
   .md\:p-2 {
@@ -2408,19 +2396,9 @@ video {
     padding-bottom: 1.5rem;
   }
 
-  .md\:px-2 {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-  }
-
-  .md\:py-1 {
-    padding-top: 0.25rem;
-    padding-bottom: 0.25rem;
-  }
-
-  .md\:py-3 {
-    padding-top: 0.75rem;
-    padding-bottom: 0.75rem;
+  .md\:px-6 {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
   }
 
   .md\:text-3xl {
@@ -2450,11 +2428,6 @@ video {
   .md\:text-xl {
     font-size: 1.25rem;
     line-height: 1.75rem;
-  }
-
-  .md\:text-xs {
-    font-size: 0.75rem;
-    line-height: 1rem;
   }
 
   .md\:leading-normal {
