@@ -8,15 +8,15 @@ Aplikasi Keuangan Sederhana untuk mencatat pemasukan, pengeluaran, dan mengelola
 - **Frontend:** HTML, Tailwind CSS
 - **Build Tool:** Tailwind CLI, PostCSS
 - **Package Manager:** npm (Node.js), Composer (PHP)
-- **Database:** (Silakan sesuaikan di file konfigurasi, default mendukung MySQL/MariaDB)
+- **Database:** MySQL/MariaDB
 
 ## Fitur Utama
 
 - Manajemen akun keuangan
+- Manajemen anggaran
 - Kategori pemasukan & pengeluaran
 - Pencatatan transaksi
 - Laporan keuangan
-- Pengaturan pengguna
 
 ## Cara Menjalankan Project di Lokal
 
